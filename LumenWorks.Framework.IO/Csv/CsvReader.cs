@@ -354,9 +354,10 @@ namespace LumenWorks.Framework.IO.Csv
 
 			_bufferSize = bufferSize;
 
-			if (reader is StreamReader)
+		    var streamReader = reader as StreamReader;
+		    if (streamReader != null)
 			{
-				Stream stream = ((StreamReader) reader).BaseStream;
+				var stream = streamReader.BaseStream;
 
 				if (stream.CanSeek)
 				{
@@ -562,6 +563,11 @@ namespace LumenWorks.Framework.IO.Csv
 		/// </summary>
 		/// <value>The default header name when it is an empty string or only whitespaces.</value>
 		public string DefaultHeaderName { get; set; }
+
+        /// <summary>
+        /// Gets or sets column information for the CSV.
+        /// </summary>
+        public IList<Column> Columns { get; set; }
 
 		#endregion
 
@@ -1528,7 +1534,7 @@ namespace LumenWorks.Framework.IO.Csv
 						_fieldCount++;
 
 						if (_fieldCount == _fields.Length)
-							Array.Resize<string>(ref _fields, (_fieldCount + 1) * 2);
+							Array.Resize(ref _fields, (_fieldCount + 1) * 2);
 					}
 				}
 
@@ -1537,7 +1543,7 @@ namespace LumenWorks.Framework.IO.Csv
 				_fieldCount++;
 
 				if (_fields.Length != _fieldCount)
-					Array.Resize<string>(ref _fields, _fieldCount);
+					Array.Resize(ref _fields, _fieldCount);
 
 				_initialized = true;
 
@@ -1556,7 +1562,7 @@ namespace LumenWorks.Framework.IO.Csv
 					{
 						string headerName = _fields[i];
 						if (string.IsNullOrEmpty(headerName) || headerName.Trim().Length == 0)
-							headerName = this.DefaultHeaderName + i.ToString();
+							headerName = this.DefaultHeaderName + i;
 
 						_fieldHeaders[i] = headerName;
 						_fieldHeaderIndexes.Add(headerName, i);
@@ -1995,11 +2001,13 @@ namespace LumenWorks.Framework.IO.Csv
 			EnsureInitialize();
 			ValidateDataReader(DataReaderValidations.IsNotClosed);
 
-			DataTable schema = new DataTable("SchemaTable");
-			schema.Locale = CultureInfo.InvariantCulture;
-			schema.MinimumCapacity = _fieldCount;
+			var schema = new DataTable("SchemaTable")
+			{
+			    Locale = CultureInfo.InvariantCulture,
+			    MinimumCapacity = _fieldCount
+			};
 
-			schema.Columns.Add(SchemaTableColumn.AllowDBNull, typeof(bool)).ReadOnly = true;
+		    schema.Columns.Add(SchemaTableColumn.AllowDBNull, typeof(bool)).ReadOnly = true;
 			schema.Columns.Add(SchemaTableColumn.BaseColumnName, typeof(string)).ReadOnly = true;
 			schema.Columns.Add(SchemaTableColumn.BaseSchemaName, typeof(string)).ReadOnly = true;
 			schema.Columns.Add(SchemaTableColumn.BaseTableName, typeof(string)).ReadOnly = true;
@@ -2036,7 +2044,7 @@ namespace LumenWorks.Framework.IO.Csv
 			}
 
 			// null marks columns that will change for each row
-			object[] schemaRow = new object[] { 
+			object[] schemaRow = { 
 					true,					// 00- AllowDBNull
 					null,					// 01- BaseColumnName
 					string.Empty,			// 02- BaseSchemaName
@@ -2084,7 +2092,7 @@ namespace LumenWorks.Framework.IO.Csv
 
 			string value = this[i];
 
-			return Int32.Parse(value == null ? string.Empty : value, CultureInfo.CurrentCulture);
+			return Int32.Parse(value ?? string.Empty, CultureInfo.CurrentCulture);
 		}
 
 		object IDataRecord.this[string name]
@@ -2101,21 +2109,18 @@ namespace LumenWorks.Framework.IO.Csv
 			get
 			{
 				ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
-				return this[i];
+			    return FieldValue(i);
 			}
 		}
 
 		object IDataRecord.GetValue(int i)
 		{
-			ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
+		    ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
 
-			if (((IDataRecord) this).IsDBNull(i))
-				return DBNull.Value;
-			else
-				return this[i];
+		    return ((IDataRecord)this).IsDBNull(i) ? DBNull.Value : FieldValue(i);
 		}
 
-		bool IDataRecord.IsDBNull(int i)
+	    bool IDataRecord.IsDBNull(int i)
 		{
 			ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
 			return (string.IsNullOrEmpty(this[i]));
@@ -2142,7 +2147,12 @@ namespace LumenWorks.Framework.IO.Csv
 			if (i < 0 || i >= _fieldCount)
 				throw new ArgumentOutOfRangeException("i", i, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, i));
 
-			return typeof(string);
+            if (Columns == null)
+            {
+                return typeof(string);
+            }
+            var column = Columns[i];
+		    return column.Type;
 		}
 
 		decimal IDataRecord.GetDecimal(int i)
@@ -2155,12 +2165,14 @@ namespace LumenWorks.Framework.IO.Csv
 		{
 			ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
 
-			IDataRecord record = (IDataRecord) this;
+			var record = (IDataRecord) this;
 
-			for (int i = 0; i < _fieldCount; i++)
-				values[i] = record.GetValue(i);
+		    for (int i = 0; i < _fieldCount; i++)
+		    {
+		        values[i] = record.GetValue(i);
+		    }
 
-			return _fieldCount;
+		    return _fieldCount;
 		}
 
 		string IDataRecord.GetName(int i)
@@ -2171,10 +2183,17 @@ namespace LumenWorks.Framework.IO.Csv
 			if (i < 0 || i >= _fieldCount)
 				throw new ArgumentOutOfRangeException("i", i, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, i));
 
-			if (_hasHeaders)
-				return _fieldHeaders[i];
-			else
-				return "Column" + i.ToString(CultureInfo.InvariantCulture);
+		    if (_hasHeaders)
+		    {
+		        return _fieldHeaders[i];
+		    }
+
+		    if (Columns != null)
+		    {
+		        return Columns[i].Name;
+		    }
+
+		    return "Column" + i.ToString(CultureInfo.InvariantCulture);
 		}
 
 		long IDataRecord.GetInt64(int i)
@@ -2274,6 +2293,17 @@ namespace LumenWorks.Framework.IO.Csv
 			ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
 			return Int16.Parse(this[i], CultureInfo.CurrentCulture);
 		}
+
+	    object FieldValue(int i)
+	    {
+            var value = this[i];
+            if (Columns == null)
+            {
+                return value;
+            }
+            var column = Columns[i];
+            return column.Convert(value);
+	    }
 
 		#endregion
 

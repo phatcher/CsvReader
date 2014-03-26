@@ -81,6 +81,7 @@
     <Compile Include="Csv\MissingFieldAction.cs" />
     <Compile Include="Csv\ParseErrorAction.cs" />
     <Compile Include="Csv\Resources\ExceptionMessage.Designer.cs" />
+    <Compile Include="Csv\Column.cs" />
     <Compile Include="Csv\ValueTrimmingOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -70,6 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IO\Csv\ColumnTests.cs" />
     <Compile Include="IO\Csv\CsvReaderIDataReaderTest.cs" />
     <Compile Include="IO\Csv\CsvReaderMalformedTest.cs" />
     <Compile Include="IO\Csv\CsvReaderSampleData.cs" />
