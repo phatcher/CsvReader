@@ -3,22 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{05BE1EA1-1C93-443A-8945-DAAEBE94FB8E}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LumenWorks.Framework.IO", "code\LumenWorks.Framework.IO\LumenWorks.Framework.IO.csproj", "{E3B83D68-C90C-4874-8E5F-DEC8D038BC7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LumenWorks.Framework.IO", "LumenWorks.Framework.IO\LumenWorks.Framework.IO.csproj", "{E3B83D68-C90C-4874-8E5F-DEC8D038BC7C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LumenWorks.Framework.Tests.Unit", "code\LumenWorks.Framework.Tests.Unit\LumenWorks.Framework.Tests.Unit.csproj", "{DBF22390-41BC-4E33-BC9E-F381621EBF01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LumenWorks.Framework.Tests.Unit", "LumenWorks.Framework.Tests.Unit\LumenWorks.Framework.Tests.Unit.csproj", "{DBF22390-41BC-4E33-BC9E-F381621EBF01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvReaderDemo", "code\CsvReaderDemo\CsvReaderDemo.csproj", "{A5F604EE-0F0A-4A3F-B947-1EB1D2BDAA33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvReaderDemo", "CsvReaderDemo\CsvReaderDemo.csproj", "{A5F604EE-0F0A-4A3F-B947-1EB1D2BDAA33}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvReaderBenchmarks", "code\CsvReaderBenchmarks\CsvReaderBenchmarks.csproj", "{6BA5C01B-2F49-4432-8FCA-A3B1ADC6AFDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvReaderBenchmarks", "CsvReaderBenchmarks\CsvReaderBenchmarks.csproj", "{6BA5C01B-2F49-4432-8FCA-A3B1ADC6AFDA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvReaderDemoWeb", "CsvReaderDemoWeb\CsvReaderDemoWeb.csproj", "{800B3F74-702F-48C8-B3E9-AA658E3D5A05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvReaderDemoWeb", "code\CsvReaderDemoWeb\CsvReaderDemoWeb.csproj", "{800B3F74-702F-48C8-B3E9-AA658E3D5A05}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D23ED3F3-7347-4369-B8AA-4E622924D01E}"
 	ProjectSection(SolutionItems) = preProject
