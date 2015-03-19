@@ -74,6 +74,21 @@
                     }
                     break;
 
+                case "Byte[]":
+                    {
+                        try
+                        {
+                            result = System.Convert.FromBase64String(value);
+                            converted = true;
+                        }
+                        catch
+                        {
+                            result = new byte[0];
+                            converted = false;
+                        }
+                    }
+                    break;
+
                 case "Int32":
                     {
                         Int32 x;
