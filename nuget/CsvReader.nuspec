@@ -4,7 +4,7 @@
         <id>CsvReader</id>
         <title>CSV Reader</title>
         <description>An extended version of LumenWorks.Frameworks.IO</description>
-        <version>3.8.2</version>
+        <version>3.8.3</version>
         <licenseUrl>http://opensource.org/licenses/mit-license.php</licenseUrl>
         <copyright>Copyright © 2005 Sébastien Lorion, 2014 Paul Hatcher</copyright>
         <owners>Paul Hatcher</owners>

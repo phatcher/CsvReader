@@ -1,3 +1,7 @@
+#### 3.8.3 (2015-03-21)
+* Minor tidy up to build file
+* Link project readme to NuGet package
+
 #### 3.8.2 (2014-02-27)
 * Adding Column metadata so we can use with SqlBulkCopy.
 

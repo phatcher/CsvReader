@@ -7,7 +7,7 @@ open Fake.NuGetHelper
 open Fake.RestorePackageHelper
 
 // Version info
-let version = "3.8.2" 
+let version = "3.8.3" 
 
 // Properties
 let buildDir = "./build"
@@ -47,7 +47,6 @@ Target "Pack" (fun _ ->
     NuGet (fun p ->
       { p with 
           Version = version
-          Description = "Hello world"
           OutputPath = buildDir}) 
       "nuget/CsvReader.nuspec"
 )

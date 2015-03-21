@@ -1,6 +1,6 @@
 # CSV Reader
 
-The CsvReader library ("LumenWorks.Framework.IO") is an extended version of Sebastian Lorien's [fast CSV Reader](http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader) project 
+The [CsvReader](https://www.nuget.org/packages/CsvReader/) library is an extended version of Sebastian Lorien's [fast CSV Reader](http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader) project 
 and provides fast parsing and reading of CSV files
 
 To this end it is a straight drop-in replacement for the existing NuGet package [LumenWork.Framework.IO](https://www.nuget.org/packages/LumenWorks.Framework.IO/), but with additional
