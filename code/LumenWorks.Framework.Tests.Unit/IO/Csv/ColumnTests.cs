@@ -5,6 +5,7 @@
     using LumenWorks.Framework.IO.Csv;
 
     using NUnit.Framework;
+    using System.Collections.Generic;
 
     [TestFixture]
     public class ColumnTests
@@ -17,6 +18,35 @@
             var candidate = column.Convert(expected.ToString());
             Assert.IsInstanceOf<Guid>(candidate);
             Assert.That(expected == (Guid)candidate);
+        }
+
+        [Test]
+        public void ConvertByteArray()
+        {
+            var expected = new Byte[] { 1, 2, 3 };
+            var column = new Column { Name = "A", Type = typeof(Byte[]) };
+            var candidate = column.Convert(System.Convert.ToBase64String(expected));
+            Assert.IsInstanceOf<Byte[]>(candidate);
+            Assert.That(ArraysEqual(expected, (byte[])candidate));
+        }
+
+        private static bool ArraysEqual<T>(T[] a1, T[] a2)
+        {
+            if (ReferenceEquals(a1, a2))
+                return true;
+
+            if (a1 == null || a2 == null)
+                return false;
+
+            if (a1.Length != a2.Length)
+                return false;
+
+            EqualityComparer<T> comparer = EqualityComparer<T>.Default;
+            for (int i = 0; i < a1.Length; i++)
+            {
+                if (!comparer.Equals(a1[i], a2[i])) return false;
+            }
+            return true;
         }
 
         [Test]
