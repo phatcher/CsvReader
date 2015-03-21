@@ -178,6 +178,7 @@ ClientBin/
 *.pfx
 *.publishsettings
 node_modules/
+tools/
 
 
 # RIA/Silverlight projects
