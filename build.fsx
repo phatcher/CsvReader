@@ -64,7 +64,7 @@ Target "Pack" (fun _ ->
           AccessKey = getBuildParamOrDefault "nugetkey" ""
           Publish = hasBuildParam "nugetkey" }
 
-    NuGet nugetParams "nuget/CsvReader.nuspec"
+    NuGet nugetParams "nuget/LumenWorksCsvReader.nuspec"
 )
 
 Target "Release" (fun _ ->
