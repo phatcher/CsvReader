@@ -21,6 +21,8 @@ let buildDir = "./build"
 let toolsDir = getBuildParamOrDefault "tools" "./tools"
 let nugetDir = "./nuget"
 
+let nunitPath = toolsDir @@ "NUnit-2.6.3/bin"
+
 // Targets
 Target "Clean" (fun _ ->
     CleanDir buildDir
@@ -49,7 +51,7 @@ Target "Test" (fun _ ->
     !! (buildDir + "/*.Tests.Unit.dll")
     |> NUnit (fun p ->
        {p with
-          ToolPath = toolsDir @@ "NUnit-2.6.3/bin"
+          ToolPath = nunitPath
           DisableShadowCopy = true
           OutputFile = buildDir @@ "TestResults.xml"})
 )
@@ -68,8 +70,9 @@ Target "Pack" (fun _ ->
 )
 
 Target "Release" (fun _ ->
-    Branches.tag "" release.AssemblyVersion
-    Branches.pushTag "" "origin" release.AssemblyVersion
+    let tag = String.concat "" ["v"; release.AssemblyVersion] 
+    Branches.tag "" tag
+    Branches.pushTag "" "origin" tag
 )
 
 Target "Default" DoNothing
