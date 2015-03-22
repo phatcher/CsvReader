@@ -3,15 +3,23 @@
 #r "packages/FAKE/tools/FakeLib.dll"
 open Fake
 open Fake.AssemblyInfoFile
+open Fake.Git
 open Fake.NuGetHelper
 open Fake.RestorePackageHelper
+open Fake.ReleaseNotesHelper
 
 // Version info
-let version = "3.8.3" 
+let projectName = "CsvReader"
+let projectSummary = ""
+let projectDescription = "An extended version of LumenWorks.Frameworks.IO"
+let authors = ["Sébastien Lorion"; "Paul Hatcher"]
+
+let release = LoadReleaseNotes "RELEASE_NOTES.md"
 
 // Properties
 let buildDir = "./build"
-let toolsDir = "./tools"
+let toolsDir = getBuildParamOrDefault "tools" "./tools"
+let nugetDir = "./nuget"
 
 // Targets
 Target "Clean" (fun _ ->
@@ -23,9 +31,12 @@ Target "PackageRestore" (fun _ ->
 )
 
 Target "SetVersion" (fun _ ->
+    let commitHash = Information.getCurrentHash()
+    let infoVersion = String.concat " " [release.AssemblyVersion; commitHash]
     CreateCSharpAssemblyInfo "./code/SolutionInfo.cs"
-        [Attribute.Version version
-         Attribute.FileVersion version]
+        [Attribute.Version release.AssemblyVersion
+         Attribute.FileVersion release.AssemblyVersion
+         Attribute.InformationalVersion infoVersion]
 )
 
 Target "Build" (fun _ ->
@@ -38,18 +49,30 @@ Target "Test" (fun _ ->
     !! (buildDir + "/*.Tests.Unit.dll")
     |> NUnit (fun p ->
        {p with
-          ToolPath = toolsDir @@ "NUnit"
+          ToolPath = toolsDir @@ "NUnit-2.6.3/bin"
           DisableShadowCopy = true
           OutputFile = buildDir @@ "TestResults.xml"})
 )
 
 Target "Pack" (fun _ ->
-    NuGet (fun p ->
+    let nugetParams p = 
       { p with 
-          Version = version
-          OutputPath = buildDir}) 
-      "nuget/CsvReader.nuspec"
+          Authors = authors
+          Version = release.AssemblyVersion
+          ReleaseNotes = release.Notes |> toLines
+          OutputPath = buildDir 
+          AccessKey = getBuildParamOrDefault "nugetkey" ""
+          Publish = hasBuildParam "nugetkey" }
+
+    NuGet nugetParams "nuget/CsvReader.nuspec"
 )
+
+Target "Release" (fun _ ->
+    Branches.tag "" release.AssemblyVersion
+    Branches.pushTag "" "origin" release.AssemblyVersion
+)
+
+Target "Default" DoNothing
 
 // Dependencies
 "Clean"
@@ -57,6 +80,8 @@ Target "Pack" (fun _ ->
     ==> "PackageRestore"
     ==> "Build"
     ==> "Test"
+    ==> "Default"
     ==> "Pack"
+    ==> "Release"
 
-RunTargetOrDefault "Test"
+RunTargetOrDefault "Default"

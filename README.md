@@ -10,6 +10,9 @@ Welcome to contributions from anyone.
 
 You can see the version history [here](RELEASE_NOTES.md).
 
+## Build the project
+* Windows: Run *build.cmd* [![AppVeyor build status](https://ci.appveyor.com/project/PaulHatcher/csvreader)](https://ci.appveyor.com/project/PaulHatcher/csvreader)
+
 ## Library License
 
 The library is available under the [MIT License](http://en.wikipedia.org/wiki/MIT_License), for more information see the [License file][1] in the GitHub repository.
