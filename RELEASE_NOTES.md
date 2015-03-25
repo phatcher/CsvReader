@@ -1,3 +1,6 @@
+#### 3.8.3 (2015-03-21)
+* Can now handle binary and varbinary columsn (thanks to @fretje)
+
 #### 3.8.2 (2014-02-27)
 * Adding Column metadata so we can use with SqlBulkCopy.
 
