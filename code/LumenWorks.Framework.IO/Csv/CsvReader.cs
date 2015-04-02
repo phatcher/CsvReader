@@ -111,6 +111,11 @@ namespace LumenWorks.Framework.IO.Csv
 		/// </summary>
 		private ValueTrimmingOptions _trimmingOptions;
 
+        /// <summary>
+        /// Contains the value which denotes a DbNull-value.
+        /// </summary>
+        private string _nullValue;
+
 		/// <summary>
 		/// Indicates if field names are located on the first non commented line.
 		/// </summary>
@@ -309,14 +314,15 @@ namespace LumenWorks.Framework.IO.Csv
 		/// </param>
 		/// <param name="comment">The comment character indicating that a line is commented out (default is '#').</param>
 		/// <param name="trimmingOptions">Determines which values should be trimmed.</param>
-		/// <exception cref="T:ArgumentNullException">
+        /// <param name="nullValue">The value which denotes a DbNull-value.</param>
+        /// <exception cref="T:ArgumentNullException">
 		///		<paramref name="reader"/> is a <see langword="null"/>.
 		/// </exception>
 		/// <exception cref="T:ArgumentException">
 		///		Cannot read from <paramref name="reader"/>.
 		/// </exception>
-		public CsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions)
-			: this(reader, hasHeaders, delimiter, quote, escape, comment, trimmingOptions, DefaultBufferSize)
+        public CsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, string nullValue = null)
+            : this(reader, hasHeaders, delimiter, quote, escape, comment, trimmingOptions, DefaultBufferSize, nullValue)
 		{
 		}
 
@@ -334,13 +340,14 @@ namespace LumenWorks.Framework.IO.Csv
 		/// <param name="comment">The comment character indicating that a line is commented out (default is '#').</param>
 		/// <param name="trimmingOptions">Determines which values should be trimmed.</param>
 		/// <param name="bufferSize">The buffer size in bytes.</param>
-		/// <exception cref="T:ArgumentNullException">
+        /// <param name="nullValue">The value which denotes a DbNull-value.</param>
+        /// <exception cref="T:ArgumentNullException">
 		///		<paramref name="reader"/> is a <see langword="null"/>.
 		/// </exception>
 		/// <exception cref="ArgumentOutOfRangeException">
 		///		<paramref name="bufferSize"/> must be 1 or more.
 		/// </exception>
-		public CsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, int bufferSize)
+		public CsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, int bufferSize, string nullValue = null)
 		{
 #if DEBUG
 			_allocStack = new System.Diagnostics.StackTrace();
@@ -375,6 +382,7 @@ namespace LumenWorks.Framework.IO.Csv
 
 			_hasHeaders = hasHeaders;
 			_trimmingOptions = trimmingOptions;
+            _nullValue = nullValue;
 			_supportsMultiline = true;
 			_skipEmptyLines = true;
 			this.DefaultHeaderName = "Column";
@@ -481,6 +489,17 @@ namespace LumenWorks.Framework.IO.Csv
 				return _trimmingOptions;
 			}
 		}
+
+        /// <summary>
+        /// Contains the value which denotes a DbNull-value.
+        /// </summary>
+        public string NullValue
+        {
+            get
+            {
+                return _nullValue;
+            }
+        }
 
 		/// <summary>
 		/// Gets the buffer size.
@@ -852,7 +871,7 @@ namespace LumenWorks.Framework.IO.Csv
 		///		<paramref name="array"/> is <see langword="null"/>.
 		/// </exception>
 		/// <exception cref="ArgumentException">
-		///		The number of fields in the record is greater than the available space from <paramref name="index"/> to the end of <paramref name="array"/>.
+		///		The number of fields in the record is greater than the available space from 0 to the end of <paramref name="array"/>.
 		/// </exception>
 		public void CopyCurrentRecordTo(string[] array)
 		{
@@ -2123,7 +2142,11 @@ namespace LumenWorks.Framework.IO.Csv
 	    bool IDataRecord.IsDBNull(int i)
 		{
 			ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
-			return (string.IsNullOrEmpty(this[i]));
+            if (_nullValue == null)
+            {
+                return (string.IsNullOrEmpty(this[i]));
+            }
+            return string.Equals(this[i], _nullValue, StringComparison.OrdinalIgnoreCase);
 		}
 
 		long IDataRecord.GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
