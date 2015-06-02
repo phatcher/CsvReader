@@ -996,6 +996,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 				Assert.AreEqual(null, csv[1]);
 			}
 		}
+        
 
 		#endregion
 
