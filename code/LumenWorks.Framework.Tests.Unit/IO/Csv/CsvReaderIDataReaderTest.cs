@@ -692,6 +692,23 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 		}
 
 		[Test()]
+		public void IsDBNullWithNullValueTest()
+		{
+			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true, 
+				CsvReader.DefaultDelimiter, CsvReader.DefaultQuote, CsvReader.DefaultEscape, CsvReader.DefaultComment,
+				ValueTrimmingOptions.UnquotedOnly, CsvReaderSampleData.SampleNullValue))
+			{
+				IDataReader reader = csv;
+
+				while (reader.Read())
+				{
+					Assert.IsTrue(reader.IsDBNull(reader.GetOrdinal(CsvReaderSampleData.DbNullWithNullValueHeader)));
+					Assert.IsFalse(reader.IsDBNull(reader.GetOrdinal(typeof(DBNull).FullName)));
+				}
+			}
+		}
+
+		[Test()]
 		public void FieldCountTest()
 		{
 			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))

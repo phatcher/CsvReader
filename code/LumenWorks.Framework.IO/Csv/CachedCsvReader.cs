@@ -142,15 +142,16 @@ namespace LumenWorks.Framework.IO.Csv
 		/// If no escape character, set to '\0' to gain some performance.
 		/// </param>
 		/// <param name="comment">The comment character indicating that a line is commented out (default is '#').</param>
-		/// <param name="trimmingOptions">Determines how values should be trimmed.</param>
-		/// <exception cref="T:ArgumentNullException">
+        /// <param name="trimmingOptions">Determines how values should be trimmed.</param>
+        /// <param name="nullValue">The value which denotes a DbNull-value.</param>
+        /// <exception cref="T:ArgumentNullException">
 		///		<paramref name="reader"/> is a <see langword="null"/>.
 		/// </exception>
 		/// <exception cref="T:ArgumentException">
 		///		Cannot read from <paramref name="reader"/>.
 		/// </exception>
-		public CachedCsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions)
-			: this(reader, hasHeaders, delimiter, quote, escape, comment, trimmingOptions, DefaultBufferSize)
+		public CachedCsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, string nullValue = null)
+			: this(reader, hasHeaders, delimiter, quote, escape, comment, trimmingOptions, DefaultBufferSize, nullValue)
 		{
 		}
 
@@ -166,16 +167,17 @@ namespace LumenWorks.Framework.IO.Csv
 		/// If no escape character, set to '\0' to gain some performance.
 		/// </param>
 		/// <param name="comment">The comment character indicating that a line is commented out (default is '#').</param>
-		/// <param name="trimSpaces"><see langword="true"/> if spaces at the start and end of a field are trimmed, otherwise, <see langword="false"/>. Default is <see langword="true"/>.</param>
-		/// <param name="bufferSize">The buffer size in bytes.</param>
-		/// <exception cref="T:ArgumentNullException">
+        /// <param name="trimmingOptions">Determines how values should be trimmed.</param>
+        /// <param name="bufferSize">The buffer size in bytes.</param>
+        /// <param name="nullValue">The value which denotes a DbNull-value.</param>
+        /// <exception cref="T:ArgumentNullException">
 		///		<paramref name="reader"/> is a <see langword="null"/>.
 		/// </exception>
 		/// <exception cref="ArgumentOutOfRangeException">
 		///		<paramref name="bufferSize"/> must be 1 or more.
 		/// </exception>
-		public CachedCsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, int bufferSize)
-			: base(reader, hasHeaders, delimiter, quote, escape, comment, trimmingOptions, bufferSize)
+		public CachedCsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, int bufferSize, string nullValue = null)
+			: base(reader, hasHeaders, delimiter, quote, escape, comment, trimmingOptions, bufferSize, nullValue)
 		{
 			_records = new List<string[]>();
 			_currentRecordIndex = -1;
