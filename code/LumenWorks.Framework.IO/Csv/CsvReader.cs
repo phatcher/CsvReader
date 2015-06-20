@@ -35,8 +35,7 @@ namespace LumenWorks.Framework.IO.Csv
 	/// <summary>
 	/// Represents a reader that provides fast, non-cached, forward-only access to CSV data.  
 	/// </summary>
-	public partial class CsvReader
-		: IDataReader, IEnumerable<string[]>, IDisposable
+	public partial class CsvReader : IDataReader, IEnumerable<string[]>
 	{
 		#region Constants
 
@@ -68,11 +67,6 @@ namespace LumenWorks.Framework.IO.Csv
 		#endregion
 
 		#region Fields
-
-		/// <summary>
-		/// Contains the field header comparer.
-		/// </summary>
-		private static readonly StringComparer _fieldHeaderComparer = StringComparer.CurrentCultureIgnoreCase;
 
 		#region Settings
 
@@ -144,11 +138,6 @@ namespace LumenWorks.Framework.IO.Csv
 		/// Indicates if the class is initialized.
 		/// </summary>
 		private bool _initialized;
-
-		/// <summary>
-		/// Contains the field headers.
-		/// </summary>
-		private string[] _fieldHeaders;
 
 		/// <summary>
 		/// Contains the dictionary of field indexes by header. The key is the field name and the value is its index.
@@ -377,7 +366,9 @@ namespace LumenWorks.Framework.IO.Csv
 			_trimmingOptions = trimmingOptions;
 			_supportsMultiline = true;
 			_skipEmptyLines = true;
-			this.DefaultHeaderName = "Column";
+
+            Columns = new List<Column>();
+			DefaultHeaderName = "Column";
 
 			_currentRecordIndex = -1;
 			_defaultParseErrorAction = ParseErrorAction.RaiseEvent;
@@ -569,6 +560,11 @@ namespace LumenWorks.Framework.IO.Csv
         /// </summary>
         public IList<Column> Columns { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether we should use the column default values if the field is not in the record.
+        /// </summary>
+        public bool UseColumnDefaults { get; set; }
+
 		#endregion
 
 		#region State
@@ -611,12 +607,12 @@ namespace LumenWorks.Framework.IO.Csv
 		public string[] GetFieldHeaders()
 		{
 			EnsureInitialize();
-			Debug.Assert(_fieldHeaders != null, "Field headers must be non null.");
+			Debug.Assert(Columns != null, "Columns must be non null.");
 
-			string[] fieldHeaders = new string[_fieldHeaders.Length];
+			string[] fieldHeaders = new string[Columns.Count];
 
 			for (int i = 0; i < fieldHeaders.Length; i++)
-				fieldHeaders[i] = _fieldHeaders[i];
+				fieldHeaders[i] = Columns[i].Name;
 
 			return fieldHeaders;
 		}
@@ -812,8 +808,8 @@ namespace LumenWorks.Framework.IO.Csv
 			if (!_initialized)
 				this.ReadNextRecord(true, false);
 
-			Debug.Assert(_fieldHeaders != null);
-			Debug.Assert(_fieldHeaders.Length > 0 || (_fieldHeaders.Length == 0 && _fieldHeaderIndexes == null));
+			Debug.Assert(Columns != null);
+            Debug.Assert(Columns.Count > 0 || (Columns.Count == 0 && _fieldHeaderIndexes == null));
 		}
 
 		#endregion
@@ -1132,17 +1128,29 @@ namespace LumenWorks.Framework.IO.Csv
 		{
 			if (!initializing)
 			{
-				if (field < 0 || field >= _fieldCount)
+                var maxField = UseColumnDefaults ? Columns.Count : _fieldCount;
+				if (field < 0 || field >= maxField)
 					throw new ArgumentOutOfRangeException("field", field, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, field));
 
 				if (_currentRecordIndex < 0)
 					throw new InvalidOperationException(ExceptionMessage.NoCurrentRecord);
 
-				// Directly return field if cached
-				if (_fields[field] != null)
-					return _fields[field];
-				else if (_missingFieldFlag)
-					return HandleMissingField(null, field, ref _nextFieldStart);
+			    if (field >= _fieldCount)
+			    {
+                    // Use the column default as UseColumnDefaults is true at this point
+                    return Columns[field].DefaultValue;
+			    }
+
+                // Directly return field if cached
+			    if (_fields[field] != null)
+			    {
+			        return _fields[field];
+			    }
+
+			    if (_missingFieldFlag)
+			    {
+			        return HandleMissingField(null, field, ref _nextFieldStart);
+			    }
 			}
 
 			CheckDisposed();
@@ -1505,9 +1513,6 @@ namespace LumenWorks.Framework.IO.Csv
 			{
 				_buffer = new char[_bufferSize];
 
-				// will be replaced if and when headers are read
-				_fieldHeaders = new string[0];
-
 				if (!ReadBuffer())
 					return false;
 
@@ -1545,6 +1550,8 @@ namespace LumenWorks.Framework.IO.Csv
 				if (_fields.Length != _fieldCount)
 					Array.Resize(ref _fields, _fieldCount);
 
+                _fieldHeaderIndexes = new Dictionary<string, int>(_fieldCount, StringComparer.CurrentCultureIgnoreCase);
+
 				_initialized = true;
 
 				// If headers are present, call ReadNextRecord again
@@ -1555,17 +1562,28 @@ namespace LumenWorks.Framework.IO.Csv
 
 					_firstRecordInCache = false;
 
-					_fieldHeaders = new string[_fieldCount];
-					_fieldHeaderIndexes = new Dictionary<string, int>(_fieldCount, _fieldHeaderComparer);
-
 					for (int i = 0; i < _fields.Length; i++)
 					{
-						string headerName = _fields[i];
-						if (string.IsNullOrEmpty(headerName) || headerName.Trim().Length == 0)
-							headerName = this.DefaultHeaderName + i;
+						var headerName = _fields[i];
+					    if (string.IsNullOrEmpty(headerName) || headerName.Trim().Length == 0)
+					    {
+					        headerName = DefaultHeaderName + i;
+					    }
 
-						_fieldHeaders[i] = headerName;
-						_fieldHeaderIndexes.Add(headerName, i);
+                        // Create it if we haven't already set it explicitly
+					    var col = Columns.Count < i + 1 ? null : Columns[i];
+					    if (col == null)
+					    {
+					        col = new Column
+					        {
+					            Name = headerName,
+                                // Default to string if not assigned.
+					            Type = typeof(string)
+					        };
+                            _fieldHeaderIndexes.Add(headerName, i);
+                            // Should be correct as we are going in ascending order.
+					        Columns.Add(col);
+					    }
 					}
 
 					// Proceed to first record
@@ -1585,9 +1603,15 @@ namespace LumenWorks.Framework.IO.Csv
 						_currentRecordIndex++;
 						return true;
 					}
-				}
+                }
 				else
 				{
+                    // If we have explicity columne, now build up the reverse dictionary
+                    for (var i = 0; i < Columns.Count; i++)
+                    {
+                        _fieldHeaderIndexes.Add(Columns[i].Name, i);
+                    }
+
 					if (onlyReadHeaders)
 					{
 						_firstRecordInCache = true;
@@ -2031,50 +2055,58 @@ namespace LumenWorks.Framework.IO.Csv
 			schema.Columns.Add(SchemaTableOptionalColumn.IsReadOnly, typeof(bool)).ReadOnly = true;
 			schema.Columns.Add(SchemaTableOptionalColumn.IsRowVersion, typeof(bool)).ReadOnly = true;
 
-			string[] columnNames;
-
-			if (_hasHeaders)
-				columnNames = _fieldHeaders;
-			else
-			{
-				columnNames = new string[_fieldCount];
-
-				for (int i = 0; i < _fieldCount; i++)
-					columnNames[i] = "Column" + i.ToString(CultureInfo.InvariantCulture);
-			}
-
 			// null marks columns that will change for each row
-			object[] schemaRow = { 
-					true,					// 00- AllowDBNull
-					null,					// 01- BaseColumnName
-					string.Empty,			// 02- BaseSchemaName
-					string.Empty,			// 03- BaseTableName
-					null,					// 04- ColumnName
-					null,					// 05- ColumnOrdinal
-					int.MaxValue,			// 06- ColumnSize
-					typeof(string),			// 07- DataType
-					false,					// 08- IsAliased
-					false,					// 09- IsExpression
-					false,					// 10- IsKey
-					false,					// 11- IsLong
-					false,					// 12- IsUnique
-					DBNull.Value,			// 13- NumericPrecision
-					DBNull.Value,			// 14- NumericScale
-					(int) DbType.String,	// 15- ProviderType
+			object[] schemaRow = 
+            { 
+				true,					// 00- AllowDBNull
+				null,					// 01- BaseColumnName
+				string.Empty,			// 02- BaseSchemaName
+				string.Empty,			// 03- BaseTableName
+				null,					// 04- ColumnName
+				null,					// 05- ColumnOrdinal
+				int.MaxValue,			// 06- ColumnSize
+				typeof(string),			// 07- DataType
+				false,					// 08- IsAliased
+				false,					// 09- IsExpression
+				false,					// 10- IsKey
+				false,					// 11- IsLong
+				false,					// 12- IsUnique
+				DBNull.Value,			// 13- NumericPrecision
+				DBNull.Value,			// 14- NumericScale
+				(int) DbType.String,	// 15- ProviderType
 
-					string.Empty,			// 16- BaseCatalogName
-					string.Empty,			// 17- BaseServerName
-					false,					// 18- IsAutoIncrement
-					false,					// 19- IsHidden
-					true,					// 20- IsReadOnly
-					false					// 21- IsRowVersion
-			  };
+				string.Empty,			// 16- BaseCatalogName
+				string.Empty,			// 17- BaseServerName
+				false,					// 18- IsAutoIncrement
+				false,					// 19- IsHidden
+				true,					// 20- IsReadOnly
+				false					// 21- IsRowVersion
+			};
 
-			for (int i = 0; i < columnNames.Length; i++)
+		    IList<Column> columns;
+		    if (Columns.Count > 0)
+		    {
+		        columns = Columns;
+		    }
+		    else
+		    {
+                columns = new List<Column>();
+		        for (var i = 0; i < _fieldCount; i++)
+		        {
+		            columns.Add(new Column
+	                {
+	                    Name = DefaultHeaderName + i,
+	                    Type = typeof(string)
+	                });
+		        }
+		    }
+
+			for (int i = 0; i < columns.Count; i++)
 			{
-				schemaRow[1] = columnNames[i]; // Base column name
-				schemaRow[4] = columnNames[i]; // Column name
-				schemaRow[5] = i; // Column ordinal
+				schemaRow[1] = columns[i].Name; // Base column name
+                schemaRow[4] = columns[i].Name; // Column name
+				schemaRow[5] = i;               // Column ordinal
+			    schemaRow[7] = columns[i].Type; // Data type
 
 				schema.Rows.Add(schemaRow);
 			}
@@ -2180,20 +2212,10 @@ namespace LumenWorks.Framework.IO.Csv
 			EnsureInitialize();
 			ValidateDataReader(DataReaderValidations.IsNotClosed);
 
-			if (i < 0 || i >= _fieldCount)
+			if (i < 0 || i >= Columns.Count)
 				throw new ArgumentOutOfRangeException("i", i, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, i));
 
-		    if (_hasHeaders)
-		    {
-		        return _fieldHeaders[i];
-		    }
-
-		    if (Columns != null)
-		    {
-		        return Columns[i].Name;
-		    }
-
-		    return "Column" + i.ToString(CultureInfo.InvariantCulture);
+            return Columns[i].Name;
 		}
 
 		long IDataRecord.GetInt64(int i)

@@ -1,4 +1,6 @@
-﻿namespace LumenWorks.Framework.IO.Csv
+﻿using System.Globalization;
+
+namespace LumenWorks.Framework.IO.Csv
 {
     using System;
 
@@ -16,6 +18,8 @@
         public Column()
         {
             Type = typeof(string);
+            Culture = CultureInfo.CurrentCulture;
+            NumberStyles = NumberStyles.Any;
         }
 
         /// <summary>
@@ -31,10 +35,19 @@
             get { return type; }
             set
             {
-                this.type = value;
+                type = value;
                 typeName = value.Name;
             }
         }
+
+        /// <summary>
+        /// Get or set the default value of the column.
+        /// </summary>
+        public string DefaultValue { get; set; }
+
+        public CultureInfo Culture { get; set; }
+
+        public NumberStyles NumberStyles { get; set; }
 
         /// <summary>
         /// Converts the value into the column type.
@@ -44,7 +57,7 @@
         public object Convert(string value)
         {
             object x;
-            TryConvert(value, out x);
+            TryConvert(value, out x);           
 
             return x;
         }
@@ -89,10 +102,27 @@
                     }
                     break;
 
+                case "Boolean":
+                    {
+                        Int32 x;
+                        converted = int.TryParse(value, NumberStyles, Culture, out x);
+                        if (converted)
+                        {
+                            result = x != 0;
+                        }
+                        else
+                        {
+                            bool y;
+                            converted = bool.TryParse(value, out y);
+                            result = y;
+                        }
+                    }
+                    break;
+
                 case "Int32":
                     {
                         Int32 x;
-                        converted = int.TryParse(value, out x);
+                        converted = int.TryParse(value, NumberStyles, Culture, out x);
                         result = x;
                     }
                     break;
@@ -100,7 +130,7 @@
                 case "Int64":
                     {
                         Int64 x;
-                        converted = long.TryParse(value, out x);
+                        converted = long.TryParse(value, NumberStyles, Culture, out x);
                         result = x;
                     }
                     break;
@@ -108,7 +138,7 @@
                 case "Single":
                     {
                         Single x;
-                        converted = float.TryParse(value, out x);
+                        converted = float.TryParse(value, NumberStyles, Culture, out x);
                         result = x;
                     }
                     break;
@@ -116,7 +146,7 @@
                 case "Double":
                     {
                         Double x;
-                        converted = double.TryParse(value, out x);
+                        converted = double.TryParse(value, NumberStyles, Culture, out x);
                         result = x;
                     }
                     break;
@@ -124,7 +154,7 @@
                 case "Decimal":
                     {
                         Decimal x;
-                        converted = decimal.TryParse(value, out x);
+                        converted = decimal.TryParse(value, NumberStyles, Culture, out x);
                         result = x;
                     }
                     break;
