@@ -66,9 +66,13 @@ Stephen,Tyler,""7452 Terrace """"At the Plaza"""" road"",SomeTown,SD, 91234
 ""Joan """"the bone"""", Anne"",Jet,""9th, at Terrace plc"",Desert City,CO,00123";
 
 		public const string SampleTypedData1 = @"
-System.Boolean,System.DateTime,System.Single,System.Double,System.Decimal,System.SByte,System.Int16,System.Int32,System.Int64,System.Byte,System.UInt16,System.UInt32,System.UInt64,System.Char,System.String,System.Guid,System.DBNull
-1,2001-01-01,1,1,1,1,1,1,1,1,1,1,1,a,abc,{11111111-1111-1111-1111-111111111111},
-""true"",""2001-01-01"",""1"",""1"",""1"",""1"",""1"",""1"",""1"",""1"",""1"",""1"",""1"",""a"",""abc"",""{11111111-1111-1111-1111-111111111111}"",""""";
+System.Boolean,System.DateTime,System.Single,System.Double,System.Decimal,System.SByte,System.Int16,System.Int32,System.Int64,System.Byte,System.UInt16,System.UInt32,System.UInt64,System.Char,System.String,System.Guid,System.DBNull,System.DBNullWithNullValue
+1,2001-01-01,1,1,1,1,1,1,1,1,1,1,1,a,abc,{11111111-1111-1111-1111-111111111111},,_<null>_
+""true"",""2001-01-01"",""1"",""1"",""1"",""1"",""1"",""1"",""1"",""1"",""1"",""1"",""1"",""a"",""abc"",""{11111111-1111-1111-1111-111111111111}"","""",""_<NULL>_""";
+
+		public const string DbNullWithNullValueHeader = "System.DBNullWithNullValue";
+
+		public const string SampleNullValue = "_<null>_";
 
 		#endregion
 
