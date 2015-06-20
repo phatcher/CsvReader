@@ -2,6 +2,7 @@
 * Completely replaced use of _fieldHeaders internally with Columns
 * Fixed IDataReader.GetSchemaTable to return Column.Type rather than always saying string
 * Introduced UseColumnDefault to allow Column.Default value to be returned when a column doesn't exist in the source data.
+* Changing handling of extra fields to respect DefaultParseErrorAction (thanks to @gap777)
 
 #### 3.8.3 (2015-03-21)
 * Can now handle binary and varbinary columsn (thanks to @fretje)
