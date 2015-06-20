@@ -323,13 +323,14 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 		}
 
 		[Test()]
-		public void MoreFieldsTest()
+		public void MoreFieldsTest_AdvanceToNextLine()
 		{
 			const string Data = "ORIGIN,DESTINATION\nPHL,FLL,kjhkj kjhkjh,eg,fhgf\nNYC,LAX";
 
 			using (CsvReader csv = new CsvReader(new System.IO.StringReader(Data), false))
 			{
 				csv.SupportsMultiline = false;
+                csv.DefaultParseErrorAction = ParseErrorAction.AdvanceToNextLine;
 
 				while (csv.ReadNextRecord())
 				{
@@ -340,6 +341,50 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 				}
 			}
 		}
+
+        [Test()]
+        public void MoreFieldsTest_RaiseEvent()
+        {
+            const string Data = "ORIGIN,DESTINATION\nPHL,FLL,kjhkj kjhkjh,eg,fhgf\nNYC,LAX";
+
+            using (CsvReader csv = new CsvReader(new System.IO.StringReader(Data), false))
+            {
+                bool sawError = false;
+                csv.SupportsMultiline = false;
+                csv.DefaultParseErrorAction = ParseErrorAction.RaiseEvent;
+                csv.ParseError += (obj, args) => sawError = true;
+                while (csv.ReadNextRecord())
+                {
+                    for (int i = 0; i < csv.FieldCount; i++)
+                    {
+                        string s = csv[i];
+                    }
+                }
+
+                Assert.That(sawError, Is.True);
+            }
+        }
+
+        [Test, ExpectedException(typeof(MalformedCsvException))]
+        public void MoreFieldsTest_ThrowsException()
+        {
+            const string Data = "ORIGIN,DESTINATION\nPHL,FLL,kjhkj kjhkjh,eg,fhgf\nNYC,LAX";
+
+            using (CsvReader csv = new CsvReader(new System.IO.StringReader(Data), false))
+            {
+                bool sawError = false;
+                csv.SupportsMultiline = false;
+                csv.DefaultParseErrorAction = ParseErrorAction.ThrowException;
+                while (csv.ReadNextRecord())
+                {
+                    for (int i = 0; i < csv.FieldCount; i++)
+                    {
+                        string s = csv[i];
+                    }
+                }
+
+            }
+        }
 
 		[Test()]
 		public void MoreFieldsMultilineTest()

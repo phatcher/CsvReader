@@ -1627,21 +1627,13 @@ namespace LumenWorks.Framework.IO.Csv
 			else
 			{
 				if (skipToNextLine)
-					SkipToNextLine(ref _nextFieldStart);
+					SkipToNewLine(ref _nextFieldStart);
 				else if (_currentRecordIndex > -1 && !_missingFieldFlag)
 				{
 					// If not already at end of record, move there
 					if (!_eol && !_eof)
 					{
-						if (!_supportsMultiline)
-							SkipToNextLine(ref _nextFieldStart);
-						else
-						{
-							// a dirty trick to handle the case where extra fields are present
-							while (ReadField(_nextFieldIndex, true, true) != null)
-							{
-							}
-						}
+                        HandleExtraFieldsInCurrentRecord(_nextFieldStart);
 					}
 				}
 
@@ -1670,7 +1662,45 @@ namespace LumenWorks.Framework.IO.Csv
 			return true;
 		}
 
-		#endregion
+	    private void HandleExtraFieldsInCurrentRecord(int currentFieldIndex)
+	    {
+	        MalformedCsvException exception = new MalformedCsvException(
+	            GetCurrentRawData(),
+	            _nextFieldStart,
+	            Math.Max(0, _currentRecordIndex),
+	            currentFieldIndex);
+
+	        if (DefaultParseErrorAction == ParseErrorAction.AdvanceToNextLine)
+	        {
+	            SkipToNextRecord();                	            
+	        }
+            else if (DefaultParseErrorAction == ParseErrorAction.RaiseEvent)
+            {
+                ParseErrorEventArgs e = new ParseErrorEventArgs(exception, ParseErrorAction.ThrowException);
+			    OnParseError(e);
+                SkipToNextRecord();   
+            }
+            else if (DefaultParseErrorAction == ParseErrorAction.ThrowException)
+            {
+                throw exception;
+            }					
+	    }
+
+	    private void SkipToNextRecord()
+	    {
+	        if (!_supportsMultiline)
+	        {
+	            SkipToNewLine(ref _nextFieldStart);
+	        }
+	        else
+	        {
+	            while (ReadField(_nextFieldIndex, true, true) != null)
+	            {
+	            }
+	        }
+	    }
+
+	    #endregion
 
 		#region SkipEmptyAndCommentedLines
 
@@ -1723,7 +1753,7 @@ namespace LumenWorks.Framework.IO.Csv
 				if (_buffer[pos] == _comment)
 				{
 					pos++;
-					SkipToNextLine(ref pos);
+					SkipToNewLine(ref pos);
 				}
 				else if (_skipEmptyLines && ParseNewLine(ref pos))
 					continue;
@@ -1781,7 +1811,7 @@ namespace LumenWorks.Framework.IO.Csv
 		/// <exception cref="T:System.ComponentModel.ObjectDisposedException">
 		///	The instance has been disposed of.
 		/// </exception>
-		private bool SkipToNextLine(ref int pos)
+		private bool SkipToNewLine(ref int pos)
 		{
 			// ((pos = 0) == 0) is a little trick to reset position inline
 			while ((pos < _bufferLength || (ReadBuffer() && ((pos = 0) == 0))) && !ParseNewLine(ref pos))
@@ -1829,7 +1859,7 @@ namespace LumenWorks.Framework.IO.Csv
 						case ParseErrorAction.AdvanceToNextLine:
 							// already at EOL when fields are missing, so don't skip to next line in that case
 							if (!_missingFieldFlag && pos >= 0)
-								SkipToNextLine(ref pos);
+								SkipToNewLine(ref pos);
 							break;
 
 						default:
@@ -1840,7 +1870,7 @@ namespace LumenWorks.Framework.IO.Csv
 				case ParseErrorAction.AdvanceToNextLine:
 					// already at EOL when fields are missing, so don't skip to next line in that case
 					if (!_missingFieldFlag && pos >= 0)
-						SkipToNextLine(ref pos);
+						SkipToNewLine(ref pos);
 					break;
 
 				default:
