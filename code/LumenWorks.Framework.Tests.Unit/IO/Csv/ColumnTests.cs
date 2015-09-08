@@ -50,6 +50,33 @@
         }
 
         [Test]
+        public void ConvertBoolean()
+        {
+            var column = new Column { Name = "A", Type = typeof(Boolean) };
+            var result = column.Convert("true");
+            Assert.IsInstanceOf<Boolean>(result);
+            Assert.That((Boolean)result == true);
+        }
+
+        [Test]
+        public void ConvertBooleanInt()
+        {
+            var column = new Column { Name = "A", Type = typeof(Boolean) };
+            var result = column.Convert("0");
+            Assert.IsInstanceOf<Boolean>(result);
+            Assert.That((Boolean)result == false);
+        }
+
+        [Test]
+        public void ConvertBooleanFail()
+        {
+            var column = new Column { Name = "A", Type = typeof(Boolean) };
+            var result = column.Convert("fred");
+            Assert.IsInstanceOf<Boolean>(result);
+            Assert.That((Boolean)result == false);
+        }
+
+        [Test]
         public void ConvertInt32()
         {
             var column = new Column { Name = "A", Type = typeof(Int32) };
