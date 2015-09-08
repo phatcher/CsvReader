@@ -16,8 +16,6 @@ You can see the version history [here](RELEASE_NOTES.md).
 
 I have my tools in C:\Tools so I use *build.cmd Default tools=C:\Tools encoding=UTF-8*
 
-I have my tools in C:\Tools so I use *build.cmd Default tools=C:\Tools encoding=UTF-8*
-
 ## Library License
 
 The library is available under the [MIT License](http://en.wikipedia.org/wiki/MIT_License), for more information see the [License file][1] in the GitHub repository.
