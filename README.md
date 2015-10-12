@@ -115,12 +115,12 @@ Below is a example using the Columns collection to set up the correct metadata f
 				sbc.DestinationTableName = "dbo.DailyPrice";
 				sbc.BatchSize = 1000;
 
-				sbc.AddColumnMapping("PriceDate", "PriceDate");
-				sbc.AddColumnMapping("OpenPrice", "OpenPrice");
-				sbc.AddColumnMapping("HighPrice", "HighPrice");
-				sbc.AddColumnMapping("LowPrice", "LowPrice");
-				sbc.AddColumnMapping("ClosePrice", "ClosePrice");
-				sbc.AddColumnMapping("Volume", "Volume");
+				sbc.ColumnMappings.Add("PriceDate", "PriceDate");
+				sbc.ColumnMappings.Add("OpenPrice", "OpenPrice");
+				sbc.ColumnMappings.Add("HighPrice", "HighPrice");
+				sbc.ColumnMappings.Add("LowPrice", "LowPrice");
+				sbc.ColumnMappings.Add("ClosePrice", "ClosePrice");
+				sbc.ColumnMappings.Add("Volume", "Volume");
 
 				sbc.WriteToServer(reader);
 			}
