@@ -1,7 +1,7 @@
 CSV Reader
 ==========
 
-The [CsvReader](https://www.nuget.org/packages/LumenWorksCsvReader/) library is an extended version of Sebastian Lorien's [fast CSV Reader](http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader) project 
+The [CsvReader](https://www.nuget.org/packages/LumenWorksCsvReader/) library is an extended version of Sébastien Lorion's [fast CSV Reader](http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader) project 
 and provides fast parsing and reading of CSV files
 
 To this end it is a straight drop-in replacement for the existing NuGet package [LumenWork.Framework.IO](https://www.nuget.org/packages/LumenWorks.Framework.IO/), but with additional
@@ -23,7 +23,7 @@ The library is available under the [MIT License](http://en.wikipedia.org/wiki/MI
  [1]: https://github.com/phatcher/CsvReader/License.md
 
 ## Getting Started
-A good starting point is to look at Sebastian's [article](http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader) on Code Project.
+A good starting point is to look at Sébastien's [article](http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader) on Code Project.
 
 A basic use of the reader something like this...
 ```csharp
