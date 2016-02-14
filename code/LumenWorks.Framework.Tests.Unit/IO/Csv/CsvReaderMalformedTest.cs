@@ -180,6 +180,27 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
 		[Test()]
 		[ExpectedException(typeof(MissingFieldCsvException))]
+		public void MissingFieldAllQuotedFields_Issue_12()
+		{
+			string sample =
+				"\"A\",\"B\"\n" +
+				"\"1\",\"2\"\n" +
+				"\"3\"\n" +
+				"\"5\",\"6\"";
+
+			string[] buffer = new string[2];
+
+			using (CsvReader csv = new CsvReader(new StringReader(sample), false))
+			{
+				while (csv.ReadNextRecord())
+				{
+					csv.CopyCurrentRecordTo(buffer);
+				}
+			}
+		}
+
+		[Test()]
+		[ExpectedException(typeof(MissingFieldCsvException))]
 		public void MissingFieldQuotedTest1()
 		{
 			const string Data = "a,b,c,d\n1,1,1,1\n2,\"2\"\n3,3,3,3";
