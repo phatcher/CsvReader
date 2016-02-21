@@ -1430,6 +1430,12 @@ namespace LumenWorks.Framework.IO.Csv
 								_nextFieldStart++;
 								delimiterSkipped = true;
 							}
+							else if (_nextFieldStart < _bufferLength && (_buffer[_nextFieldStart] == '\r' || _buffer[_nextFieldStart] == '\n'))
+							{
+								_nextFieldStart++;
+								_eol = true;
+								delimiterSkipped = true;
+							}
 							else
 							{
 								delimiterSkipped = false;
@@ -1443,8 +1449,16 @@ namespace LumenWorks.Framework.IO.Csv
 							// If no delimiter is present after the quoted field and it is not the last field, then it is a parsing error
 							if (!delimiterSkipped && !_eof && !(_eol || IsNewLine(_nextFieldStart)))
 								HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, _currentRecordIndex), index), ref _nextFieldStart);
+
 						}
 
+						// If we are at the end, then verify we have all the fields
+						if (_eol || _eof)
+						{
+							if (!initializing && index < _fieldCount - 1)
+								value = HandleMissingField(value, index, ref _nextFieldStart);
+						}
+						
 						if (!discardValue)
 						{
 							if (value == null)
