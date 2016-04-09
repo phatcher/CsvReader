@@ -27,59 +27,44 @@ using System.Globalization;
 
 namespace LumenWorks.Framework.IO.Csv
 {
-	public partial class CachedCsvReader
-		: CsvReader
-	{
-		/// <summary>
-		/// Represents a CSV record comparer.
-		/// </summary>
-		private class CsvRecordComparer
-			: IComparer<string[]>
-		{
-			#region Fields
+    /// <summary>
+    /// Represents a CSV record comparer.
+    /// </summary>
+    public class CsvRecordComparer : IComparer<string[]>
+    {
+        /// <summary>
+        /// Initializes a new instance of the CsvRecordComparer class.
+        /// </summary>
+        /// <param name="field">The field index of the values to compare.</param>
+        /// <param name="direction">The sort direction.</param>
+        public CsvRecordComparer(int field, ListSortDirection direction)
+        {
+            if (field < 0)
+            {
+                throw new ArgumentOutOfRangeException("field", field, string.Format(CultureInfo.InvariantCulture, Resources.ExceptionMessage.FieldIndexOutOfRange, field));
+            }
 
-			/// <summary>
-			/// Contains the field index of the values to compare.
-			/// </summary>
-			private int _field;
+            Field = field;
+            Direction = direction;
+        }
 
-			/// <summary>
-			/// Contains the sort direction.
-			/// </summary>
-			private ListSortDirection _direction;
+        /// <summary>
+        /// Contains the field index of the values to compare.
+        /// </summary>
+        public int Field { get; }
 
-			#endregion
+        /// <summary>
+        /// Contains the sort direction.
+        /// </summary>
+        public ListSortDirection Direction { get; }
 
-			#region Constructors
+        public int Compare(string[] x, string[] y)
+        {
+            Debug.Assert(x != null && y != null && x.Length == y.Length && Field < x.Length);
 
-			/// <summary>
-			/// Initializes a new instance of the CsvRecordComparer class.
-			/// </summary>
-			/// <param name="field">The field index of the values to compare.</param>
-			/// <param name="direction">The sort direction.</param>
-			public CsvRecordComparer(int field, ListSortDirection direction)
-			{
-				if (field < 0)
-					throw new ArgumentOutOfRangeException("field", field, string.Format(CultureInfo.InvariantCulture, Resources.ExceptionMessage.FieldIndexOutOfRange, field));
+            var result = string.Compare(x[Field], y[Field], StringComparison.CurrentCulture);
 
-				_field = field;
-				_direction = direction;
-			}
-
-			#endregion
-
-			#region IComparer<string[]> Members
-
-			public int Compare(string[] x, string[] y)
-			{
-				Debug.Assert(x != null && y != null && x.Length == y.Length && _field < x.Length);
-
-				int result = String.Compare(x[_field], y[_field], StringComparison.CurrentCulture);
-
-				return (_direction == ListSortDirection.Ascending ? result : -result);
-			}
-
-			#endregion
-		}
-	}
+            return (Direction == ListSortDirection.Ascending ? result : -result);
+        }
+    }
 }

@@ -21,8 +21,6 @@
 
 using System;
 using System.Globalization;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 using LumenWorks.Framework.IO.Csv.Resources;
 
@@ -31,12 +29,9 @@ namespace LumenWorks.Framework.IO.Csv
 	/// <summary>
 	/// Represents the exception that is thrown when a CSV file is malformed.
 	/// </summary>
-	[Serializable()]
 	public class MalformedCsvException 
 		: Exception
 	{
-		#region Fields
-
 		/// <summary>
 		/// Contains the message that describes the error.
 		/// </summary>
@@ -61,10 +56,6 @@ namespace LumenWorks.Framework.IO.Csv
 		/// Contains the current position in the raw data.
 		/// </summary>
 		private int _currentPosition;
-
-		#endregion
-
-		#region Constructors
 
 		/// <summary>
 		/// Initializes a new instance of the MalformedCsvException class.
@@ -131,26 +122,6 @@ namespace LumenWorks.Framework.IO.Csv
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the MalformedCsvException class with serialized data.
-		/// </summary>
-		/// <param name="info">The <see cref="T:SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-		/// <param name="context">The <see cref="T:StreamingContext"/> that contains contextual information about the source or destination.</param>
-		protected MalformedCsvException(SerializationInfo info, StreamingContext context)
-			: base(info, context)
-		{
-			_message = info.GetString("MyMessage");
-
-			_rawData = info.GetString("RawData");
-			_currentPosition = info.GetInt32("CurrentPosition");
-			_currentRecordIndex = info.GetInt64("CurrentRecordIndex");
-			_currentFieldIndex = info.GetInt32("CurrentFieldIndex");
-		}
-
-		#endregion
-
-		#region Properties
-
-		/// <summary>
 		/// Gets the raw data when the error occured.
 		/// </summary>
 		/// <value>The raw data when the error occured.</value>
@@ -186,10 +157,6 @@ namespace LumenWorks.Framework.IO.Csv
 			get { return _currentFieldIndex; }
 		}
 
-		#endregion
-
-		#region Overrides
-
 		/// <summary>
 		/// Gets a message that describes the current exception.
 		/// </summary>
@@ -198,24 +165,5 @@ namespace LumenWorks.Framework.IO.Csv
 		{
 			get { return _message; }
 		}
-
-		/// <summary>
-		/// When overridden in a derived class, sets the <see cref="T:SerializationInfo"/> with information about the exception.
-		/// </summary>
-		/// <param name="info">The <see cref="T:SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-		/// <param name="context">The <see cref="T:StreamingContext"/> that contains contextual information about the source or destination.</param>
-		public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			base.GetObjectData(info, context);
-
-			info.AddValue("MyMessage", _message);
-
-			info.AddValue("RawData", _rawData);
-			info.AddValue("CurrentPosition", _currentPosition);
-			info.AddValue("CurrentRecordIndex", _currentRecordIndex);
-			info.AddValue("CurrentFieldIndex", _currentFieldIndex);
-		}
-
-		#endregion
 	}
 }

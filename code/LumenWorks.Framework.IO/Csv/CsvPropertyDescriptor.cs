@@ -1,4 +1,4 @@
-//	LumenWorks.Framework.IO.CSV.ParseErrorAction
+//	LumenWorks.Framework.IO.CSV.CachedCsvReader.CsvPropertyDescriptor
 //	Copyright (c) 2006 Sébastien Lorion
 //
 //	MIT license (http://en.wikipedia.org/wiki/MIT_License)
@@ -19,26 +19,68 @@
 //	FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 //	ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.ComponentModel;
+
 namespace LumenWorks.Framework.IO.Csv
 {
 	/// <summary>
-	/// Specifies the action to take when a parsing error has occured.
+	/// Represents a CSV field property descriptor.
 	/// </summary>
-	public enum ParseErrorAction
+	public class CsvPropertyDescriptor : PropertyDescriptor
 	{
 		/// <summary>
-		/// Raises the <see cref="M:CsvReader.ParseError"/> event.
+		/// Initializes a new instance of the CsvPropertyDescriptor class.
 		/// </summary>
-		RaiseEvent = 0,
+		/// <param name="fieldName">The field name.</param>
+		/// <param name="index">The field index.</param>
+		public CsvPropertyDescriptor(string fieldName, int index) : base(fieldName, null)
+		{
+			Index = index;
+		}
 
 		/// <summary>
-		/// Tries to advance to next line.
+		/// Gets the field index.
 		/// </summary>
-		AdvanceToNextLine = 1,
+		/// <value>The field index.</value>
+		public int Index { get; private set; }
 
-		/// <summary>
-		/// Throws an exception.
-		/// </summary>
-		ThrowException = 2,
+		public override bool CanResetValue(object component)
+		{
+			return false;
+		}
+
+		public override object GetValue(object component)
+		{
+			return ((string[]) component)[Index];
+		}
+
+		public override void ResetValue(object component)
+		{
+		}
+
+		public override void SetValue(object component, object value)
+		{
+		}
+
+		public override bool ShouldSerializeValue(object component)
+		{
+			return false;
+		}
+
+		public override Type ComponentType
+		{
+			get { return typeof(CachedCsvReader); }
+		}
+
+		public override bool IsReadOnly
+		{
+			get { return true; }
+		}
+
+		public override Type PropertyType
+		{
+			get { return typeof(string); }
+		}
 	}
 }

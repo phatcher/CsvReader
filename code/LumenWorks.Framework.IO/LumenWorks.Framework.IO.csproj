@@ -47,7 +47,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET20</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -72,9 +72,9 @@
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Csv\CachedCsvReader.cs" />
-    <Compile Include="Csv\CachedCsvReader.CsvBindingList.cs" />
-    <Compile Include="Csv\CachedCsvReader.CsvPropertyDescriptor.cs" />
-    <Compile Include="Csv\CachedCsvReader.CsvRecordComparer.cs" />
+    <Compile Include="Csv\CsvBindingList.cs" />
+    <Compile Include="Csv\CsvPropertyDescriptor.cs" />
+    <Compile Include="Csv\CsvRecordComparer.cs" />
     <Compile Include="Csv\CsvReader.cs" />
     <Compile Include="Csv\CsvReader.DataReaderValidations.cs" />
     <Compile Include="Csv\CsvReader.RecordEnumerator.cs" />

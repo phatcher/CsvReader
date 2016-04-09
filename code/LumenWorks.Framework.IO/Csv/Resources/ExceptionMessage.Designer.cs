@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Reflection;
+
 namespace LumenWorks.Framework.IO.Csv.Resources {
     using System;
     
@@ -38,8 +40,15 @@ namespace LumenWorks.Framework.IO.Csv.Resources {
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
-                if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LumenWorks.Framework.IO.Csv.Resources.ExceptionMessage", typeof(ExceptionMessage).Assembly);
+                if (object.ReferenceEquals(resourceMan, null))
+                {
+#if NET20
+                    var asm = typeof(ExceptionMessage).Assembly;
+#else
+                    var t = typeof(ExceptionMessage);
+                    var asm = t.GetTypeInfo().Assembly;
+#endif
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LumenWorks.Framework.IO.Csv.Resources.ExceptionMessage", asm);
                     resourceMan = temp;
                 }
                 return resourceMan;

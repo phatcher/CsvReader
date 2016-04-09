@@ -32,11 +32,8 @@ namespace LumenWorks.Framework.IO.Csv
 		/// <summary>
 		/// Supports a simple iteration over the records of a <see cref="T:CsvReader"/>.
 		/// </summary>
-		public struct RecordEnumerator
-			: IEnumerator<string[]>, IEnumerator
+		public struct RecordEnumerator : IEnumerator<string[]>
 		{
-			#region Fields
-
 			/// <summary>
 			/// Contains the enumerated <see cref="T:CsvReader"/>.
 			/// </summary>
@@ -51,10 +48,6 @@ namespace LumenWorks.Framework.IO.Csv
 			/// Contains the current record index.
 			/// </summary>
 			private long _currentRecordIndex;
-
-			#endregion
-
-			#region Constructors
 
 			/// <summary>
 			/// Initializes a new instance of the <see cref="T:RecordEnumerator"/> class.
@@ -74,10 +67,6 @@ namespace LumenWorks.Framework.IO.Csv
 				_currentRecordIndex = reader._currentRecordIndex;
 			}
 
-			#endregion
-
-			#region IEnumerator<string[]> Members
-
 			/// <summary>
 			/// Gets the current record.
 			/// </summary>
@@ -92,10 +81,12 @@ namespace LumenWorks.Framework.IO.Csv
 			/// <returns><see langword="true"/> if the enumerator was successfully advanced to the next record, <see langword="false"/> if the enumerator has passed the end of the CSV.</returns>
 			public bool MoveNext()
 			{
-				if (_reader._currentRecordIndex != _currentRecordIndex)
-					throw new InvalidOperationException(ExceptionMessage.EnumerationVersionCheckFailed);
+			    if (_reader._currentRecordIndex != _currentRecordIndex)
+			    {
+			        throw new InvalidOperationException(ExceptionMessage.EnumerationVersionCheckFailed);
+			    }
 
-				if (_reader.ReadNextRecord())
+			    if (_reader.ReadNextRecord())
 				{
 					_current = new string[_reader._fieldCount];
 
@@ -113,19 +104,17 @@ namespace LumenWorks.Framework.IO.Csv
 				}
 			}
 
-			#endregion
-
-			#region IEnumerator Members
-
 			/// <summary>
 			/// Sets the enumerator to its initial position, which is before the first record in the CSV.
 			/// </summary>
 			public void Reset()
 			{
-				if (_reader._currentRecordIndex != _currentRecordIndex)
-					throw new InvalidOperationException(ExceptionMessage.EnumerationVersionCheckFailed);
+			    if (_reader._currentRecordIndex != _currentRecordIndex)
+			    {
+			        throw new InvalidOperationException(ExceptionMessage.EnumerationVersionCheckFailed);
+			    }
 
-				_reader.MoveTo(-1);
+			    _reader.MoveTo(-1);
 
 				_current = null;
 				_currentRecordIndex = _reader._currentRecordIndex;
@@ -138,16 +127,14 @@ namespace LumenWorks.Framework.IO.Csv
 			{
 				get
 				{
-					if (_reader._currentRecordIndex != _currentRecordIndex)
-						throw new InvalidOperationException(ExceptionMessage.EnumerationVersionCheckFailed);
+				    if (_reader._currentRecordIndex != _currentRecordIndex)
+				    {
+				        throw new InvalidOperationException(ExceptionMessage.EnumerationVersionCheckFailed);
+				    }
 
-					return this.Current;
+				    return this.Current;
 				}
 			}
-
-			#endregion
-
-			#region IDisposable Members
 
 			/// <summary>
 			/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -157,8 +144,6 @@ namespace LumenWorks.Framework.IO.Csv
 				_reader = null;
 				_current = null;
 			}
-
-			#endregion
 		}
 	}
 }

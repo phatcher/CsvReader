@@ -20,11 +20,6 @@
 //	ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Globalization;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
-
-using LumenWorks.Framework.IO.Csv.Resources;
 
 namespace LumenWorks.Framework.IO.Csv
 {
@@ -34,12 +29,8 @@ namespace LumenWorks.Framework.IO.Csv
 	/// <remarks>
 	/// MissingFieldException would have been a better name, but there is already a <see cref="T:System.MissingFieldException"/>.
 	/// </remarks>
-	[Serializable()]
-	public class MissingFieldCsvException
-		: MalformedCsvException
+	public class MissingFieldCsvException : MalformedCsvException
 	{
-		#region Constructors
-
 		/// <summary>
 		/// Initializes a new instance of the MissingFieldCsvException class.
 		/// </summary>
@@ -91,17 +82,5 @@ namespace LumenWorks.Framework.IO.Csv
 			: base(rawData, currentPosition, currentRecordIndex, currentFieldIndex, innerException)
 		{
 		}
-
-		/// <summary>
-		/// Initializes a new instance of the MissingFieldCsvException class with serialized data.
-		/// </summary>
-		/// <param name="info">The <see cref="T:SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
-		/// <param name="context">The <see cref="T:StreamingContext"/> that contains contextual information about the source or destination.</param>
-		protected MissingFieldCsvException(SerializationInfo info, StreamingContext context)
-			: base(info, context)
-		{
-		}
-
-		#endregion
 	}
 }

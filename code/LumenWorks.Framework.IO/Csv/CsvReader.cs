@@ -37,8 +37,6 @@ namespace LumenWorks.Framework.IO.Csv
     /// </summary>
     public partial class CsvReader : IDataReader, IEnumerable<string[]>
     {
-        #region Constants
-
         /// <summary>
         /// Defines the default buffer size.
         /// </summary>
@@ -63,12 +61,6 @@ namespace LumenWorks.Framework.IO.Csv
         /// Defines the default comment character indicating that a line is commented out.
         /// </summary>
         public const char DefaultComment = '#';
-
-        #endregion
-
-        #region Fields
-
-        #region Settings
 
         /// <summary>
         /// Contains the <see cref="T:TextReader"/> pointing to the CSV file.
@@ -130,19 +122,15 @@ namespace LumenWorks.Framework.IO.Csv
         /// </summary>
         private bool _supportsMultiline;
 
-		/// <summary>
-		/// Contains a maximum length (in bytes) of an individual quoted field to be read; null if not specified
-		/// </summary>
-		private int? _maxQuotedFieldLength;
+        /// <summary>
+        /// Contains a maximum length (in bytes) of an individual quoted field to be read; null if not specified
+        /// </summary>
+        private int? _maxQuotedFieldLength;
 
-		/// <summary>
-		/// Indicates if the reader will skip empty lines.
-		/// </summary>
-		private bool _skipEmptyLines;
-
-        #endregion
-
-        #region State
+        /// <summary>
+        /// Indicates if the reader will skip empty lines.
+        /// </summary>
+        private bool _skipEmptyLines;
 
         /// <summary>
         /// Indicates if the class is initialized.
@@ -220,12 +208,6 @@ namespace LumenWorks.Framework.IO.Csv
         /// Resets after each successful record read.
         /// </summary>
         private bool _parseErrorFlag;
-
-        #endregion
-
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the CsvReader class.
@@ -387,10 +369,6 @@ namespace LumenWorks.Framework.IO.Csv
             _defaultParseErrorAction = ParseErrorAction.RaiseEvent;
         }
 
-        #endregion
-
-        #region Events
-
         /// <summary>
         /// Occurs when there is an error while parsing the CSV stream.
         /// </summary>
@@ -407,12 +385,6 @@ namespace LumenWorks.Framework.IO.Csv
             if (handler != null)
                 handler(this, e);
         }
-
-        #endregion
-
-        #region Properties
-
-        #region Settings
 
         /// <summary>
         /// Gets the comment character indicating that a line is commented out.
@@ -556,37 +528,37 @@ namespace LumenWorks.Framework.IO.Csv
             }
         }
 
-		/// <summary>
-		/// Gets or sets a value giving a maxmimum length (in bytes) for any quoted field.
-		/// </summary>
+        /// <summary>
+        /// Gets or sets a value giving a maxmimum length (in bytes) for any quoted field.
+        /// </summary>
         /// <value>The maximum length (in bytes) of a CSV field.</value>
-		public int? MaxQuotedFieldLength
-		{
-			get
-			{
-				return _maxQuotedFieldLength;
-			}
-			set
-			{
-			        _maxQuotedFieldLength = value;
-			}
-		}
+        public int? MaxQuotedFieldLength
+        {
+            get
+            {
+                return _maxQuotedFieldLength;
+            }
+            set
+            {
+               _maxQuotedFieldLength = value;
+            }
+        }
 
-		/// <summary>
-		/// Gets or sets a value indicating if the reader will skip empty lines.
-		/// </summary>
-		/// <value>A value indicating if the reader will skip empty lines.</value>
-		public bool SkipEmptyLines
-		{
-			get
-			{
-				return _skipEmptyLines;
-			}
-			set
-			{
-				_skipEmptyLines = value;
-			}
-		}
+        /// <summary>
+        /// Gets or sets a value indicating if the reader will skip empty lines.
+        /// </summary>
+        /// <value>A value indicating if the reader will skip empty lines.</value>
+        public bool SkipEmptyLines
+        {
+            get
+            {
+                return _skipEmptyLines;
+            }
+            set
+            {
+                _skipEmptyLines = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the default header name when it is an empty string or only whitespaces.
@@ -604,10 +576,6 @@ namespace LumenWorks.Framework.IO.Csv
         /// Gets or sets whether we should use the column default values if the field is not in the record.
         /// </summary>
         public bool UseColumnDefaults { get; set; }
-
-        #endregion
-
-        #region State
 
         /// <summary>
         /// Gets the maximum number of fields to retrieve for each record.
@@ -652,7 +620,9 @@ namespace LumenWorks.Framework.IO.Csv
             string[] fieldHeaders = new string[Columns.Count];
 
             for (int i = 0; i < fieldHeaders.Length; i++)
+            {
                 fieldHeaders[i] = Columns[i].Name;
+            }
 
             return fieldHeaders;
         }
@@ -686,12 +656,6 @@ namespace LumenWorks.Framework.IO.Csv
         {
             get { return _parseErrorFlag; }
         }
-
-        #endregion
-
-        #endregion
-
-        #region Indexers
 
         /// <summary>
         /// Gets the field with the specified name and record position. <see cref="M:hasHeaders"/> must be <see langword="true"/>.
@@ -728,7 +692,9 @@ namespace LumenWorks.Framework.IO.Csv
             get
             {
                 if (!MoveTo(record))
+                {
                     throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, ExceptionMessage.CannotReadRecordAtIndex, record));
+                }
 
                 return this[field];
             }
@@ -764,7 +730,9 @@ namespace LumenWorks.Framework.IO.Csv
             get
             {
                 if (!MoveTo(record))
+                {
                     throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, ExceptionMessage.CannotReadRecordAtIndex, record));
+                }
 
                 return this[field];
             }
@@ -796,15 +764,21 @@ namespace LumenWorks.Framework.IO.Csv
             get
             {
                 if (string.IsNullOrEmpty(field))
+                {
                     throw new ArgumentNullException("field");
+                }
 
                 if (!_hasHeaders)
+                {
                     throw new InvalidOperationException(ExceptionMessage.NoHeaders);
+                }
 
-                int index = GetFieldIndex(field);
+                var index = GetFieldIndex(field);
 
                 if (index < 0)
+                {
                     throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldHeaderNotFound, field), "field");
+                }
 
                 return this[index];
             }
@@ -828,17 +802,8 @@ namespace LumenWorks.Framework.IO.Csv
         /// </exception>
         public virtual string this[int field]
         {
-            get
-            {
-                return ReadField(field, false, false);
-            }
+            get { return ReadField(field, false, false); }
         }
-
-        #endregion
-
-        #region Methods
-
-        #region EnsureInitialize
 
         /// <summary>
         /// Ensures that the reader is initialized.
@@ -849,12 +814,8 @@ namespace LumenWorks.Framework.IO.Csv
                 this.ReadNextRecord(true, false);
 
             Debug.Assert(Columns != null);
-			Debug.Assert(Columns.Count > 0 || (Columns.Count == 0 && (_fieldHeaderIndexes == null || _fieldHeaderIndexes.Count == 0)));
+            Debug.Assert(Columns.Count > 0 || (Columns.Count == 0 && (_fieldHeaderIndexes == null || _fieldHeaderIndexes.Count == 0)));
         }
-
-        #endregion
-
-        #region GetFieldIndex
 
         /// <summary>
         /// Gets the field index for the provided header.
@@ -893,10 +854,6 @@ namespace LumenWorks.Framework.IO.Csv
             else
                 return false;
         }
-
-        #endregion
-
-        #region CopyCurrentRecordTo
 
         /// <summary>
         /// Copies the field array of the current record to a one-dimensional array, starting at the beginning of the target array.
@@ -953,10 +910,6 @@ namespace LumenWorks.Framework.IO.Csv
             }
         }
 
-        #endregion
-
-        #region GetCurrentRawData
-
         /// <summary>
         /// Gets the current raw CSV data.
         /// </summary>
@@ -969,10 +922,6 @@ namespace LumenWorks.Framework.IO.Csv
             else
                 return string.Empty;
         }
-
-        #endregion
-
-        #region IsWhiteSpace
 
         /// <summary>
         /// Indicates whether the specified Unicode character is categorized as white space.
@@ -993,10 +942,6 @@ namespace LumenWorks.Framework.IO.Csv
                     return (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) == System.Globalization.UnicodeCategory.SpaceSeparator);
             }
         }
-
-        #endregion
-
-        #region MoveTo
 
         /// <summary>
         /// Moves to the specified record index.
@@ -1024,10 +969,6 @@ namespace LumenWorks.Framework.IO.Csv
 
             return true;
         }
-
-        #endregion
-
-        #region ParseNewLine
 
         /// <summary>
         /// Parses a new line delimiter.
@@ -1121,10 +1062,6 @@ namespace LumenWorks.Framework.IO.Csv
                 return false;
         }
 
-        #endregion
-
-        #region ReadBuffer
-
         /// <summary>
         /// Fills the buffer with data from the reader.
         /// </summary>
@@ -1151,10 +1088,6 @@ namespace LumenWorks.Framework.IO.Csv
                 return false;
             }
         }
-
-        #endregion
-
-        #region ReadField
 
         /// <summary>
         /// Reads the field at the specified index.
@@ -1386,7 +1319,7 @@ namespace LumenWorks.Framework.IO.Csv
 
                         bool quoted = true;
                         bool escaped = false;
-						int fieldLength =0;
+                        int fieldLength =0;
 
                         if ((_trimmingOptions & ValueTrimmingOptions.QuotedOnly) != 0)
                         {
@@ -1419,16 +1352,16 @@ namespace LumenWorks.Framework.IO.Csv
                                     break;
                                 }
 
-								fieldLength++;
+                                fieldLength++;
 
-								if (_maxQuotedFieldLength.HasValue && fieldLength > _maxQuotedFieldLength.Value)
-								{
-									HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, _currentRecordIndex), index), ref _nextFieldStart);
-									return null;
-								}
+                                if (_maxQuotedFieldLength.HasValue && fieldLength > _maxQuotedFieldLength.Value)
+                                {
+                                    HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, _currentRecordIndex), index), ref _nextFieldStart);
+                                    return null;
+                                }
 
-								pos++;
-							}
+                                pos++;
+                            }
 
                             if (!quoted)
                                 break;
@@ -1471,23 +1404,23 @@ namespace LumenWorks.Framework.IO.Csv
                             // Skip whitespaces between the quote and the delimiter/eol
                             SkipWhiteSpaces(ref _nextFieldStart);
 
-							// Skip delimiter
-							bool delimiterSkipped;
-							if (_nextFieldStart < _bufferLength && _buffer[_nextFieldStart] == _delimiter)
-							{
-								_nextFieldStart++;
-								delimiterSkipped = true;
-							}
-							else if (_nextFieldStart < _bufferLength && (_buffer[_nextFieldStart] == '\r' || _buffer[_nextFieldStart] == '\n'))
-							{
-								_nextFieldStart++;
-								_eol = true;
-								delimiterSkipped = true;
-							}
-							else
-							{
-								delimiterSkipped = false;
-							}
+                            // Skip delimiter
+                            bool delimiterSkipped;
+                            if (_nextFieldStart < _bufferLength && _buffer[_nextFieldStart] == _delimiter)
+                            {
+                                _nextFieldStart++;
+                                delimiterSkipped = true;
+                            }
+                            else if (_nextFieldStart < _bufferLength && (_buffer[_nextFieldStart] == '\r' || _buffer[_nextFieldStart] == '\n'))
+                            {
+                                _nextFieldStart++;
+                                _eol = true;
+                                delimiterSkipped = true;
+                            }
+                            else
+                            {
+                                delimiterSkipped = false;
+                            }
 
                             // Skip new line delimiter if initializing or last field
                             // (if the next field is missing, it will be caught when parsed)
@@ -1499,17 +1432,17 @@ namespace LumenWorks.Framework.IO.Csv
                                 HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, _currentRecordIndex), index), ref _nextFieldStart);
                         }
 
-						// If we are at the end, then verify we have all the fields
-						if (_eol || _eof)
-						{
-							if (!initializing && index < _fieldCount - 1)
-								value = HandleMissingField(value, index, ref _nextFieldStart);
-						}
-						
-						if (!discardValue)
-						{
-							if (value == null)
-								value = string.Empty;
+                        // If we are at the end, then verify we have all the fields
+                        if (_eol || _eof)
+                        {
+                            if (!initializing && index < _fieldCount - 1)
+                                value = HandleMissingField(value, index, ref _nextFieldStart);
+                        }
+                        
+                        if (!discardValue)
+                        {
+                            if (value == null)
+                                value = string.Empty;
 
                             _fields[index] = value;
                         }
@@ -1540,10 +1473,6 @@ namespace LumenWorks.Framework.IO.Csv
             HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, _currentRecordIndex), index), ref _nextFieldStart);
             return null;
         }
-
-        #endregion
-
-        #region ReadNextRecord
 
         /// <summary>
         /// Reads the next record.
@@ -1780,10 +1709,6 @@ namespace LumenWorks.Framework.IO.Csv
             }
         }
 
-        #endregion
-
-        #region SkipEmptyAndCommentedLines
-
         /// <summary>
         /// Skips empty and commented lines.
         /// If the end of the buffer is reached, its content be discarded and filled again from the reader.
@@ -1842,10 +1767,6 @@ namespace LumenWorks.Framework.IO.Csv
             }
         }
 
-        #endregion
-
-        #region SkipWhiteSpaces
-
         /// <summary>
         /// Skips whitespace characters.
         /// </summary>
@@ -1875,10 +1796,6 @@ namespace LumenWorks.Framework.IO.Csv
             return true;
         }
 
-        #endregion
-
-        #region SkipToNextLine
-
         /// <summary>
         /// Skips ahead to the next NewLine character.
         /// If the end of the buffer is reached, its content be discarded and filled again from the reader.
@@ -1899,10 +1816,6 @@ namespace LumenWorks.Framework.IO.Csv
 
             return !_eof;
         }
-
-        #endregion
-
-        #region HandleParseError
 
         /// <summary>
         /// Handles a parsing error.
@@ -1958,10 +1871,6 @@ namespace LumenWorks.Framework.IO.Csv
             }
         }
 
-        #endregion
-
-        #region HandleMissingField
-
         /// <summary>
         /// Handles a missing field error.
         /// </summary>
@@ -2004,12 +1913,6 @@ namespace LumenWorks.Framework.IO.Csv
                 }
             }
         }
-
-        #endregion
-
-        #endregion
-
-        #region IDataReader support methods
 
         /// <summary>
         /// Validates the state of the data reader.
@@ -2079,10 +1982,6 @@ namespace LumenWorks.Framework.IO.Csv
 
             return length;
         }
-
-        #endregion
-
-        #region IDataReader Members
 
         int IDataReader.RecordsAffected
         {
@@ -2168,30 +2067,30 @@ namespace LumenWorks.Framework.IO.Csv
             // null marks columns that will change for each row
             object[] schemaRow = 
             { 
-				true,					// 00- AllowDBNull
-				null,					// 01- BaseColumnName
-				string.Empty,			// 02- BaseSchemaName
-				string.Empty,			// 03- BaseTableName
-				null,					// 04- ColumnName
-				null,					// 05- ColumnOrdinal
-				int.MaxValue,			// 06- ColumnSize
-				typeof(string),			// 07- DataType
-				false,					// 08- IsAliased
-				false,					// 09- IsExpression
-				false,					// 10- IsKey
-				false,					// 11- IsLong
-				false,					// 12- IsUnique
-				DBNull.Value,			// 13- NumericPrecision
-				DBNull.Value,			// 14- NumericScale
-				(int) DbType.String,	// 15- ProviderType
+                true,					// 00- AllowDBNull
+                null,					// 01- BaseColumnName
+                string.Empty,			// 02- BaseSchemaName
+                string.Empty,			// 03- BaseTableName
+                null,					// 04- ColumnName
+                null,					// 05- ColumnOrdinal
+                int.MaxValue,			// 06- ColumnSize
+                typeof(string),			// 07- DataType
+                false,					// 08- IsAliased
+                false,					// 09- IsExpression
+                false,					// 10- IsKey
+                false,					// 11- IsLong
+                false,					// 12- IsUnique
+                DBNull.Value,			// 13- NumericPrecision
+                DBNull.Value,			// 14- NumericScale
+                (int) DbType.String,	// 15- ProviderType
 
-				string.Empty,			// 16- BaseCatalogName
-				string.Empty,			// 17- BaseServerName
-				false,					// 18- IsAutoIncrement
-				false,					// 19- IsHidden
-				true,					// 20- IsReadOnly
-				false					// 21- IsRowVersion
-			};
+                string.Empty,			// 16- BaseCatalogName
+                string.Empty,			// 17- BaseServerName
+                false,					// 18- IsAutoIncrement
+                false,					// 19- IsHidden
+                true,					// 20- IsReadOnly
+                false					// 21- IsRowVersion
+            };
 
             IList<Column> columns;
             if (Columns.Count > 0)
@@ -2224,17 +2123,13 @@ namespace LumenWorks.Framework.IO.Csv
             return schema;
         }
 
-        #endregion
-
-        #region IDataRecord Members
-
         int IDataRecord.GetInt32(int i)
         {
             ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
 
-            string value = this[i];
+            var value = this[i];
 
-            return Int32.Parse(value ?? string.Empty, CultureInfo.CurrentCulture);
+            return int.Parse(value ?? string.Empty, CultureInfo.CurrentCulture);
         }
 
         object IDataRecord.this[string name]
@@ -2352,10 +2247,12 @@ namespace LumenWorks.Framework.IO.Csv
 
             int result;
 
-            if (Int32.TryParse(value, out result))
+            if (int.TryParse(value, out result))
+            {
                 return (result != 0);
-            else
-                return Boolean.Parse(value);
+            }
+
+            return bool.Parse(value);
         }
 
         Guid IDataRecord.GetGuid(int i)
@@ -2378,7 +2275,9 @@ namespace LumenWorks.Framework.IO.Csv
             int index;
 
             if (!_fieldHeaderIndexes.TryGetValue(name, out index))
+            {
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldHeaderNotFound, name), "name");
+            }
 
             return index;
         }
@@ -2392,17 +2291,14 @@ namespace LumenWorks.Framework.IO.Csv
         float IDataRecord.GetFloat(int i)
         {
             ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
-            return Single.Parse(this[i], CultureInfo.CurrentCulture);
+            return float.Parse(this[i], CultureInfo.CurrentCulture);
         }
 
         IDataReader IDataRecord.GetData(int i)
         {
             ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
 
-            if (i == 0)
-                return this;
-            else
-                return null;
+            return i == 0 ? this : null;
         }
 
         long IDataRecord.GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
@@ -2421,13 +2317,13 @@ namespace LumenWorks.Framework.IO.Csv
         char IDataRecord.GetChar(int i)
         {
             ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
-            return Char.Parse(this[i]);
+            return char.Parse(this[i]);
         }
 
         short IDataRecord.GetInt16(int i)
         {
             ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
-            return Int16.Parse(this[i], CultureInfo.CurrentCulture);
+            return short.Parse(this[i], CultureInfo.CurrentCulture);
         }
 
         object FieldValue(int i)
@@ -2440,10 +2336,6 @@ namespace LumenWorks.Framework.IO.Csv
             var column = Columns[i];
             return column.Convert(value);
         }
-
-        #endregion
-
-        #region IEnumerable<string[]> Members
 
         /// <summary>
         /// Returns an <see cref="T:RecordEnumerator"/>  that can iterate through CSV records.
@@ -2469,10 +2361,6 @@ namespace LumenWorks.Framework.IO.Csv
             return this.GetEnumerator();
         }
 
-        #endregion
-
-        #region IEnumerable Members
-
         /// <summary>
         /// Returns an <see cref="T:System.Collections.IEnumerator"/>  that can iterate through CSV records.
         /// </summary>
@@ -2484,10 +2372,6 @@ namespace LumenWorks.Framework.IO.Csv
         {
             return GetEnumerator();
         }
-
-        #endregion
-
-        #region IDisposable members
 
 #if DEBUG
         /// <summary>
@@ -2517,7 +2401,6 @@ namespace LumenWorks.Framework.IO.Csv
         /// <value>
         /// 	<see langword="true"/> if the instance has been disposed of; otherwise, <see langword="false"/>.
         /// </value>
-        [System.ComponentModel.Browsable(false)]
         public bool IsDisposed
         {
             get { return _isDisposed; }
@@ -2634,7 +2517,5 @@ namespace LumenWorks.Framework.IO.Csv
 
             Dispose(false);
         }
-
-        #endregion
     }
 }
