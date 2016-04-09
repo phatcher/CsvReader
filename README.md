@@ -127,7 +127,28 @@ Below is a example using the Columns collection to set up the correct metadata f
 		}
 	}
 ```
-One other issue arose recently on a project where we wanted to use SBC but some of the data was not in the file itself but metadata that needed to be included on every row. The solution was to amend the CSV reader and Columns collection to allow default values to be provided that are not in the data itself.
+The method AddColumnMapping is an extension I wrote to simplify adding mappings to SBC
+```csharp
+    public static class SqlBulkCopyExtensions
+    {
+        public static SqlBulkCopyColumnMapping AddColumnMapping(this SqlBulkCopy sbc, int sourceColumnOrdinal, int targetColumnOrdinal)
+        {
+            var map = new SqlBulkCopyColumnMapping(sourceColumnOrdinal, targetColumnOrdinal);
+            sbc.ColumnMappings.Add(map);
+
+            return map;
+        }
+
+        public static SqlBulkCopyColumnMapping AddColumnMapping(this SqlBulkCopy sbc, string sourceColumn, string targetColumn)
+        {
+            var map = new SqlBulkCopyColumnMapping(sourceColumn, targetColumn);
+            sbc.ColumnMappings.Add(map);
+
+            return map;
+        }
+    }
+```	
+One other issue recently arose where we wanted to use SBC but some of the data was not in the file itself, but metadata that needed to be included on every row. The solution was to amend the CSV reader and Columns collection to allow default values to be provided that are not in the data.
 
 The additional columns should be added at the end of the Columns collection to avoid interfering with the parsing, see the amended example below...
 ```csharp
