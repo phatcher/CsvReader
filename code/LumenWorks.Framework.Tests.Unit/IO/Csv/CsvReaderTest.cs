@@ -28,7 +28,7 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Text;
-
+using System.Windows.Forms;
 using NUnit.Framework;
 
 using LumenWorks.Framework.IO.Csv;
@@ -991,39 +991,39 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 Assert.AreEqual("a", csv[0]);
                 Assert.AreEqual("b", csv[1]);
 
-				csv.ReadNextRecord();
-				Assert.AreEqual(string.Empty, csv[0]);
-				Assert.AreEqual(null, csv[1]);
-			}
-		}
+                csv.ReadNextRecord();
+                Assert.AreEqual(string.Empty, csv[0]);
+                Assert.AreEqual(null, csv[1]);
+            }
+        }
 
-		[ExpectedException(typeof(MalformedCsvException))]
-		[Test]
-		public void ParsingTest44()
-		{
-			const string data = "\"01234567891\"\r\ntest";
+        [ExpectedException(typeof(MalformedCsvException))]
+        [Test]
+        public void ParsingTest44()
+        {
+            const string data = "\"01234567891\"\r\ntest";
 
-			using (var csv = new CsvReader(new StringReader(data), false))
-			{
-				csv.MaxQuotedFieldLength = 10;
-				csv.ReadNextRecord();
-			}
-		}
+            using (var csv = new CsvReader(new StringReader(data), false))
+            {
+                csv.MaxQuotedFieldLength = 10;
+                csv.ReadNextRecord();
+            }
+        }
 
-		[Test]
-		public void ParsingTest45()
-		{
-			const string data = "\"01234567891\"\r\ntest";
+        [Test]
+        public void ParsingTest45()
+        {
+            const string data = "\"01234567891\"\r\ntest";
 
-			using (var csv = new CsvReader(new StringReader(data), false))
-			{
-				csv.MaxQuotedFieldLength = 11;
-				csv.ReadNextRecord();
-				Assert.AreEqual("01234567891", csv[0]);
-			}
-		}
+            using (var csv = new CsvReader(new StringReader(data), false))
+            {
+                csv.MaxQuotedFieldLength = 11;
+                csv.ReadNextRecord();
+                Assert.AreEqual("01234567891", csv[0]);
+            }
+        }
 
-		#endregion
+        #endregion
 
         #region UnicodeParsing tests
 
@@ -1191,6 +1191,17 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         }
 
         #endregion
+
+        [Test]
+        public void CachedNoHeader()
+        {
+            var csv = new CachedCsvReader(new StringReader("12345678;Hello\r\n78945612;World"), false, ';');
+
+            var dgv = new DataGridView();
+            dgv.DataSource = csv;
+
+            dgv.Refresh();
+        }
 
         #region HasHeader
 
