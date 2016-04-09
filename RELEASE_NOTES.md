@@ -1,3 +1,9 @@
+#### 3.9.1 (2016-04-09)
+* Added max field length for quoted fields (@criteo)
+* Strengthen Debug.Assert condition in GetSchemaWithoutHeaders (@joshgo)
+* Added test for quoted fields not throwing an exception (@joshgo)
+* Added HasHeader function to allow checking if a header existing without throwing exception (@kiran94)
+
 #### 3.9 (2015-06-20)
 * Completely replaced use of _fieldHeaders internally with Columns
 * Fixed IDataReader.GetSchemaTable to return Column.Type rather than always saying string

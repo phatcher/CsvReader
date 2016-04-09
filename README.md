@@ -23,7 +23,7 @@ I have my tools in C:\Tools so I use *build.cmd Default tools=C:\Tools encoding=
 
 The library is available under the [MIT License](http://en.wikipedia.org/wiki/MIT_License), for more information see the [License file][1] in the GitHub repository.
 
- [1]: https://github.com/phatcher/CsvReader/License.md
+ [1]: https://github.com/phatcher/CsvReader/blob/master/License.md
 
 ## Getting Started
 A good starting point is to look at Sébastien's [article](http://www.codeproject.com/Articles/9258/A-Fast-CSV-Reader) on Code Project.
@@ -182,7 +182,7 @@ The additional columns should be added at the end of the Columns collection to a
 		}
 	}
 ```
-To give an idea of performance, this took the naive sample app using an ORM from 2m 27s to 1.37s use SBC and the full import took just over 11m importing 9.8m records.
+To give an idea of performance, this took a naive sample app using an ORM from 2m 27s to 1.37s using SBC and the full import took just over 11m to import 9.8m records.
 	
 ## Performance
 One of the main reasons for using this library is its excellent performance on reading/parsing raw data, here's a recent run of the benchmark (which is in the source)
