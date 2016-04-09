@@ -828,7 +828,7 @@ namespace LumenWorks.Framework.IO.Csv
 				this.ReadNextRecord(true, false);
 
 			Debug.Assert(Columns != null);
-            Debug.Assert(Columns.Count > 0 || (Columns.Count == 0 && _fieldHeaderIndexes == null));
+			Debug.Assert(Columns.Count > 0 || (Columns.Count == 0 && (_fieldHeaderIndexes == null || _fieldHeaderIndexes.Count == 0)));
 		}
 
 		#endregion
