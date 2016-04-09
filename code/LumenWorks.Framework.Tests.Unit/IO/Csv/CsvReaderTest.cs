@@ -996,7 +996,32 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 				Assert.AreEqual(null, csv[1]);
 			}
 		}
-        
+
+		[ExpectedException(typeof(MalformedCsvException))]
+		[Test]
+		public void ParsingTest44()
+		{
+			const string data = "\"01234567891\"\r\ntest";
+
+			using (var csv = new CsvReader(new StringReader(data), false))
+			{
+				csv.MaxQuotedFieldLength = 10;
+				csv.ReadNextRecord();
+			}
+		}
+
+		[Test]
+		public void ParsingTest45()
+		{
+			const string data = "\"01234567891\"\r\ntest";
+
+			using (var csv = new CsvReader(new StringReader(data), false))
+			{
+				csv.MaxQuotedFieldLength = 11;
+				csv.ReadNextRecord();
+				Assert.AreEqual("01234567891", csv[0]);
+			}
+		}
 
 		#endregion
 

@@ -131,6 +131,11 @@ namespace LumenWorks.Framework.IO.Csv
 		private bool _supportsMultiline;
 
 		/// <summary>
+		/// Contains a maximum length (in bytes) of an individual quoted field to be read; null if not specified
+		/// </summary>
+		private int? _maxQuotedFieldLength;
+
+		/// <summary>
 		/// Indicates if the reader will skip empty lines.
 		/// </summary>
 		private bool _skipEmptyLines;
@@ -548,6 +553,22 @@ namespace LumenWorks.Framework.IO.Csv
 			set
 			{
 				_supportsMultiline = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value giving a maxmimum length (in bytes) for any quoted field.
+		/// </summary>
+        /// <value>The maximum length (in bytes) of a CSV field.</value>
+		public int? MaxQuotedFieldLength
+		{
+			get
+			{
+				return _maxQuotedFieldLength;
+			}
+			set
+			{
+			        _maxQuotedFieldLength = value;
 			}
 		}
 
@@ -1347,6 +1368,7 @@ namespace LumenWorks.Framework.IO.Csv
 
 						bool quoted = true;
 						bool escaped = false;
+						int fieldLength =0;
 
 						if ((_trimmingOptions & ValueTrimmingOptions.QuotedOnly) != 0)
 						{
@@ -1377,6 +1399,14 @@ namespace LumenWorks.Framework.IO.Csv
 								{
 									quoted = false;
 									break;
+								}
+
+								fieldLength++;
+
+								if (_maxQuotedFieldLength.HasValue && fieldLength > _maxQuotedFieldLength.Value)
+								{
+									HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, _currentRecordIndex), index), ref _nextFieldStart);
+									return null;
 								}
 
 								pos++;
