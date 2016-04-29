@@ -1126,6 +1126,12 @@ namespace LumenWorks.Framework.IO.Csv
                 if (_currentRecordIndex < 0)
                     throw new InvalidOperationException(ExceptionMessage.NoCurrentRecord);
 
+                if (!string.IsNullOrEmpty(Columns[field].OverrideValue))
+                {
+                    // Use the override value for this column.
+                    return Columns[field].OverrideValue;
+                }
+
                 if (field >= _fieldCount)
                 {
                     // Use the column default as UseColumnDefaults is true at this point
