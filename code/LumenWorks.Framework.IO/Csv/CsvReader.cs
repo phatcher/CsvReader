@@ -540,7 +540,7 @@ namespace LumenWorks.Framework.IO.Csv
             }
             set
             {
-               _maxQuotedFieldLength = value;
+                _maxQuotedFieldLength = value;
             }
         }
 
@@ -1126,7 +1126,7 @@ namespace LumenWorks.Framework.IO.Csv
                 if (_currentRecordIndex < 0)
                     throw new InvalidOperationException(ExceptionMessage.NoCurrentRecord);
 
-                if (!string.IsNullOrEmpty(Columns[field].OverrideValue))
+                if (Columns.Count > field && !string.IsNullOrEmpty(Columns[field].OverrideValue))
                 {
                     // Use the override value for this column.
                     return Columns[field].OverrideValue;
@@ -1215,7 +1215,7 @@ namespace LumenWorks.Framework.IO.Csv
                         int start = _nextFieldStart;
                         int pos = _nextFieldStart;
 
-                        for (; ; )
+                        for (;;)
                         {
                             while (pos < _bufferLength)
                             {
@@ -1325,7 +1325,7 @@ namespace LumenWorks.Framework.IO.Csv
 
                         bool quoted = true;
                         bool escaped = false;
-                        int fieldLength =0;
+                        int fieldLength = 0;
 
                         if ((_trimmingOptions & ValueTrimmingOptions.QuotedOnly) != 0)
                         {
@@ -1333,7 +1333,7 @@ namespace LumenWorks.Framework.IO.Csv
                             pos = start;
                         }
 
-                        for (; ; )
+                        for (;;)
                         {
                             while (pos < _bufferLength)
                             {
@@ -1444,7 +1444,7 @@ namespace LumenWorks.Framework.IO.Csv
                             if (!initializing && index < _fieldCount - 1)
                                 value = HandleMissingField(value, index, ref _nextFieldStart);
                         }
-                        
+
                         if (!discardValue)
                         {
                             if (value == null)
@@ -1783,7 +1783,7 @@ namespace LumenWorks.Framework.IO.Csv
         /// </exception>
         private bool SkipWhiteSpaces(ref int pos)
         {
-            for (; ; )
+            for (;;)
             {
                 while (pos < _bufferLength && IsWhiteSpace(_buffer[pos]))
                     pos++;
@@ -2071,8 +2071,8 @@ namespace LumenWorks.Framework.IO.Csv
             schema.Columns.Add(SchemaTableOptionalColumn.IsRowVersion, typeof(bool)).ReadOnly = true;
 
             // null marks columns that will change for each row
-            object[] schemaRow = 
-            { 
+            object[] schemaRow =
+            {
                 true,					// 00- AllowDBNull
                 null,					// 01- BaseColumnName
                 string.Empty,			// 02- BaseSchemaName
