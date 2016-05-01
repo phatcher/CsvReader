@@ -45,6 +45,11 @@ namespace LumenWorks.Framework.IO.Csv
         /// </summary>
         public string DefaultValue { get; set; }
 
+        /// <summary>
+        /// Get or set the override value of the column.
+        /// </summary>
+        public string OverrideValue { get; set; }
+
         public CultureInfo Culture { get; set; }
 
         public NumberStyles NumberStyles { get; set; }

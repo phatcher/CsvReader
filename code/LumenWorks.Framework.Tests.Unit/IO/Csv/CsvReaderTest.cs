@@ -1193,6 +1193,24 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         #endregion
 
         [Test]
+        public void OverrideColumnValueTest()
+        {
+            using (CsvReader csv = new CsvReader(new StringReader("Column1,Column2,Column3\nabc,def,ghi\n"), true))
+            {
+                csv.Columns[csv.GetFieldIndex("Column2")].OverrideValue = "xyz";
+
+                Assert.IsTrue(csv.ReadNextRecord());
+
+                Assert.AreEqual("abc", csv[0]);
+                Assert.AreEqual("xyz", csv[1]);
+                Assert.AreNotEqual("def", csv[1]);
+                Assert.AreEqual("ghi", csv[2]);
+
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+        }
+
+        [Test]
         public void CachedNoHeader()
         {
             var csv = new CachedCsvReader(new StringReader("12345678;Hello\r\n78945612;World"), false, ';');
@@ -1226,7 +1244,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
             using (CsvReader csvReader = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
             {
-                Assert.IsTrue(csvReader.HasHeader(header)); 
+                Assert.IsTrue(csvReader.HasHeader(header));
             }
         }
 
