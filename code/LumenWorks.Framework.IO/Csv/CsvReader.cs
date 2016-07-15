@@ -1679,25 +1679,28 @@ namespace LumenWorks.Framework.IO.Csv
 
         private void HandleExtraFieldsInCurrentRecord(int currentFieldIndex)
         {
-            MalformedCsvException exception = new MalformedCsvException(
-                GetCurrentRawData(),
-                _nextFieldStart,
-                Math.Max(0, _currentRecordIndex),
-                currentFieldIndex);
-
             if (DefaultParseErrorAction == ParseErrorAction.AdvanceToNextLine)
             {
                 SkipToNextRecord();
             }
-            else if (DefaultParseErrorAction == ParseErrorAction.RaiseEvent)
+            else
             {
-                ParseErrorEventArgs e = new ParseErrorEventArgs(exception, ParseErrorAction.ThrowException);
-                OnParseError(e);
-                SkipToNextRecord();
-            }
-            else if (DefaultParseErrorAction == ParseErrorAction.ThrowException)
-            {
-                throw exception;
+                MalformedCsvException exception = new MalformedCsvException(
+                    GetCurrentRawData(),
+                    _nextFieldStart,
+                    Math.Max(0, _currentRecordIndex),
+                    currentFieldIndex);
+
+                if (DefaultParseErrorAction == ParseErrorAction.RaiseEvent)
+                {
+                    ParseErrorEventArgs e = new ParseErrorEventArgs(exception, ParseErrorAction.ThrowException);
+                    OnParseError(e);
+                    SkipToNextRecord();
+                }
+                else if (DefaultParseErrorAction == ParseErrorAction.ThrowException)
+                {
+                    throw exception;
+                }
             }
         }
 
