@@ -78,7 +78,9 @@
     <Compile Include="Csv\CsvReader.cs" />
     <Compile Include="Csv\CsvReader.DataReaderValidations.cs" />
     <Compile Include="Csv\CsvReader.RecordEnumerator.cs" />
+    <Compile Include="Csv\Events\DuplicateHeaderEventArgs.cs" />
     <Compile Include="Csv\Events\ParseErrorEventArgs.cs" />
+    <Compile Include="Csv\Exceptions\DuplicateHeaderException.cs" />
     <Compile Include="Csv\Exceptions\MalformedCsvException.cs" />
     <Compile Include="Csv\Exceptions\MissingFieldCsvException.cs" />
     <Compile Include="Csv\MissingFieldAction.cs" />

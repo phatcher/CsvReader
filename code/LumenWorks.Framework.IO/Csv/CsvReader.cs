@@ -387,6 +387,13 @@ namespace LumenWorks.Framework.IO.Csv
         }
 
         /// <summary>
+        /// Occurs when HasHeaders is true and a duplicate Column Header Name is encountered.
+        /// Setting the HeaderName property on this column will prevent the library from throwing a duplicate key exception
+        /// </summary>
+        public event EventHandler<DuplicateHeaderEventArgs> DuplicateHeaderEncountered;
+
+
+        /// <summary>
         /// Gets the comment character indicating that a line is commented out.
         /// </summary>
         /// <value>The comment character indicating that a line is commented out.</value>
@@ -1589,7 +1596,19 @@ namespace LumenWorks.Framework.IO.Csv
                                 // Default to string if not assigned.
                                 Type = typeof(string)
                             };
-                            _fieldHeaderIndexes.Add(headerName, i);
+
+                            int existingIndex;
+                            if (_fieldHeaderIndexes.TryGetValue(headerName, out existingIndex))
+                            {
+                              if(DuplicateHeaderEncountered == null)
+                                 throw new DuplicateHeaderException(headerName, i);
+
+                              DuplicateHeaderEventArgs args = new DuplicateHeaderEventArgs(headerName, i, existingIndex);
+                              DuplicateHeaderEncountered(this, args);
+                              col.Name = args.HeaderName;
+                            }
+
+                            _fieldHeaderIndexes.Add(col.Name, i);
                             // Should be correct as we are going in ascending order.
                             Columns.Add(col);
                         }
