@@ -73,7 +73,7 @@ You can specify the columns yourself if there are none, and also specify the exp
 
     void ReadCsv()
     {
-        // open the file "data.csv" which is a CSV file with headers
+        // open the file "data.csv" which is a CSV file without headers
         using (var csv = new CachedCsvReader(new StreamReader("data.csv"), false))
         {
             csv.Columns.Add(new Column { Name = "PriceDate", Type = typeof(DateTime) });
