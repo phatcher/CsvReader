@@ -71,25 +71,7 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
-    <Compile Include="Csv\CachedCsvReader.cs" />
-    <Compile Include="Csv\CsvBindingList.cs" />
-    <Compile Include="Csv\CsvPropertyDescriptor.cs" />
-    <Compile Include="Csv\CsvRecordComparer.cs" />
-    <Compile Include="Csv\CsvReader.cs" />
-    <Compile Include="Csv\CsvReader.DataReaderValidations.cs" />
-    <Compile Include="Csv\CsvReader.RecordEnumerator.cs" />
-    <Compile Include="Csv\Events\ParseErrorEventArgs.cs" />
-    <Compile Include="Csv\Exceptions\MalformedCsvException.cs" />
-    <Compile Include="Csv\Exceptions\MissingFieldCsvException.cs" />
-    <Compile Include="Csv\MissingFieldAction.cs" />
-    <Compile Include="Csv\ParseErrorAction.cs" />
-    <Compile Include="Csv\Resources\ExceptionMessage.Designer.cs" />
-    <Compile Include="Csv\Column.cs" />
-    <Compile Include="Csv\ValueTrimmingOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Csv\Resources\ExceptionMessage.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LumenWorks.Framework.snk" />
@@ -111,6 +93,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <Import Project="..\..\LumenWorks.Framework.IO.Shared\LumenWorks.Framework.IO.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
