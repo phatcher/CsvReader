@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>LumenWorks.Framework.IO</RootNamespace>
+    <AssemblyName>LumenWorks.Framework.IO</AssemblyName>
+  </PropertyGroup>
+
+  <Import Project="..\LumenWorks.Framework.IO.Shared\LumenWorks.Framework.IO.Shared.projitems" Label="Shared" />
+
+</Project>

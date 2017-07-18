@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>727cff14-8419-424a-877b-a8d6da663cc0</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>LumenWorks.Framework.IO</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\CachedCsvReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\Column.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\CsvBindingList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\CsvPropertyDescriptor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\CsvReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\CsvReader.DataReaderValidations.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\CsvReader.RecordEnumerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\CsvRecordComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\Events\ParseErrorEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\Exceptions\MalformedCsvException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\Exceptions\MissingFieldCsvException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\MissingFieldAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\ParseErrorAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\Resources\ExceptionMessage.Designer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Csv\ValueTrimmingOptions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Csv\Resources\ExceptionMessage.resx" />
+  </ItemGroup>
+</Project>
