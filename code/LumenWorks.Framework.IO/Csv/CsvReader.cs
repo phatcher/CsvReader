@@ -2329,7 +2329,7 @@ namespace LumenWorks.Framework.IO.Csv
         object FieldValue(int i)
         {
             var value = this[i];
-            if (Columns == null)
+            if (Columns == null || i < 0 || i >= Columns.Count)
             {
                 return value;
             }

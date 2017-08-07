@@ -694,7 +694,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 		[Test()]
 		public void IsDBNullWithNullValueTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true, 
+			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true,
 				CsvReader.DefaultDelimiter, CsvReader.DefaultQuote, CsvReader.DefaultEscape, CsvReader.DefaultComment,
 				ValueTrimmingOptions.UnquotedOnly, CsvReaderSampleData.SampleNullValue))
 			{
@@ -758,6 +758,23 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
 					CsvReaderSampleData.CheckSampleData1(csv.HasHeaders, csv.CurrentRecordIndex, values);
 				}
+			}
+		}
+
+		[Test()]
+		public void HasNoHeadersTest()
+		{
+			using (IDataReader reader = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), false))
+			{
+				var recordCount = 0;
+				while (reader.Read())
+				{
+					var values = new object[reader.FieldCount];
+					reader.GetValues(values);
+					recordCount++;
+				}
+
+				Assert.AreNotEqual(0, recordCount);
 			}
 		}
 

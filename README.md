@@ -1,8 +1,9 @@
+Repo: https://github.com/molopony/CsvReader
 This is a forked version of LumenWorksCsvReader.
 
 Changes since fork:
-Added: 
-TargetFrameworkVersion: v2.0 => v4.6.1
+- Fixed: Exception when reading data and hasHeaders is false
+- TargetFrameworkVersion: v2.0 => v4.6.1
 
 See below for the original Readme text...
 
