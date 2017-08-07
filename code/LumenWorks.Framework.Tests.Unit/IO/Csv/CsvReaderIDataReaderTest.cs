@@ -771,6 +771,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 				{
 					var values = new object[reader.FieldCount];
 					reader.GetValues(values);
+					reader.GetFieldType(0);
 					recordCount++;
 				}
 

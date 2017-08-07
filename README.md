@@ -2,6 +2,7 @@ Repo: https://github.com/molopony/CsvReader
 This is a forked version of LumenWorksCsvReader.
 
 Changes since fork:
+- Fixed: Exception in GetFieldType() when hasHeaders is false
 - Fixed: Exception when reading data and hasHeaders is false
 - TargetFrameworkVersion: v2.0 => v4.6.1
 

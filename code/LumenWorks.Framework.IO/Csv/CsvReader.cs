@@ -2188,7 +2188,7 @@ namespace LumenWorks.Framework.IO.Csv
             if (i < 0 || i >= _fieldCount)
                 throw new ArgumentOutOfRangeException("i", i, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, i));
 
-            if (Columns == null)
+            if (Columns == null || i < 0 || i >= Columns.Count)
             {
                 return typeof(string);
             }
