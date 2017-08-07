@@ -2221,10 +2221,15 @@ namespace LumenWorks.Framework.IO.Csv
             EnsureInitialize();
             ValidateDataReader(DataReaderValidations.IsNotClosed);
 
-            if (i < 0 || i >= Columns.Count)
-                throw new ArgumentOutOfRangeException("i", i, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, i));
+			if (i < 0 || i >= FieldCount)
+				throw new ArgumentOutOfRangeException("i", i, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, i));
 
-            return Columns[i].Name;
+			if (i >= Columns.Count)
+			{
+				return null;
+			}
+
+			return Columns[i].Name;
         }
 
         long IDataRecord.GetInt64(int i)
