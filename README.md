@@ -1,3 +1,11 @@
+This is a forked version of LumenWorksCsvReader.
+
+Changes since fork:
+Added: 
+TargetFrameworkVersion: v2.0 => v4.6.1
+
+See below for the original Readme text...
+
 CSV Reader
 ==========
 
