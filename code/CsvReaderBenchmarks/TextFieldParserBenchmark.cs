@@ -1,12 +1,6 @@
-#region Using directives
-
-using System;
 using System.IO;
-using System.Text;
 
 using Microsoft.VisualBasic.FileIO;
-
-#endregion
 
 namespace CsvReaderDemo
 {
@@ -33,7 +27,7 @@ namespace CsvReaderDemo
 
 		public static void Run(string path, int field)
 		{
-			using (TextFieldParser csv = new TextFieldParser(new StreamReader(path)))
+			using (var csv = new TextFieldParser(new StreamReader(path)))
 			{
 				csv.TextFieldType = FieldType.Delimited;
 				csv.TrimWhiteSpace = true;

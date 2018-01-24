@@ -1,0 +1,8 @@
+
+
+GROUP Build
+NUGET
+  remote: http://www.nuget.org/api/v2
+    FAKE (4.64.3)
+    NuGet.CommandLine (4.4.1)
+    NUnit.ConsoleRunner (3.7)

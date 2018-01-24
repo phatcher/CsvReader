@@ -22,9 +22,7 @@
 
 // A special thanks goes to "shriop" at CodeProject for providing many of the standard and Unicode parsing tests.
 
-
 using System;
-using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -37,8 +35,6 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
     [TestFixture()]
     public class CsvReaderMalformedTest
     {
-        #region Utilities
-
         private void CheckMissingFieldUnquoted(long recordCount, int fieldCount, long badRecordIndex, int badFieldIndex, int bufferSize)
         {
             CheckMissingFieldUnquoted(recordCount, fieldCount, badRecordIndex, badFieldIndex, bufferSize, true, MissingFieldAction.ParseError);
@@ -54,11 +50,11 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             // construct the csv data with template "00,01,02\n10,11,12\n...." and calculate expected error position
 
-            long capacity = recordCount * (fieldCount * 2 + fieldCount - 1) + recordCount;
+            var capacity = recordCount * (fieldCount * 2 + fieldCount - 1) + recordCount;
             Assert.IsTrue(capacity <= int.MaxValue);
 
-            StringBuilder sb = new StringBuilder((int) capacity);
-            int expectedErrorPosition = 0;
+            var sb = new StringBuilder((int) capacity);
+            var expectedErrorPosition = 0;
 
             for (long i = 0; i < recordCount; i++)
             {
@@ -69,7 +65,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 else
                     realFieldCount = fieldCount;
 
-                for (int j = 0; j < realFieldCount; j++)
+                for (var j = 0; j < realFieldCount; j++)
                 {
                     sb.Append(i);
                     sb.Append(j);
@@ -91,7 +87,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
             // test csv
 
-            using (CsvReader csv = new CsvReader(new StringReader(sb.ToString()), false, bufferSize))
+            using (var csv = new CsvReader(new StringReader(sb.ToString()), false, bufferSize))
             {
                 csv.MissingFieldAction = action;
                 Assert.AreEqual(fieldCount, csv.FieldCount);
@@ -104,7 +100,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                     if (!sequentialAccess)
                         CheckMissingFieldValueUnquoted(csv, badFieldIndex, badRecordIndex, badFieldIndex, expectedErrorPosition, sequentialAccess, action);
 
-                    for (int i = 0; i < csv.FieldCount; i++)
+                    for (var i = 0; i < csv.FieldCount; i++)
                         CheckMissingFieldValueUnquoted(csv, i, badRecordIndex, badFieldIndex, expectedErrorPosition, sequentialAccess, action);
                 }
             }
@@ -112,10 +108,10 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
         private void CheckMissingFieldValueUnquoted(CsvReader csv, int fieldIndex, long badRecordIndex, int badFieldIndex, int expectedErrorPosition, bool sequentialAccess, MissingFieldAction action)
         {
-            const string Message = "RecordIndex={0}; FieldIndex={1}; Position={2}; Sequential={3}; Action={4}";
+            const string message = "RecordIndex={0}; FieldIndex={1}; Position={2}; Sequential={3}; Action={4}";
 
             // make sure s contains garbage as to not have false successes
-            string s = "asdfasdfasdf";
+            var s = "asdfasdfasdf";
 
             try
             {
@@ -123,29 +119,31 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             }
             catch (MissingFieldCsvException ex)
             {
-                Assert.AreEqual(badRecordIndex, ex.CurrentRecordIndex, Message, ex.CurrentRecordIndex, ex.CurrentFieldIndex, ex.CurrentPosition, sequentialAccess, action);
-                Assert.IsTrue(fieldIndex >= badFieldIndex, Message, ex.CurrentRecordIndex, ex.CurrentFieldIndex, ex.CurrentPosition, sequentialAccess, action);
-                Assert.AreEqual(expectedErrorPosition, ex.CurrentPosition, Message, ex.CurrentRecordIndex, ex.CurrentFieldIndex, ex.CurrentPosition, sequentialAccess, action);
+                Assert.AreEqual(badRecordIndex, ex.CurrentRecordIndex, message, ex.CurrentRecordIndex, ex.CurrentFieldIndex, ex.CurrentPosition, sequentialAccess, action);
+                Assert.IsTrue(fieldIndex >= badFieldIndex, message, ex.CurrentRecordIndex, ex.CurrentFieldIndex, ex.CurrentPosition, sequentialAccess, action);
+                Assert.AreEqual(expectedErrorPosition, ex.CurrentPosition, message, ex.CurrentRecordIndex, ex.CurrentFieldIndex, ex.CurrentPosition, sequentialAccess, action);
 
                 return;
             }
 
             if (csv.CurrentRecordIndex != badRecordIndex || fieldIndex < badFieldIndex)
-                Assert.AreEqual(csv.CurrentRecordIndex.ToString() + fieldIndex.ToString(), s, Message, csv.CurrentRecordIndex, fieldIndex, -1, sequentialAccess, action);
+            {
+                Assert.AreEqual(csv.CurrentRecordIndex.ToString() + fieldIndex.ToString(), s, message, csv.CurrentRecordIndex, fieldIndex, -1, sequentialAccess, action);
+            }
             else
             {
                 switch (action)
                 {
                     case MissingFieldAction.ReplaceByEmpty:
-                        Assert.AreEqual(string.Empty, s, Message, csv.CurrentRecordIndex, fieldIndex, -1, sequentialAccess, action);
+                        Assert.AreEqual(string.Empty, s, message, csv.CurrentRecordIndex, fieldIndex, -1, sequentialAccess, action);
                         break;
 
                     case MissingFieldAction.ReplaceByNull:
-                        Assert.IsNull(s, Message, csv.CurrentRecordIndex, fieldIndex, -1, sequentialAccess, action);
+                        Assert.IsNull(s, message, csv.CurrentRecordIndex, fieldIndex, -1, sequentialAccess, action);
                         break;
 
                     case MissingFieldAction.ParseError:
-                        Assert.Fail("Failed to throw ParseError. - " + Message, csv.CurrentRecordIndex, fieldIndex, -1, sequentialAccess, action);
+                        Assert.Fail("Failed to throw ParseError. - " + message, csv.CurrentRecordIndex, fieldIndex, -1, sequentialAccess, action);
                         break;
 
                     default:
@@ -155,230 +153,156 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             }
         }
 
-        #endregion
-
-        [Test()]
+        [Test]
         public void MissingFieldUnquotedTest1()
         {
             CheckMissingFieldUnquoted(4, 4, 2, 2, CsvReader.DefaultBufferSize);
             CheckMissingFieldUnquoted(4, 4, 2, 2, CsvReader.DefaultBufferSize);
         }
 
-        [Test()]
+        [Test]
         public void MissingFieldUnquotedTest2()
         {
             // With bufferSize = 16, faulty new line char is at the start of next buffer read
             CheckMissingFieldUnquoted(4, 4, 2, 3, 16);
         }
 
-        [Test()]
+        [Test]
         public void MissingFieldUnquotedTest3()
         {
             // test missing field when end of buffer has been reached
             CheckMissingFieldUnquoted(3, 4, 2, 3, 16);
         }
 
-        [Test()]
-        [ExpectedException(typeof(MissingFieldCsvException))]
+        [Test]
         public void MissingFieldAllQuotedFields_Issue_12()
         {
-            string sample =
+            var sample =
                 "\"A\",\"B\"\n" +
                 "\"1\",\"2\"\n" +
                 "\"3\"\n" +
                 "\"5\",\"6\"";
 
-            string[] buffer = new string[2];
+            var buffer = new string[2];
 
-            using (CsvReader csv = new CsvReader(new StringReader(sample), false))
+            Assert.Throws<MissingFieldCsvException>(() =>
             {
-                while (csv.ReadNextRecord())
+                using (var csv = new CsvReader(new StringReader(sample), false))
                 {
-                    csv.CopyCurrentRecordTo(buffer);
+                    while (csv.ReadNextRecord())
+                    {
+                        csv.CopyCurrentRecordTo(buffer);
+                    }
                 }
-            }
+            });
         }
 
-        [Test()]
-        [ExpectedException(typeof(MissingFieldCsvException))]
+        [Test]
         public void MissingFieldQuotedTest1()
         {
-            const string Data = "a,b,c,d\n1,1,1,1\n2,\"2\"\n3,3,3,3";
+            const string data = "a,b,c,d\n1,1,1,1\n2,\"2\"\n3,3,3,3";
 
-            try
+            var ep = ParseException<MissingFieldCsvException>(data);
+            if (!(ep.CurrentRecordIndex == 2 && ep.CurrentFieldIndex == 2 && ep.CurrentPosition == 22))
             {
-                using (CsvReader csv = new CsvReader(new StringReader(Data), false))
-                {
-                    while (csv.ReadNextRecord())
-                        for (int i = 0; i < csv.FieldCount; i++)
-                        {
-                            string s = csv[i];
-                        }
-                }
-            }
-            catch (MissingFieldCsvException ex)
-            {
-                if (ex.CurrentRecordIndex == 2 && ex.CurrentFieldIndex == 2 && ex.CurrentPosition == 22)
-                    throw ex;
+                throw ep;
             }
         }
 
-        [Test()]
-        [ExpectedException(typeof(MissingFieldCsvException))]
+        [Test]
         public void MissingFieldQuotedTest2()
         {
-            const string Data = "a,b,c,d\n1,1,1,1\n2,\"2\",\n3,3,3,3";
+            const string data = "a,b,c,d\n1,1,1,1\n2,\"2\",\n3,3,3,3";
 
-            try
-            {
-                using (CsvReader csv = new CsvReader(new StringReader(Data), false, 11))
-                {
-                    while (csv.ReadNextRecord())
-                        for (int i = 0; i < csv.FieldCount; i++)
-                        {
-                            string s = csv[i];
-                        }
-                }
-            }
-            catch (MissingFieldCsvException ex)
-            {
-                if (ex.CurrentRecordIndex == 2 && ex.CurrentFieldIndex == 2 && ex.CurrentPosition == 1)
-                    throw ex;
-            }
+            // NOTE: Buffer size affects reported error position - surely should be based on source doc position?
+            var ep = ParseException<MissingFieldCsvException>(data, 11);
+            if (!(ep.CurrentRecordIndex == 2 && ep.CurrentFieldIndex == 2 && ep.CurrentPosition == 1))
+                throw ep;
         }
 
-        [Test()]
-        [ExpectedException(typeof(MissingFieldCsvException))]
+        [Test]
         public void MissingFieldQuotedTest3()
         {
-            const string Data = "a,b,c,d\n1,1,1,1\n2,\"2\"\n\"3\",3,3,3";
+            const string data = "a,b,c,d\n1,1,1,1\n2,\"2\"\n\"3\",3,3,3";
 
-            try
-            {
-                using (CsvReader csv = new CsvReader(new StringReader(Data), false))
-                {
-                    while (csv.ReadNextRecord())
-                        for (int i = 0; i < csv.FieldCount; i++)
-                        {
-                            string s = csv[i];
-                        }
-                }
-            }
-            catch (MissingFieldCsvException ex)
-            {
-                if (ex.CurrentRecordIndex == 2 && ex.CurrentFieldIndex == 2 && ex.CurrentPosition == 22)
-                    throw ex;
-            }
+            var ep = ParseException<MissingFieldCsvException>(data);
+            if (!(ep.CurrentRecordIndex == 2 && ep.CurrentFieldIndex == 2 && ep.CurrentPosition == 22))
+                throw ep;
         }
 
-        [Test()]
-        [ExpectedException(typeof(MissingFieldCsvException))]
+        [Test]
         public void MissingFieldQuotedTest4()
         {
-            const string Data = "a,b,c,d\n1,1,1,1\n2,\"2\",\n\"3\",3,3,3";
+            const string data = "a,b,c,d\n1,1,1,1\n2,\"2\",\n\"3\",3,3,3";
 
-            try
+            // NOTE: Buffer size affects reported error position - surely should be based on source doc position?
+            var ep = ParseException<MissingFieldCsvException>(data, 11);
+            if (!(ep.CurrentRecordIndex == 2 && ep.CurrentFieldIndex == 2 && ep.CurrentPosition == 1))
             {
-                using (CsvReader csv = new CsvReader(new StringReader(Data), false, 11))
-                {
-                    while (csv.ReadNextRecord())
-                        for (int i = 0; i < csv.FieldCount; i++)
-                        {
-                            string s = csv[i];
-                        }
-                }
-            }
-            catch (MissingFieldCsvException ex)
-            {
-                if (ex.CurrentRecordIndex == 2 && ex.CurrentFieldIndex == 2 && ex.CurrentPosition == 1)
-                    throw ex;
+                throw ep;
             }
         }
 
-        [Test()]
-        [ExpectedException(typeof(MalformedCsvException))]
+        [Test]
         public void MissingDelimiterAfterQuotedFieldTest1()
         {
-            const string Data = "\"111\",\"222\"\"333\"";
+            const string data = "\"111\",\"222\"\"333\"";
 
-            try
+            var ep = ParseExceptionTrimmingOptions<MalformedCsvException>(data);
+            if (!(ep.CurrentRecordIndex == 0 && ep.CurrentFieldIndex == 1 && ep.CurrentPosition == 11))
             {
-                using (CsvReader csv = new CsvReader(new StringReader(Data), false, ',', '"', '\\', '#', ValueTrimmingOptions.UnquotedOnly))
-                {
-                    while (csv.ReadNextRecord())
-                        for (int i = 0; i < csv.FieldCount; i++)
-                        {
-                            string s = csv[i];
-                        }
-                }
-            }
-            catch (MalformedCsvException ex)
-            {
-                if (ex.CurrentRecordIndex == 0 && ex.CurrentFieldIndex ==1 && ex.CurrentPosition == 11)
-                    throw ex;
+                throw ep;
             }
         }
 
-        [Test()]
-        [ExpectedException(typeof(MalformedCsvException))]
+        [Test]
         public void MissingDelimiterAfterQuotedFieldTest2()
         {
-            const string Data = "\"111\",\"222\",\"333\"\n\"111\",\"222\"\"333\"";
+            const string data = "\"111\",\"222\",\"333\"\n\"111\",\"222\"\"333\"";
 
-            try
+            var ep = ParseExceptionTrimmingOptions<MalformedCsvException>(data);
+            if (!(ep.CurrentRecordIndex == 1 && ep.CurrentFieldIndex == 1 && ep.CurrentPosition == 29))
             {
-                using (CsvReader csv = new CsvReader(new StringReader(Data), false, ',', '"', '\\', '#', ValueTrimmingOptions.UnquotedOnly))
-                {
-                    while (csv.ReadNextRecord())
-                        for (int i = 0; i < csv.FieldCount; i++)
-                        {
-                            string s = csv[i];
-                        }
-                }
-            }
-            catch (MalformedCsvException ex)
-            {
-                if (ex.CurrentRecordIndex == 1 && ex.CurrentFieldIndex == 1 && ex.CurrentPosition == 29)
-                    throw ex;
+                throw ep;
             }
         }
 
-        [Test()]
+        [Test]
         public void MoreFieldsTest_AdvanceToNextLine()
         {
-            const string Data = "ORIGIN,DESTINATION\nPHL,FLL,kjhkj kjhkjh,eg,fhgf\nNYC,LAX";
+            const string data = "ORIGIN,DESTINATION\nPHL,FLL,kjhkj kjhkjh,eg,fhgf\nNYC,LAX";
 
-            using (CsvReader csv = new CsvReader(new System.IO.StringReader(Data), false))
+            using (var csv = new CsvReader(new StringReader(data), false))
             {
                 csv.SupportsMultiline = false;
                 csv.DefaultParseErrorAction = ParseErrorAction.AdvanceToNextLine;
 
                 while (csv.ReadNextRecord())
                 {
-                    for (int i = 0; i < csv.FieldCount; i++)
+                    for (var i = 0; i < csv.FieldCount; i++)
                     {
-                        string s = csv[i];
+                        var s = csv[i];
                     }
                 }
             }
         }
 
-        [Test()]
+        [Test]
         public void MoreFieldsTest_RaiseEvent()
         {
-            const string Data = "ORIGIN,DESTINATION\nPHL,FLL,kjhkj kjhkjh,eg,fhgf\nNYC,LAX";
+            const string data = "ORIGIN,DESTINATION\nPHL,FLL,kjhkj kjhkjh,eg,fhgf\nNYC,LAX";
 
-            using (CsvReader csv = new CsvReader(new System.IO.StringReader(Data), false))
+            using (var csv = new CsvReader(new StringReader(data), false))
             {
-                bool sawError = false;
+                var sawError = false;
                 csv.SupportsMultiline = false;
                 csv.DefaultParseErrorAction = ParseErrorAction.RaiseEvent;
                 csv.ParseError += (obj, args) => sawError = true;
                 while (csv.ReadNextRecord())
                 {
-                    for (int i = 0; i < csv.FieldCount; i++)
+                    for (var i = 0; i < csv.FieldCount; i++)
                     {
-                        string s = csv[i];
+                        var s = csv[i];
                     }
                 }
 
@@ -386,39 +310,40 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             }
         }
 
-        [Test, ExpectedException(typeof(MalformedCsvException))]
+        [Test]
         public void MoreFieldsTest_ThrowsException()
         {
-            const string Data = "ORIGIN,DESTINATION\nPHL,FLL,kjhkj kjhkjh,eg,fhgf\nNYC,LAX";
+            const string data = "ORIGIN,DESTINATION\nPHL,FLL,kjhkj kjhkjh,eg,fhgf\nNYC,LAX";
 
-            using (CsvReader csv = new CsvReader(new System.IO.StringReader(Data), false))
+            Assert.Throws<MalformedCsvException>(() =>
             {
-                bool sawError = false;
-                csv.SupportsMultiline = false;
-                csv.DefaultParseErrorAction = ParseErrorAction.ThrowException;
-                while (csv.ReadNextRecord())
+                using (var csv = new CsvReader(new System.IO.StringReader(data), false))
                 {
-                    for (int i = 0; i < csv.FieldCount; i++)
+                    csv.SupportsMultiline = false;
+                    csv.DefaultParseErrorAction = ParseErrorAction.ThrowException;
+                    while (csv.ReadNextRecord())
                     {
-                        string s = csv[i];
+                        for (var i = 0; i < csv.FieldCount; i++)
+                        {
+                            var s = csv[i];
+                        }
                     }
                 }
-
-            }
+            });
         }
 
-        [Test()]
+        [Test]
         public void MoreFieldsMultilineTest()
         {
-            const string Data = "ORIGIN,DESTINATION\nPHL,FLL,kjhkj kjhkjh,eg,fhgf\nNYC,LAX";
+            const string data = "ORIGIN,DESTINATION\nPHL,FLL,kjhkj kjhkjh,eg,fhgf\nNYC,LAX";
 
-            using (CsvReader csv = new CsvReader(new System.IO.StringReader(Data), false))
+            using (var csv = new CsvReader(new System.IO.StringReader(data), false))
             {
                 while (csv.ReadNextRecord())
                 {
-                    for (int i = 0; i < csv.FieldCount; i++)
+                    for (var i = 0; i < csv.FieldCount; i++)
                     {
-                        string s = csv[i];
+                        var s = csv[i];
                     }
                 }
             }
@@ -427,9 +352,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParseErrorBeforeInitializeTest()
         {
-            const string Data = "\"0022 - SKABELON\";\"\"Tandremstrammer\";\"\";\"0,00\";\"\"\n\"15907\";\"\"BOLT TIL 2-05-405\";\"\";\"42,50\";\"4027816159070\"\n\"19324\";\"FJEDER TIL 2-05-405\";\"\";\"14,50\";\"4027816193241\"";
+            const string data = "\"0022 - SKABELON\";\"\"Tandremstrammer\";\"\";\"0,00\";\"\"\n\"15907\";\"\"BOLT TIL 2-05-405\";\"\";\"42,50\";\"4027816159070\"\n\"19324\";\"FJEDER TIL 2-05-405\";\"\";\"14,50\";\"4027816193241\"";
 
-            using (var csv = new CsvReader(new System.IO.StringReader(Data), false, ';'))
+            using (var csv = new CsvReader(new System.IO.StringReader(data), false, ';'))
             {
                 csv.DefaultParseErrorAction = ParseErrorAction.AdvanceToNextLine;
 
@@ -448,11 +373,11 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void LastFieldEmptyFollowedByMissingFieldsOnNextRecord()
         {
-            const string Data = "a,b,c,d,e"
+            const string data = "a,b,c,d,e"
                 + "\na,b,c,d,"
                 + "\na,b,";
 
-            using (var csv = new CsvReader(new StringReader(Data), false))
+            using (var csv = new CsvReader(new StringReader(data), false))
             {
                 csv.MissingFieldAction = MissingFieldAction.ReplaceByNull;
 
@@ -472,6 +397,66 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
                 Assert.IsFalse(csv.ReadNextRecord());
             }
+        }
+
+        private T ParseException<T>(string data)
+            where T : Exception
+        {
+            var ep = Assert.Throws<T>(() =>
+            {
+                using (var csv = new CsvReader(new StringReader(data), false))
+                {
+                    while (csv.ReadNextRecord())
+                    {
+                        for (var i = 0; i < csv.FieldCount; i++)
+                        {
+                            var s = csv[i];
+                        }
+                    }
+                }
+            });
+
+            return ep;
+        }
+
+        private T ParseException<T>(string data, int bufferSize)
+            where T : Exception
+        {
+            var ep = Assert.Throws<T>(() =>
+            {
+                using (var csv = new CsvReader(new StringReader(data), false, bufferSize))
+                {
+                    while (csv.ReadNextRecord())
+                    {
+                        for (var i = 0; i < csv.FieldCount; i++)
+                        {
+                            var s = csv[i];
+                        }
+                    }
+                }
+            });
+
+            return ep;
+        }
+
+        private T ParseExceptionTrimmingOptions<T>(string data, ValueTrimmingOptions options = ValueTrimmingOptions.UnquotedOnly)
+            where T : Exception
+        {
+            var ep = Assert.Throws<T>(() =>
+            {
+                using (var csv = new CsvReader(new StringReader(data), false, ',', '"', '\\', '#', options))
+                {
+                    while (csv.ReadNextRecord())
+                    {
+                        for (var i = 0; i < csv.FieldCount; i++)
+                        {
+                            var s = csv[i];
+                        }
+                    }
+                }
+            });
+
+            return ep;
         }
     }
 }

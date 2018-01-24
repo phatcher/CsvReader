@@ -17,7 +17,7 @@ You can see the version history [here](RELEASE_NOTES.md).
 ## Build the project
 * Windows: Run *build.cmd*
 
-I have my tools in C:\Tools so I use *build.cmd Default tools=C:\Tools encoding=UTF-8*
+The tooling should be automatically installed by paket/Fake. The default build will compile and test the project, and also produce a nuget package.
 
 ## Library License
 
@@ -50,43 +50,43 @@ Having said that, there are some extensions built into this version of the libra
 ### Columns
 One addition is the addition of a Column list which holds the names and types of the data in the CSV file. If there are no headers present, we default the column names to Column1, Column2 etc; this can be overridden by setting the DefaultColumnHeader property e.g.
 ```csharp
-    using System.IO;
-    using LumenWorks.Framework.IO.Csv;
+using System.IO;
+using LumenWorks.Framework.IO.Csv;
 
-    void ReadCsv()
+void ReadCsv()
+{
+    // open the file "data.csv" which is a CSV file with headers
+    using (var csv = new CachedCsvReader(new StreamReader("data.csv"), false))
     {
-        // open the file "data.csv" which is a CSV file with headers
-        using (var csv = new CachedCsvReader(new StreamReader("data.csv"), false))
-        {
-            csv.DefaultColumnHeader = "Fred"
+        csv.DefaultColumnHeader = "Fred"
 
-            // Field headers will now be Fred1, Fred2, etc
-            myDataGrid.DataSource = csv;
-        }
+        // Field headers will now be Fred1, Fred2, etc
+        myDataGrid.DataSource = csv;
     }
+}
 ```
 
 You can specify the columns yourself if there are none, and also specify the expected type; this is especially important when using against SqlBulkCopy which we will come back to later.
 ```csharp
-    using System.IO;
-    using LumenWorks.Framework.IO.Csv;
+using System.IO;
+using LumenWorks.Framework.IO.Csv;
 
-    void ReadCsv()
+void ReadCsv()
+{
+    // open the file "data.csv" which is a CSV file with headers
+    using (var csv = new CachedCsvReader(new StreamReader("data.csv"), false))
     {
-        // open the file "data.csv" which is a CSV file with headers
-        using (var csv = new CachedCsvReader(new StreamReader("data.csv"), false))
-        {
-            csv.Columns.Add(new Column { Name = "PriceDate", Type = typeof(DateTime) });
-            csv.Columns.Add(new Column { Name = "OpenPrice", Type = typeof(decimal) });
-            csv.Columns.Add(new Column { Name = "HighPrice", Type = typeof(decimal) });
-            csv.Columns.Add(new Column { Name = "LowPrice", Type = typeof(decimal) });
-            csv.Columns.Add(new Column { Name = "ClosePrice", Type = typeof(decimal) });
-            csv.Columns.Add(new Column { Name = "Volume", Type = typeof(int) });
+        csv.Columns.Add(new Column { Name = "PriceDate", Type = typeof(DateTime) });
+        csv.Columns.Add(new Column { Name = "OpenPrice", Type = typeof(decimal) });
+        csv.Columns.Add(new Column { Name = "HighPrice", Type = typeof(decimal) });
+        csv.Columns.Add(new Column { Name = "LowPrice", Type = typeof(decimal) });
+        csv.Columns.Add(new Column { Name = "ClosePrice", Type = typeof(decimal) });
+        csv.Columns.Add(new Column { Name = "Volume", Type = typeof(int) });
 
-            // Field headers will now be picked from the Columns collection
-            myDataGrid.DataSource = csv;
-        }
+        // Field headers will now be picked from the Columns collection
+        myDataGrid.DataSource = csv;
     }
+}
 ```
 
 ### SQL Bulk Copy
@@ -98,89 +98,89 @@ A couple of issues arise when using SBC
 	
 Below is a example using the Columns collection to set up the correct metadata for SBC
 ```csharp
-	public void Import(string fileName, string connectionString)
-	{
-		using (var reader = new CsvReader(new StreamReader(fileName), false))
-		{
-			reader.Columns = new List<LumenWorks.Framework.IO.Csv.Column>
-			{
-				new LumenWorks.Framework.IO.Csv.Column { Name = "PriceDate", Type = typeof(DateTime) },
-				new LumenWorks.Framework.IO.Csv.Column { Name = "OpenPrice", Type = typeof(decimal) },
-				new LumenWorks.Framework.IO.Csv.Column { Name = "HighPrice", Type = typeof(decimal) },
-				new LumenWorks.Framework.IO.Csv.Column { Name = "LowPrice", Type = typeof(decimal) },
-				new LumenWorks.Framework.IO.Csv.Column { Name = "ClosePrice", Type = typeof(decimal) },
-				new LumenWorks.Framework.IO.Csv.Column { Name = "Volume", Type = typeof(int) },
-			};
+public void Import(string fileName, string connectionString)
+{
+    using (var reader = new CsvReader(new StreamReader(fileName), false))
+    {
+        reader.Columns = new List<LumenWorks.Framework.IO.Csv.Column>
+        {
+            new LumenWorks.Framework.IO.Csv.Column { Name = "PriceDate", Type = typeof(DateTime) },
+            new LumenWorks.Framework.IO.Csv.Column { Name = "OpenPrice", Type = typeof(decimal) },
+            new LumenWorks.Framework.IO.Csv.Column { Name = "HighPrice", Type = typeof(decimal) },
+            new LumenWorks.Framework.IO.Csv.Column { Name = "LowPrice", Type = typeof(decimal) },
+            new LumenWorks.Framework.IO.Csv.Column { Name = "ClosePrice", Type = typeof(decimal) },
+            new LumenWorks.Framework.IO.Csv.Column { Name = "Volume", Type = typeof(int) },
+        };
 
-			// Now use SQL Bulk Copy to move the data
-			using (var sbc = new SqlBulkCopy(connectionString))
-			{
-				sbc.DestinationTableName = "dbo.DailyPrice";
-				sbc.BatchSize = 1000;
+        // Now use SQL Bulk Copy to move the data
+        using (var sbc = new SqlBulkCopy(connectionString))
+        {
+            sbc.DestinationTableName = "dbo.DailyPrice";
+            sbc.BatchSize = 1000;
 
-				sbc.AddColumnMapping("PriceDate", "PriceDate");
-				sbc.AddColumnMapping("OpenPrice", "OpenPrice");
-				sbc.AddColumnMapping("HighPrice", "HighPrice");
-				sbc.AddColumnMapping("LowPrice", "LowPrice");
-				sbc.AddColumnMapping("ClosePrice", "ClosePrice");
-				sbc.AddColumnMapping("Volume", "Volume");
+            sbc.AddColumnMapping("PriceDate", "PriceDate");
+            sbc.AddColumnMapping("OpenPrice", "OpenPrice");
+            sbc.AddColumnMapping("HighPrice", "HighPrice");
+            sbc.AddColumnMapping("LowPrice", "LowPrice");
+            sbc.AddColumnMapping("ClosePrice", "ClosePrice");
+            sbc.AddColumnMapping("Volume", "Volume");
 
-				sbc.WriteToServer(reader);
-			}
-		}
-	}
+            sbc.WriteToServer(reader);
+        }
+    }
+}
 ```
 The method AddColumnMapping is an extension I wrote to simplify adding mappings to SBC
 ```csharp
-    public static class SqlBulkCopyExtensions
+public static class SqlBulkCopyExtensions
+{
+    public static SqlBulkCopyColumnMapping AddColumnMapping(this SqlBulkCopy sbc, int sourceColumnOrdinal, int targetColumnOrdinal)
     {
-        public static SqlBulkCopyColumnMapping AddColumnMapping(this SqlBulkCopy sbc, int sourceColumnOrdinal, int targetColumnOrdinal)
-        {
-            var map = new SqlBulkCopyColumnMapping(sourceColumnOrdinal, targetColumnOrdinal);
-            sbc.ColumnMappings.Add(map);
+        var map = new SqlBulkCopyColumnMapping(sourceColumnOrdinal, targetColumnOrdinal);
+        sbc.ColumnMappings.Add(map);
 
-            return map;
-        }
-
-        public static SqlBulkCopyColumnMapping AddColumnMapping(this SqlBulkCopy sbc, string sourceColumn, string targetColumn)
-        {
-            var map = new SqlBulkCopyColumnMapping(sourceColumn, targetColumn);
-            sbc.ColumnMappings.Add(map);
-
-            return map;
-        }
+        return map;
     }
+
+    public static SqlBulkCopyColumnMapping AddColumnMapping(this SqlBulkCopy sbc, string sourceColumn, string targetColumn)
+    {
+        var map = new SqlBulkCopyColumnMapping(sourceColumn, targetColumn);
+        sbc.ColumnMappings.Add(map);
+
+        return map;
+    }
+}
 ```	
 One other issue recently arose where we wanted to use SBC but some of the data was not in the file itself, but metadata that needed to be included on every row. The solution was to amend the CSV reader and Columns collection to allow default values to be provided that are not in the data.
 
 The additional columns should be added at the end of the Columns collection to avoid interfering with the parsing, see the amended example below...
 ```csharp
-	public void Import(string fileName, string connectionString)
-	{
-		using (var reader = new CsvReader(new StreamReader(fileName), false))
-		{
-			reader.Columns = new List<LumenWorks.Framework.IO.Csv.Column>
-			{
-			    ...
-				new LumenWorks.Framework.IO.Csv.Column { Name = "Volume", Type = typeof(int) },
-				// NB Fake column so bulk import works
-                new LumenWorks.Framework.IO.Csv.Column { Name = "Ticker", Type = typeof(string) },
-			};
+public void Import(string fileName, string connectionString)
+{
+    using (var reader = new CsvReader(new StreamReader(fileName), false))
+    {
+        reader.Columns = new List<LumenWorks.Framework.IO.Csv.Column>
+        {
+            ...
+            new LumenWorks.Framework.IO.Csv.Column { Name = "Volume", Type = typeof(int) },
+            // NB Fake column so bulk import works
+            new LumenWorks.Framework.IO.Csv.Column { Name = "Ticker", Type = typeof(string) },
+        };
 
-			// Fix up the column defaults with the values we need
-            reader.UseColumnDefaults = true;
-			reader.Columns[reader.GetFieldIndex("Ticker")] = Path.GetFileNameWithoutExtension(fileName);
+        // Fix up the column defaults with the values we need
+        reader.UseColumnDefaults = true;
+        reader.Columns[reader.GetFieldIndex("Ticker")] = Path.GetFileNameWithoutExtension(fileName);
 
-			// Now use SQL Bulk Copy to move the data
-			using (var sbc = new SqlBulkCopy(connectionString))
-			{
-				...
-				sbc.AddColumnMapping("Ticker", "Ticker");
+        // Now use SQL Bulk Copy to move the data
+        using (var sbc = new SqlBulkCopy(connectionString))
+        {
+            ...
+            sbc.AddColumnMapping("Ticker", "Ticker");
 
-				sbc.WriteToServer(reader);
-			}
-		}
-	}
+            sbc.WriteToServer(reader);
+        }
+    }
+}
 ```
 To give an idea of performance, this took a naive sample app using an ORM from 2m 27s to 1.37s using SBC and the full import took just over 11m to import 9.8m records.
 	
