@@ -12,7 +12,7 @@ open Fake.ReleaseNotesHelper
 let projectName = "CsvReader"
 let projectSummary = ""
 let projectDescription = "An extended version of LumenWorks.Frameworks.IO"
-let authors = ["Sébastien Lorion"; "Paul Hatcher"]
+let authors = ["SÃ©bastien Lorion"; "Paul Hatcher"]
 
 let release = LoadReleaseNotes "RELEASE_NOTES.md"
 
