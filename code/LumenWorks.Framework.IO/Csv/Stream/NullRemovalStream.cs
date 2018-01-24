@@ -29,8 +29,12 @@
             {
                 throw new ArgumentOutOfRangeException(nameof(bufferSize), bufferSize, ExceptionMessage.BufferSizeTooSmall);
             }
-            _source = source ?? throw new ArgumentNullException(nameof(source));
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
 
+            _source = source;
             _addMark = addMark;
             _buffer = new byte [bufferSize];
             _threshold = threshold < 60 ? 60 : threshold;
