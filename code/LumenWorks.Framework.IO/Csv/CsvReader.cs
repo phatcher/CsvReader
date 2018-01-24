@@ -2663,9 +2663,11 @@ namespace LumenWorks.Framework.IO.Csv
         ~CsvReader()
         {
 #if DEBUG
-            Debug.WriteLine("FinalizableObject was not disposed" + _allocStack.ToString());
+            if (_allocStack != null)
+            {
+                Debug.WriteLine("FinalizableObject was not disposed" + _allocStack.ToString());
+            }
 #endif
-
             Dispose(false);
         }
     }
