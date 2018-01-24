@@ -82,6 +82,8 @@
     <Compile Include="Csv\Exceptions\MalformedCsvException.cs" />
     <Compile Include="Csv\Exceptions\MissingFieldCsvException.cs" />
     <Compile Include="Csv\MissingFieldAction.cs" />
+    <Compile Include="Csv\Stream\NullRemovalStream.cs" />
+    <Compile Include="Csv\Stream\NullRemovalStreamReader.cs" />
     <Compile Include="Csv\ParseErrorAction.cs" />
     <Compile Include="Csv\Resources\ExceptionMessage.Designer.cs" />
     <Compile Include="Csv\Column.cs" />

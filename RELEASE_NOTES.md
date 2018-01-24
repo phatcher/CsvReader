@@ -1,3 +1,6 @@
+#### 3.9.2 (TBD)
+* Added NullBytesRemoval functionality to reduce memory usage and runtime (@andrewpsy)
+
 #### 3.9.1 (2016-04-09)
 * Added max field length for quoted fields (@criteo)
 * Strengthen Debug.Assert condition in GetSchemaWithoutHeaders (@joshgo)

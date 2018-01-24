@@ -32,6 +32,8 @@ using LumenWorks.Framework.IO.Csv.Resources;
 
 namespace LumenWorks.Framework.IO.Csv
 {
+    using System.Text;
+
     /// <summary>
     /// Represents a reader that provides fast, non-cached, forward-only access to CSV data.  
     /// </summary>
@@ -61,6 +63,16 @@ namespace LumenWorks.Framework.IO.Csv
         /// Defines the default comment character indicating that a line is commented out.
         /// </summary>
         public const char DefaultComment = '#';
+
+        /// <summary>
+        /// Defines the default value for AddMark indicating should the CsvReader add null bytes removal mark ([removed x null bytes])
+        /// </summary>
+        private const bool DefaultAddMark = false;
+
+        /// <summary>
+        /// Defines the default value for Threshold indicating when the CsvReader should replace/remove consecutive null bytes
+        /// </summary>
+        private const int DefaultThreshold = 60;
 
         /// <summary>
         /// Contains the <see cref="T:TextReader"/> pointing to the CSV file.
@@ -210,6 +222,25 @@ namespace LumenWorks.Framework.IO.Csv
         private bool _parseErrorFlag;
 
         /// <summary>
+        /// Like CsvReader(TextReader reader, bool hasHeaders) but removes consecutive null bytes above a threshold from source stream.
+        /// </summary>
+        /// <param name="stream">A <see cref="T:Stream"/> pointing to the CSV file.</param>
+        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+        /// <param name="encoding"> specifies the encoding of the underlying stream.</param>
+        /// <param name="addMark"><see langword="true"/> if want to add a mark ([removed x null bytes]) to indicate removal, remove silently if <see langword="false"/>.</param>
+        /// <param name="threshold"> only consecutive null bytes above this threshold will be removed or replaced by a mark.</param>
+        /// <exception cref="T:ArgumentNullException">
+        ///     <paramref name="stream"/> is a <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="T:ArgumentException">
+        ///     Cannot read from <paramref name="stream"/>.
+        /// </exception>
+        public CsvReader(Stream stream, bool hasHeaders, Encoding encoding, bool addMark = DefaultAddMark, int threshold = DefaultThreshold)
+            : this(new NullRemovalStreamReader(stream, addMark, threshold, encoding), hasHeaders)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the CsvReader class.
         /// </summary>
         /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
@@ -222,6 +253,26 @@ namespace LumenWorks.Framework.IO.Csv
         /// </exception>
         public CsvReader(TextReader reader, bool hasHeaders)
             : this(reader, hasHeaders, DefaultDelimiter, DefaultQuote, DefaultEscape, DefaultComment, ValueTrimmingOptions.UnquotedOnly, DefaultBufferSize)
+        {
+        }
+
+        /// <summary>
+        /// Like CsvReader(TextReader reader, bool hasHeaders, int bufferSize) but removes consecutive null bytes above a threshold from source stream.
+        /// </summary>
+        /// <param name="stream">A <see cref="T:Stream"/> pointing to the CSV file.</param>
+        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+        /// <param name="encoding"> specifies the encoding of the underlying stream.</param>
+        /// <param name="bufferSize">The buffer size in bytes.</param>
+        /// <param name="addMark"><see langword="true"/> if want to add a mark ([removed x null bytes]) to indicate removal, remove silently if <see langword="false"/>.</param>
+        /// <param name="threshold"> only consecutive null bytes above this threshold will be removed or replaced by a mark.</param>
+        /// <exception cref="T:ArgumentNullException">
+        ///     <paramref name="stream"/> is a <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="T:ArgumentException">
+        ///     Cannot read from <paramref name="stream"/>.
+        /// </exception>
+        public CsvReader(Stream stream, bool hasHeaders, Encoding encoding, int bufferSize, bool addMark = DefaultAddMark, int threshold = DefaultThreshold)
+            : this(new NullRemovalStreamReader(stream, addMark, threshold, encoding, bufferSize), hasHeaders, bufferSize)
         {
         }
 
@@ -243,6 +294,26 @@ namespace LumenWorks.Framework.IO.Csv
         }
 
         /// <summary>
+        /// Like CsvReader(TextReader reader, bool hasHeaders, char delimiter) but removes consecutive null bytes above a threshold from source stream.
+        /// </summary>
+        /// <param name="stream">A <see cref="T:Stream"/> pointing to the CSV file.</param>
+        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+        /// <param name="encoding"> specifies the encoding of the underlying stream.</param>
+        /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
+        /// <param name="addMark"><see langword="true"/> if want to add a mark ([removed x null bytes]) to indicate removal, remove silently if <see langword="false"/>.</param>
+        /// <param name="threshold"> only consecutive null bytes above this threshold will be removed or replaced by a mark.</param>
+        /// <exception cref="T:ArgumentNullException">
+        ///     <paramref name="stream"/> is a <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="T:ArgumentException">
+        ///     Cannot read from <paramref name="stream"/>.
+        /// </exception>
+        public CsvReader(Stream stream, bool hasHeaders, Encoding encoding, char delimiter, bool addMark = DefaultAddMark, int threshold = DefaultThreshold)
+            : this(new NullRemovalStreamReader(stream, addMark, threshold, encoding), hasHeaders, delimiter)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the CsvReader class.
         /// </summary>
         /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
@@ -256,6 +327,27 @@ namespace LumenWorks.Framework.IO.Csv
         /// </exception>
         public CsvReader(TextReader reader, bool hasHeaders, char delimiter)
             : this(reader, hasHeaders, delimiter, DefaultQuote, DefaultEscape, DefaultComment, ValueTrimmingOptions.UnquotedOnly, DefaultBufferSize)
+        {
+        }
+
+        /// <summary>
+        /// Like CsvReader(TextReader reader, bool hasHeaders, char delimiter, int bufferSize) but removes consecutive null bytes above a threshold from source stream.
+        /// </summary>
+        /// <param name="stream">A <see cref="T:Stream"/> pointing to the CSV file.</param>
+        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+        /// <param name="encoding"> specifies the encoding of the underlying stream.</param>
+        /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
+        /// <param name="bufferSize">The buffer size in bytes.</param>
+        /// <param name="addMark"><see langword="true"/> if want to add a mark ([removed x null bytes]) to indicate removal, remove silently if <see langword="false"/>.</param>
+        /// <param name="threshold"> only consecutive null bytes above this threshold will be removed or replaced by a mark.</param>
+        /// <exception cref="T:ArgumentNullException">
+        ///     <paramref name="stream"/> is a <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="T:ArgumentException">
+        ///     Cannot read from <paramref name="stream"/>.
+        /// </exception>
+        public CsvReader(Stream stream, bool hasHeaders, Encoding encoding, char delimiter, int bufferSize, bool addMark = DefaultAddMark, int threshold = DefaultThreshold)
+            : this(new NullRemovalStreamReader(stream, addMark, threshold, encoding, bufferSize), hasHeaders, delimiter, bufferSize)
         {
         }
 
@@ -274,6 +366,35 @@ namespace LumenWorks.Framework.IO.Csv
         /// </exception>
         public CsvReader(TextReader reader, bool hasHeaders, char delimiter, int bufferSize)
             : this(reader, hasHeaders, delimiter, DefaultQuote, DefaultEscape, DefaultComment, ValueTrimmingOptions.UnquotedOnly, bufferSize)
+        {
+        }
+
+        /// <summary>
+        ///     Like CsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, string nullValue)
+        ///     but removes consecutive null bytes above a threshold from source stream.
+        /// </summary>
+        /// <param name="stream">A <see cref="T:Stream"/> pointing to the CSV file.</param>
+        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+        /// <param name="encoding"> specifies the encoding of the underlying stream.</param>
+        /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
+        /// <param name="quote">The quotation character wrapping every field (default is ''').</param>
+        /// <param name="escape">
+        /// The escape character letting insert quotation characters inside a quoted field (default is '\').
+        /// If no escape character, set to '\0' to gain some performance.
+        /// </param>
+        /// <param name="comment">The comment character indicating that a line is commented out (default is '#').</param>
+        /// <param name="trimmingOptions">Determines which values should be trimmed.</param>
+        /// <param name="nullValue">The value which denotes a DbNull-value.</param>
+        /// <param name="addMark"><see langword="true"/> if want to add a mark ([removed x null bytes]) to indicate removal, remove silently if <see langword="false"/>.</param>
+        /// <param name="threshold"> only consecutive null bytes above this threshold will be removed or replaced by a mark.</param>
+        /// <exception cref="T:ArgumentNullException">
+        ///     <paramref name="stream"/> is a <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="T:ArgumentException">
+        ///     Cannot read from <paramref name="stream"/>.
+        /// </exception>
+        public CsvReader(Stream stream, bool hasHeaders, Encoding encoding, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, string nullValue = null, bool addMark = DefaultAddMark, int threshold = DefaultThreshold)
+            : this(new NullRemovalStreamReader(stream, addMark, threshold, encoding), hasHeaders, delimiter, quote, escape, comment, trimmingOptions, nullValue)
         {
         }
 
@@ -299,6 +420,36 @@ namespace LumenWorks.Framework.IO.Csv
         /// </exception>
         public CsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, string nullValue = null)
             : this(reader, hasHeaders, delimiter, quote, escape, comment, trimmingOptions, DefaultBufferSize, nullValue)
+        {
+        }
+
+        /// <summary>
+        ///     Like CsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, int bufferSize, string nullValue)
+        ///     but removes consecutive null bytes above a threshold from source stream.
+        /// </summary>
+        /// <param name="stream">A <see cref="T:Stream"/> pointing to the CSV file.</param>
+        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+        /// <param name="encoding"> specifies the encoding of the underlying stream.</param>
+        /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
+        /// <param name="quote">The quotation character wrapping every field (default is ''').</param>
+        /// <param name="escape">
+        /// The escape character letting insert quotation characters inside a quoted field (default is '\').
+        /// If no escape character, set to '\0' to gain some performance.
+        /// </param>
+        /// <param name="comment">The comment character indicating that a line is commented out (default is '#').</param>
+        /// <param name="trimmingOptions">Determines which values should be trimmed.</param>
+        /// <param name="bufferSize">The buffer size in bytes.</param>
+        /// <param name="nullValue">The value which denotes a DbNull-value.</param>
+        /// <param name="addMark"><see langword="true"/> if want to add a mark ([removed x null bytes]) to indicate removal, remove silently if <see langword="false"/>.</param>
+        /// <param name="threshold"> only consecutive null bytes above this threshold will be removed or replace by a mark.</param>
+        /// <exception cref="T:ArgumentNullException">
+        ///     <paramref name="stream"/> is a <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="T:ArgumentException">
+        ///     Cannot read from <paramref name="stream"/>.
+        /// </exception>
+        public CsvReader(Stream stream, bool hasHeaders, Encoding encoding, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, int bufferSize, string nullValue = null, bool addMark = DefaultAddMark, int threshold = DefaultThreshold)
+            : this(new NullRemovalStreamReader(stream, addMark, threshold, encoding, bufferSize), hasHeaders, delimiter, quote, escape, comment, trimmingOptions, bufferSize, nullValue)
         {
         }
 

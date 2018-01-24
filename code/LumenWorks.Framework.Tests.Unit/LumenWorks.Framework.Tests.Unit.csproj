@@ -78,7 +78,9 @@
     <Compile Include="IO\Csv\CsvReaderIDataReaderTest.cs" />
     <Compile Include="IO\Csv\CsvReaderMalformedTest.cs" />
     <Compile Include="IO\Csv\CsvReaderSampleData.cs" />
+    <Compile Include="IO\Csv\CsvReaderWithNullRemovalTest.cs" />
     <Compile Include="IO\Csv\CsvReaderTest.cs" />
+    <Compile Include="IO\NullRemovalStreamTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
