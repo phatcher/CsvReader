@@ -20,11 +20,9 @@
 //	ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections;
 using System.Data;
 using System.Globalization;
 using System.IO;
-using System.Text;
 
 using NUnit.Framework;
 
@@ -35,12 +33,10 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 	[TestFixture()]
 	public class CsvReaderIDataReaderTest
 	{
-		#region IDataReader interface
-
-		[Test()]
+	    [Test]
 		public void CloseTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 
@@ -53,14 +49,14 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetSchemaTableWithHeadersTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 
-				DataTable schema = reader.GetSchemaTable();
+				var schema = reader.GetSchemaTable();
 
 				Assert.AreEqual(CsvReaderSampleData.SampleData1RecordCount, schema.Rows.Count);
 
@@ -69,9 +65,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 					Assert.IsTrue(column.ReadOnly);
 				}
 
-				for (int index = 0; index < schema.Rows.Count; index++)
+				for (var index = 0; index < schema.Rows.Count; index++)
 				{
-					DataRow column = schema.Rows[index];
+					var column = schema.Rows[index];
 
 					Assert.AreEqual(int.MaxValue, column["ColumnSize"]);
 					Assert.AreEqual(DBNull.Value, column["NumericPrecision"]);
@@ -128,14 +124,14 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetSchemaTableWithoutHeadersTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), false))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), false))
 			{
 				IDataReader reader = csv;
 
-				DataTable schema = reader.GetSchemaTable();
+				var schema = reader.GetSchemaTable();
 
 				Assert.AreEqual(CsvReaderSampleData.SampleData1RecordCount, schema.Rows.Count);
 
@@ -144,9 +140,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 					Assert.IsTrue(column.ReadOnly);
 				}
 
-				for (int index = 0; index < schema.Rows.Count; index++)
+				for (var index = 0; index < schema.Rows.Count; index++)
 				{
-					DataRow column = schema.Rows[index];
+					var column = schema.Rows[index];
 
 					Assert.AreEqual(int.MaxValue, column["ColumnSize"]);
 					Assert.AreEqual(DBNull.Value, column["NumericPrecision"]);
@@ -176,24 +172,26 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
-		[ExpectedException(typeof(InvalidOperationException))]
+		[Test]
 		public void GetSchemaTableReaderClosedTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
-			{
-				IDataReader reader = csv;
-				csv.ReadNextRecord();
-				reader.Close();
+		    Assert.Throws<InvalidOperationException>(() =>
+		    {
+		        using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+		        {
+		            IDataReader reader = csv;
+		            csv.ReadNextRecord();
+		            reader.Close();
 
-				DataTable result = reader.GetSchemaTable();
-			}
+		            var result = reader.GetSchemaTable();
+		        }
+            });
 		}
 
-		[Test()]
+		[Test]
 		public void NextResultTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 				Assert.IsFalse(reader.NextResult());
@@ -203,52 +201,58 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
-		[ExpectedException(typeof(InvalidOperationException))]
+		[Test]
 		public void NextResultReaderClosedTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
-			{
-				IDataReader reader = csv;
-				csv.ReadNextRecord();
-				reader.Close();
+		    Assert.Throws<InvalidOperationException>(() =>
+		    {
+		        using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+		        {
+		            IDataReader reader = csv;
+		            csv.ReadNextRecord();
+		            reader.Close();
 
-				bool result = reader.NextResult();
-			}
+		            var result = reader.NextResult();
+		        }
+            });
 		}
 
-		[Test()]
+		[Test]
 		public void ReadTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 
-				for (int i = 0; i < CsvReaderSampleData.SampleData1RecordCount; i++)
-					Assert.IsTrue(reader.Read());
+			    for (var i = 0; i < CsvReaderSampleData.SampleData1RecordCount; i++)
+			    {
+			        Assert.IsTrue(reader.Read());
+			    }
 
-				Assert.IsFalse(reader.Read());
+			    Assert.IsFalse(reader.Read());
 			}
 		}
 
-		[Test()]
-		[ExpectedException(typeof(InvalidOperationException))]
+		[Test]
 		public void ReadReaderClosedTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
-			{
-				IDataReader reader = csv;
-				csv.ReadNextRecord();
-				reader.Close();
+		    Assert.Throws<InvalidOperationException>(() =>
+		    {
+		        using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+		        {
+		            IDataReader reader = csv;
+		            csv.ReadNextRecord();
+		            reader.Close();
 
-				bool result = reader.Read();
-			}
+		            var result = reader.Read();
+		        }
+            });
 		}
 
-		[Test()]
+		[Test]
 		public void DepthTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 				Assert.AreEqual(0, reader.Depth);
@@ -258,24 +262,26 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
-		[ExpectedException(typeof(InvalidOperationException))]
+		[Test]
 		public void DepthReaderClosedTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
-			{
-				IDataReader reader = csv;
-				csv.ReadNextRecord();
-				reader.Close();
+		    Assert.Throws<InvalidOperationException>(() =>
+		    {
+		        using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+		        {
+		            IDataReader reader = csv;
+		            csv.ReadNextRecord();
+		            reader.Close();
 
-				int result = reader.Depth;
-			}
+		            var result = reader.Depth;
+		        }
+            });
 		}
 
-		[Test()]
+		[Test]
 		public void IsClosedTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 				Assert.IsFalse(reader.IsClosed);
@@ -288,10 +294,10 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void RecordsAffectedTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 				Assert.AreEqual(-1, reader.RecordsAffected);
@@ -304,110 +310,106 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		#endregion
-
-		#region IDataRecord interface
-
-		[Test()]
+	    [Test]
 		public void GetBooleanTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Boolean value = true;
+				var value = true;
 				while (reader.Read())
 				{
-					Assert.AreEqual(value, reader.GetBoolean(reader.GetOrdinal(typeof(Boolean).FullName)));
+					Assert.AreEqual(value, reader.GetBoolean(reader.GetOrdinal(typeof(bool).FullName)));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetByteTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Byte value = 1;
+				byte value = 1;
 				while (reader.Read())
 				{
-					Assert.AreEqual(value, reader.GetByte(reader.GetOrdinal(typeof(Byte).FullName)));
+					Assert.AreEqual(value, reader.GetByte(reader.GetOrdinal(typeof(byte).FullName)));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetBytesTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Char[] temp = "abc".ToCharArray();
-				Byte[] value = new Byte[temp.Length];
+				var temp = "abc".ToCharArray();
+				var value = new byte[temp.Length];
 
-				for (int i = 0; i < temp.Length; i++)
+				for (var i = 0; i < temp.Length; i++)
 					value[i] = Convert.ToByte(temp[i]);
 
 				while (reader.Read())
 				{
-					Byte[] csvValue = new Byte[value.Length];
+					var csvValue = new byte[value.Length];
 
-					long count = reader.GetBytes(reader.GetOrdinal(typeof(String).FullName), 0, csvValue, 0, value.Length);
+					var count = reader.GetBytes(reader.GetOrdinal(typeof(string).FullName), 0, csvValue, 0, value.Length);
 
 					Assert.AreEqual(value.Length, count);
 					Assert.AreEqual(value.Length, csvValue.Length);
 
-					for (int i = 0; i < value.Length; i++)
+					for (var i = 0; i < value.Length; i++)
 						Assert.AreEqual(value[i], csvValue[i]);
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetCharTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Char value = 'a';
+				var value = 'a';
 				while (reader.Read())
 				{
-					Assert.AreEqual(value, reader.GetChar(reader.GetOrdinal(typeof(Char).FullName)));
+					Assert.AreEqual(value, reader.GetChar(reader.GetOrdinal(typeof(char).FullName)));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetCharsTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Char[] value = "abc".ToCharArray();
+				var value = "abc".ToCharArray();
 				while (reader.Read())
 				{
-					Char[] csvValue = new Char[value.Length];
+					var csvValue = new char[value.Length];
 
-					long count = reader.GetChars(reader.GetOrdinal(typeof(String).FullName), 0, csvValue, 0, value.Length);
+					var count = reader.GetChars(reader.GetOrdinal(typeof(string).FullName), 0, csvValue, 0, value.Length);
 
 					Assert.AreEqual(value.Length, count);
 					Assert.AreEqual(value.Length, csvValue.Length);
 
-					for (int i = 0; i < value.Length; i++)
+					for (var i = 0; i < value.Length; i++)
 						Assert.AreEqual(value[i], csvValue[i]);
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetDataTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
@@ -415,35 +417,35 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 				{
 					Assert.AreSame(csv, reader.GetData(0));
 
-					for (int i = 1; i < reader.FieldCount; i++)
+					for (var i = 1; i < reader.FieldCount; i++)
 						Assert.IsNull(reader.GetData(i));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetDataTypeNameTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
 				while (reader.Read())
 				{
-					for (int i = 0; i < reader.FieldCount; i++)
+					for (var i = 0; i < reader.FieldCount; i++)
 						Assert.AreEqual(typeof(string).FullName, reader.GetDataTypeName(i));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetDateTimeTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				DateTime value = new DateTime(2001, 1, 1);
+				var value = new DateTime(2001, 1, 1);
 				while (reader.Read())
 				{
 					Assert.AreEqual(value, reader.GetDateTime(reader.GetOrdinal(typeof(DateTime).FullName)));
@@ -451,74 +453,74 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetDecimalTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Decimal value = 1;
+				decimal value = 1;
 				while (reader.Read())
 				{
-					Assert.AreEqual(value, reader.GetDecimal(reader.GetOrdinal(typeof(Decimal).FullName)));
+					Assert.AreEqual(value, reader.GetDecimal(reader.GetOrdinal(typeof(decimal).FullName)));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetDoubleTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Double value = 1;
+				double value = 1;
 				while (reader.Read())
 				{
-					Assert.AreEqual(value, reader.GetDouble(reader.GetOrdinal(typeof(Double).FullName)));
+					Assert.AreEqual(value, reader.GetDouble(reader.GetOrdinal(typeof(double).FullName)));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetFieldTypeTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
 				while (reader.Read())
 				{
-					for (int i = 0; i < reader.FieldCount; i++)
+					for (var i = 0; i < reader.FieldCount; i++)
 						Assert.AreEqual(typeof(string), reader.GetFieldType(i));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetFloatTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Single value = 1;
+				float value = 1;
 				while (reader.Read())
 				{
-					Assert.AreEqual(value, reader.GetFloat(reader.GetOrdinal(typeof(Single).FullName)));
+					Assert.AreEqual(value, reader.GetFloat(reader.GetOrdinal(typeof(float).FullName)));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetGuidTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Guid value = new Guid("{11111111-1111-1111-1111-111111111111}");
+				var value = new Guid("{11111111-1111-1111-1111-111111111111}");
 				while (reader.Read())
 				{
 					Assert.AreEqual(value, reader.GetGuid(reader.GetOrdinal(typeof(Guid).FullName)));
@@ -526,55 +528,55 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetInt16Test()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Int16 value = 1;
+				short value = 1;
 				while (reader.Read())
 				{
-					Assert.AreEqual(value, reader.GetInt16(reader.GetOrdinal(typeof(Int16).FullName)));
+					Assert.AreEqual(value, reader.GetInt16(reader.GetOrdinal(typeof(short).FullName)));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetInt32Test()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Int32 value = 1;
+				var value = 1;
 				while (reader.Read())
 				{
-					Assert.AreEqual(value, reader.GetInt32(reader.GetOrdinal(typeof(Int32).FullName)));
+					Assert.AreEqual(value, reader.GetInt32(reader.GetOrdinal(typeof(int).FullName)));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetInt64Test()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				Int64 value = 1;
+				long value = 1;
 				while (reader.Read())
 				{
-					Assert.AreEqual(value, reader.GetInt64(reader.GetOrdinal(typeof(Int64).FullName)));
+					Assert.AreEqual(value, reader.GetInt64(reader.GetOrdinal(typeof(long).FullName)));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetNameTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 
@@ -590,10 +592,10 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetOrdinalTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 
@@ -609,35 +611,35 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetStringTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
-				String value = "abc";
+				var value = "abc";
 				while (reader.Read())
 				{
-					Assert.AreEqual(value, reader.GetString(reader.GetOrdinal(typeof(String).FullName)));
+					Assert.AreEqual(value, reader.GetString(reader.GetOrdinal(typeof(string).FullName)));
 				}
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetValueTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 
-				string[] values = new string[CsvReaderSampleData.SampleData1RecordCount];
+				var values = new string[CsvReaderSampleData.SampleData1RecordCount];
 
 				while (reader.Read())
 				{
-					for (int i = 0; i < reader.FieldCount; i++)
+					for (var i = 0; i < reader.FieldCount; i++)
 					{
-						object value = reader.GetValue(i);
+						var value = reader.GetValue(i);
 
 						if (string.IsNullOrEmpty(csv[i]))
 							Assert.AreEqual(DBNull.Value, value);
@@ -650,26 +652,28 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void GetValuesTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 
-				object[] objValues = new object[CsvReaderSampleData.SampleData1RecordCount];
-				string[] values = new string[CsvReaderSampleData.SampleData1RecordCount];
+				var objValues = new object[CsvReaderSampleData.SampleData1RecordCount];
+				var values = new string[CsvReaderSampleData.SampleData1RecordCount];
 
 				while (reader.Read())
 				{
 					Assert.AreEqual(CsvReaderSampleData.SampleData1RecordCount, reader.GetValues(objValues));
 
-					for (int i = 0; i < reader.FieldCount; i++)
+					for (var i = 0; i < reader.FieldCount; i++)
 					{
-						if (string.IsNullOrEmpty(csv[i]))
-							Assert.AreEqual(DBNull.Value, objValues[i]);
+					    if (string.IsNullOrEmpty(csv[i]))
+					    {
+					        Assert.AreEqual(DBNull.Value, objValues[i]);
+					    }
 
-						values[i] = objValues[i].ToString();
+					    values[i] = objValues[i].ToString();
 					}
 
 					CsvReaderSampleData.CheckSampleData1(csv.HasHeaders, csv.CurrentRecordIndex, values);
@@ -677,10 +681,10 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void IsDBNullTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true))
 			{
 				IDataReader reader = csv;
 
@@ -691,10 +695,10 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void IsDBNullWithNullValueTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true, 
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true, 
 				CsvReader.DefaultDelimiter, CsvReader.DefaultQuote, CsvReader.DefaultEscape, CsvReader.DefaultComment,
 				ValueTrimmingOptions.UnquotedOnly, CsvReaderSampleData.SampleNullValue))
 			{
@@ -708,10 +712,10 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void FieldCountTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 
@@ -719,14 +723,14 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void IndexerByFieldNameTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 
-				string[] values = new string[CsvReaderSampleData.SampleData1RecordCount];
+				var values = new string[CsvReaderSampleData.SampleData1RecordCount];
 
 				while (reader.Read())
 				{
@@ -742,25 +746,23 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 
-		[Test()]
+		[Test]
 		public void IndexerByFieldIndexTest()
 		{
-			using (CsvReader csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
+			using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), true))
 			{
 				IDataReader reader = csv;
 
-				string[] values = new string[CsvReaderSampleData.SampleData1RecordCount];
+				var values = new string[CsvReaderSampleData.SampleData1RecordCount];
 
 				while (reader.Read())
 				{
-					for (int i = 0; i < reader.FieldCount; i++)
+					for (var i = 0; i < reader.FieldCount; i++)
 						values[i] = (string) reader[i];
 
 					CsvReaderSampleData.CheckSampleData1(csv.HasHeaders, csv.CurrentRecordIndex, values);
 				}
 			}
 		}
-
-		#endregion
 	}
 }

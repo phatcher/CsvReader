@@ -9,6 +9,7 @@
 
 
 # Build results
+.vs/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -17,7 +18,7 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
-
+.sonarqube/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -69,6 +70,7 @@ _Chutzpah*
 ipch/
 *.aps
 *.ncb
+*.opendb
 *.opensdf
 *.sdf
 *.cachefile
@@ -144,6 +146,12 @@ publish/
 *.[Pp]ublish.xml
 *.azurePubxml
 
+# Build tools/artifacts
+.fake/
+.paket/paket.exe
+paket.restore.targets
+packages/
+paket-files/
 
 # NuGet Packages Directory
 ## TODO: If you have NuGet Package Restore enabled, uncomment the next line
@@ -178,7 +186,6 @@ ClientBin/
 *.pfx
 *.publishsettings
 node_modules/
-tools/
 
 
 # RIA/Silverlight projects

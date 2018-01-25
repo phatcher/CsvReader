@@ -1,15 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LumenWorks.Framework.IO", "code\LumenWorks.Framework.IO\LumenWorks.Framework.IO.csproj", "{E3B83D68-C90C-4874-8E5F-DEC8D038BC7C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LumenWorks.Framework.Tests.Unit", "code\LumenWorks.Framework.Tests.Unit\LumenWorks.Framework.Tests.Unit.csproj", "{DBF22390-41BC-4E33-BC9E-F381621EBF01}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvReaderDemo", "code\CsvReaderDemo\CsvReaderDemo.csproj", "{A5F604EE-0F0A-4A3F-B947-1EB1D2BDAA33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvReaderBenchmarks", "code\CsvReaderBenchmarks\CsvReaderBenchmarks.csproj", "{6BA5C01B-2F49-4432-8FCA-A3B1ADC6AFDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvReaderBenchmarks", "code\CsvReaderBenchmarks\CsvReaderBenchmarks.csproj", "{6BA5C01B-2F49-4432-8FCA-A3B1ADC6AFDA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvReaderDemoWeb", "code\CsvReaderDemoWeb\CsvReaderDemoWeb.csproj", "{800B3F74-702F-48C8-B3E9-AA658E3D5A05}"
 EndProject
@@ -17,11 +13,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		build.fsx = build.fsx
 		License.md = License.md
+		nuget\LumenWorksCsvReader.nuspec = nuget\LumenWorksCsvReader.nuspec
 		README.md = README.md
 		RELEASE_NOTES.md = RELEASE_NOTES.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lumenworks.Framework.IO.Pcl", "code\LumenWorks.Framework.IO\Lumenworks.Framework.IO.Pcl.csproj", "{E564BC5A-8C07-43B9-BBD5-18CD3B4EDCF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LumenWorks.Framework.IO", "code\LumenWorks.Framework.IO\LumenWorks.Framework.IO.csproj", "{EB0A04A6-54DE-4729-82B4-5162F614BFCE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LumenWorks.Framework.Tests.Unit", "code\LumenWorks.Framework.Tests.Unit\LumenWorks.Framework.Tests.Unit.csproj", "{44025B03-AA50-4E52-AFE0-BD79B28A9BE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,14 +28,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E3B83D68-C90C-4874-8E5F-DEC8D038BC7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E3B83D68-C90C-4874-8E5F-DEC8D038BC7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E3B83D68-C90C-4874-8E5F-DEC8D038BC7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E3B83D68-C90C-4874-8E5F-DEC8D038BC7C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DBF22390-41BC-4E33-BC9E-F381621EBF01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DBF22390-41BC-4E33-BC9E-F381621EBF01}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DBF22390-41BC-4E33-BC9E-F381621EBF01}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DBF22390-41BC-4E33-BC9E-F381621EBF01}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A5F604EE-0F0A-4A3F-B947-1EB1D2BDAA33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A5F604EE-0F0A-4A3F-B947-1EB1D2BDAA33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5F604EE-0F0A-4A3F-B947-1EB1D2BDAA33}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,12 +40,19 @@ Global
 		{800B3F74-702F-48C8-B3E9-AA658E3D5A05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{800B3F74-702F-48C8-B3E9-AA658E3D5A05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{800B3F74-702F-48C8-B3E9-AA658E3D5A05}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E564BC5A-8C07-43B9-BBD5-18CD3B4EDCF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E564BC5A-8C07-43B9-BBD5-18CD3B4EDCF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E564BC5A-8C07-43B9-BBD5-18CD3B4EDCF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E564BC5A-8C07-43B9-BBD5-18CD3B4EDCF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB0A04A6-54DE-4729-82B4-5162F614BFCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB0A04A6-54DE-4729-82B4-5162F614BFCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB0A04A6-54DE-4729-82B4-5162F614BFCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB0A04A6-54DE-4729-82B4-5162F614BFCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44025B03-AA50-4E52-AFE0-BD79B28A9BE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44025B03-AA50-4E52-AFE0-BD79B28A9BE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44025B03-AA50-4E52-AFE0-BD79B28A9BE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44025B03-AA50-4E52-AFE0-BD79B28A9BE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4E7DD40D-AA81-4273-9F6C-17801432B31D}
 	EndGlobalSection
 EndGlobal

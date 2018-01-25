@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace LumenWorks.Framework.IO.Csv
 {
@@ -20,6 +21,8 @@ namespace LumenWorks.Framework.IO.Csv
             Type = typeof(string);
             Culture = CultureInfo.CurrentCulture;
             NumberStyles = NumberStyles.Any;
+            DateTimeStyles = DateTimeStyles.None;
+            DateParseExact = null;
         }
 
         /// <summary>
@@ -45,9 +48,18 @@ namespace LumenWorks.Framework.IO.Csv
         /// </summary>
         public string DefaultValue { get; set; }
 
+        /// <summary>
+        /// Get or set the override value of the column.
+        /// </summary>
+        public string OverrideValue { get; set; }
+
         public CultureInfo Culture { get; set; }
 
         public NumberStyles NumberStyles { get; set; }
+        
+        public DateTimeStyles DateTimeStyles { get; set; }
+        
+        public string DateParseExact { get; set; }
 
         /// <summary>
         /// Converts the value into the column type.
@@ -162,7 +174,10 @@ namespace LumenWorks.Framework.IO.Csv
                 case "DateTime":
                     {
                         DateTime x;
-                        converted = DateTime.TryParse(value, out x);
+                        if(!string.IsNullOrEmpty(DateParseExact))
+                            converted = DateTime.TryParseExact(value, DateParseExact, Culture, DateTimeStyles, out x);
+                        else
+                            converted = DateTime.TryParse(value, Culture, DateTimeStyles, out x);
                         result = x;
                     }
                     break;
