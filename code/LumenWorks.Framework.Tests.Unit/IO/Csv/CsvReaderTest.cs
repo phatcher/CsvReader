@@ -1232,6 +1232,40 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         }
 
         [Test]
+        public void HasHeader_DuplicateHeader()
+        {
+          try
+          {
+            using (CsvReader csvReader = new CsvReader(new StringReader("Header,Header\r\nValue1,Value2"), true))
+            {
+              csvReader.ReadNextRecord();
+            }
+            Assert.Fail("Expected DuplicateHeaderException");
+          }
+          catch (DuplicateHeaderException ex)
+          {
+            Assert.AreEqual("Header", ex.HeaderName);
+            Assert.AreEqual(1,ex.ColumnIndex);
+          }
+          catch (Exception)
+          {
+            Assert.Fail("Expected DuplicateHeaderException");
+          }
+        }
+
+        [Test]
+        public void HasHeader_DuplicateHeader_Override()
+        {
+            using (CsvReader csvReader = new CsvReader(new StringReader("Header,Header\r\nValue1,Value2"), true))
+            {
+              csvReader.DuplicateHeaderEncountered += (s, e) => e.HeaderName = $"{e.HeaderName}_{e.Index}";
+              csvReader.ReadNextRecord();
+              Assert.AreEqual(csvReader.Columns[0].Name,"Header");
+              Assert.AreEqual(csvReader.Columns[1].Name,"Header_1");
+            }
+        }
+
+        [Test]
         public void HasHeader_HeaderExists()
         {
             var header = "First Name";
