@@ -1,9 +1,8 @@
 using System.IO;
 
-using Microsoft.VisualBasic.FileIO;
-
 namespace CsvReaderDemo
 {
+#if !NETCOREAPP2_0
 	public sealed class TextFieldParserBenchmark
 	{
 		private TextFieldParserBenchmark()
@@ -27,9 +26,9 @@ namespace CsvReaderDemo
 
 		public static void Run(string path, int field)
 		{
-			using (var csv = new TextFieldParser(new StreamReader(path)))
+            using (var csv = new Microsoft.VisualBasic.FileIO.TextFieldParser(new StreamReader(path)))
 			{
-				csv.TextFieldType = FieldType.Delimited;
+				csv.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
 				csv.TrimWhiteSpace = true;
 				csv.HasFieldsEnclosedInQuotes = true;
 				csv.Delimiters = new string[] { "," };
@@ -39,6 +38,8 @@ namespace CsvReaderDemo
 				{
 				}
 			}
-		}
-	}
+
+	    }
+    }
+#endif
 }

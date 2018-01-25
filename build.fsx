@@ -58,7 +58,6 @@ Target "Build" (fun _ ->
             "PackageVersion", release.AssemblyVersion
             "PackageReleaseNotes", release.Notes |> toLines
             "IncludeSymbols", "true"
-            "DefineConstants", "NET20"
         ]
     |> Log "AppBuild-Output: "
 )

@@ -1186,6 +1186,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             }
         }
 
+#if !NETCOREAPP2_0
         [Test]
         public void CachedNoHeader()
         {
@@ -1196,6 +1197,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
             dgv.Refresh();
         }
+#endif
 
         [Test]
         public void HasHeader_NullHeader()

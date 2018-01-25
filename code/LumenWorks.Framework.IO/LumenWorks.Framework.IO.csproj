@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net20</TargetFramework>
+    <TargetFrameworks>net20;net35;net45;net461;netstandard20</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -19,9 +19,12 @@
     <Authors>Sébastien Lorion, Paul Hatcher</Authors>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>LumenWorks.Framework.snk</AssemblyOriginatorKeyFile>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <OutputPath>$(SolutionDir)\build\$(AssemblyName)$(Configuration)\$(TargetFramework)\</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\CsvParser.xml</DocumentationFile>
+    <DocumentationFile>$(SolutionDir)\build\$(Configuration)\$(TargetFramework)\LumenWorks.Framework.IO.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />

@@ -1,16 +1,11 @@
-#region Using directives
-
-using System;
 using System.Data;
 using System.Data.OleDb;
 using System.IO;
-using System.Text;
-
-#endregion
 
 namespace CsvReaderDemo
 {
-	public sealed class OleDbBenchmark
+#if !NETCOREAPP2_0
+    public sealed class OleDbBenchmark
 	{
 		private OleDbBenchmark()
 		{
@@ -64,4 +59,5 @@ namespace CsvReaderDemo
 			}
 		}
 	}
+#endif
 }

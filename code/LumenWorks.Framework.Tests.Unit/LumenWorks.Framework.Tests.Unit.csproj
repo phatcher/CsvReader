@@ -1,22 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net20</TargetFrameworks>
+    <TargetFrameworks>net20;net35;net45;net461;netcoreapp20</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.9.0" />
   </ItemGroup>
-  <ItemGroup Condition="$(TargetFramework) == 'net462'">
+  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp20'">
      <PackageReference Include="Microsoft.Net.Test.Sdk" Version="15.5.0" />
      <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Lumenworks.Framework.IO\Lumenworks.Framework.IO.csproj" />
+  <ItemGroup Condition="$(TargetFramework) != 'netcoreapp20'">
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
+    <ProjectReference Include="..\LumenWorks.Framework.IO\LumenWorks.Framework.IO.csproj" />
   </ItemGroup>
 </Project>
