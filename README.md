@@ -149,7 +149,7 @@ public static class SqlBulkCopyExtensions
 
         return map;
     }
-
+}
 ```    
 
 One other issue recently arose where we wanted to use SBC but some of the data was not in the file itself, but metadata that needed to be included on every row. The solution was to amend the CSV reader and Columns collection to allow default values to be provided that are not in the data.
