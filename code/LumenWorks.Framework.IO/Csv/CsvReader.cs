@@ -538,6 +538,13 @@ namespace LumenWorks.Framework.IO.Csv
         }
 
         /// <summary>
+        /// Occurs when HasHeaders is true and a duplicate Column Header Name is encountered.
+        /// Setting the HeaderName property on this column will prevent the library from throwing a duplicate key exception
+        /// </summary>
+        public event EventHandler<DuplicateHeaderEventArgs> DuplicateHeaderEncountered;
+
+
+        /// <summary>
         /// Gets the comment character indicating that a line is commented out.
         /// </summary>
         /// <value>The comment character indicating that a line is commented out.</value>
@@ -691,7 +698,7 @@ namespace LumenWorks.Framework.IO.Csv
             }
             set
             {
-               _maxQuotedFieldLength = value;
+                _maxQuotedFieldLength = value;
             }
         }
 
@@ -1277,6 +1284,12 @@ namespace LumenWorks.Framework.IO.Csv
                 if (_currentRecordIndex < 0)
                     throw new InvalidOperationException(ExceptionMessage.NoCurrentRecord);
 
+                if (Columns.Count > field && !string.IsNullOrEmpty(Columns[field].OverrideValue))
+                {
+                    // Use the override value for this column.
+                    return Columns[field].OverrideValue;
+                }
+
                 if (field >= _fieldCount)
                 {
                     // Use the column default as UseColumnDefaults is true at this point
@@ -1360,7 +1373,7 @@ namespace LumenWorks.Framework.IO.Csv
                         int start = _nextFieldStart;
                         int pos = _nextFieldStart;
 
-                        for (; ; )
+                        for (;;)
                         {
                             while (pos < _bufferLength)
                             {
@@ -1470,7 +1483,7 @@ namespace LumenWorks.Framework.IO.Csv
 
                         bool quoted = true;
                         bool escaped = false;
-                        int fieldLength =0;
+                        int fieldLength = 0;
 
                         if ((_trimmingOptions & ValueTrimmingOptions.QuotedOnly) != 0)
                         {
@@ -1478,7 +1491,7 @@ namespace LumenWorks.Framework.IO.Csv
                             pos = start;
                         }
 
-                        for (; ; )
+                        for (;;)
                         {
                             while (pos < _bufferLength)
                             {
@@ -1589,7 +1602,7 @@ namespace LumenWorks.Framework.IO.Csv
                             if (!initializing && index < _fieldCount - 1)
                                 value = HandleMissingField(value, index, ref _nextFieldStart);
                         }
-                        
+
                         if (!discardValue)
                         {
                             if (value == null)
@@ -1740,7 +1753,19 @@ namespace LumenWorks.Framework.IO.Csv
                                 // Default to string if not assigned.
                                 Type = typeof(string)
                             };
-                            _fieldHeaderIndexes.Add(headerName, i);
+
+                            int existingIndex;
+                            if (_fieldHeaderIndexes.TryGetValue(headerName, out existingIndex))
+                            {
+                              if(DuplicateHeaderEncountered == null)
+                                 throw new DuplicateHeaderException(headerName, i);
+
+                              DuplicateHeaderEventArgs args = new DuplicateHeaderEventArgs(headerName, i, existingIndex);
+                              DuplicateHeaderEncountered(this, args);
+                              col.Name = args.HeaderName;
+                            }
+
+                            _fieldHeaderIndexes.Add(col.Name, i);
                             // Should be correct as we are going in ascending order.
                             Columns.Add(col);
                         }
@@ -1824,25 +1849,28 @@ namespace LumenWorks.Framework.IO.Csv
 
         private void HandleExtraFieldsInCurrentRecord(int currentFieldIndex)
         {
-            MalformedCsvException exception = new MalformedCsvException(
-                GetCurrentRawData(),
-                _nextFieldStart,
-                Math.Max(0, _currentRecordIndex),
-                currentFieldIndex);
-
             if (DefaultParseErrorAction == ParseErrorAction.AdvanceToNextLine)
             {
                 SkipToNextRecord();
             }
-            else if (DefaultParseErrorAction == ParseErrorAction.RaiseEvent)
+            else
             {
-                ParseErrorEventArgs e = new ParseErrorEventArgs(exception, ParseErrorAction.ThrowException);
-                OnParseError(e);
-                SkipToNextRecord();
-            }
-            else if (DefaultParseErrorAction == ParseErrorAction.ThrowException)
-            {
-                throw exception;
+                MalformedCsvException exception = new MalformedCsvException(
+                    GetCurrentRawData(),
+                    _nextFieldStart,
+                    Math.Max(0, _currentRecordIndex),
+                    currentFieldIndex);
+
+                if (DefaultParseErrorAction == ParseErrorAction.RaiseEvent)
+                {
+                    ParseErrorEventArgs e = new ParseErrorEventArgs(exception, ParseErrorAction.ThrowException);
+                    OnParseError(e);
+                    SkipToNextRecord();
+                }
+                else if (DefaultParseErrorAction == ParseErrorAction.ThrowException)
+                {
+                    throw exception;
+                }
             }
         }
 
@@ -1928,7 +1956,7 @@ namespace LumenWorks.Framework.IO.Csv
         /// </exception>
         private bool SkipWhiteSpaces(ref int pos)
         {
-            for (; ; )
+            for (;;)
             {
                 while (pos < _bufferLength && IsWhiteSpace(_buffer[pos]))
                     pos++;
@@ -2216,8 +2244,8 @@ namespace LumenWorks.Framework.IO.Csv
             schema.Columns.Add(SchemaTableOptionalColumn.IsRowVersion, typeof(bool)).ReadOnly = true;
 
             // null marks columns that will change for each row
-            object[] schemaRow = 
-            { 
+            object[] schemaRow =
+            {
                 true,					// 00- AllowDBNull
                 null,					// 01- BaseColumnName
                 string.Empty,			// 02- BaseSchemaName

@@ -37,9 +37,11 @@ namespace CsvReaderDemo
                         case "CSVNULLREMOVALSTREAMREADER":
                             PerformanceTestWithNullRemovalStreamReader();
                             return;
+#if !NETCOREAPP2_0
                         case "OLEDB":
                             OleDbBenchmark.Run(TestFile3);
                             return;
+#endif
                         case "REGEX":
                             RegexBenchmark.Run(TestFile3);
                             return;
@@ -62,7 +64,9 @@ namespace CsvReaderDemo
                 DoTest("CsvReader - No cache", fileSize, CsvReaderBenchmark.Run, TestFile2);
                 csv = DoTest("CachedCsvReader - Run 1", fileSize, CachedCsvReaderBenchmark.Run1, TestFile2);
                 DoTest("CachedCsvReader - Run 2", fileSize, CachedCsvReaderBenchmark.Run2, csv);
+#if !NETCOREAPP2_0
                 DoTest("TextFieldParser", fileSize, TextFieldParserBenchmark.Run, TestFile2);
+#endif
                 DoTest("Regex", fileSize, RegexBenchmark.Run, TestFile2);
 
                 // seems to not be working on Windows 7 with Office 2007 (and I'm not bothering to try to make it run on my machine)
@@ -75,11 +79,15 @@ namespace CsvReaderDemo
                 DoTest("CsvReader - No cache", fileSize, CsvReaderBenchmark.Run, TestFile2, Field);
                 csv = DoTest("CachedCsvReader - Run 1", fileSize, CachedCsvReaderBenchmark.Run1, TestFile2, Field);
                 DoTest("CachedCsvReader - Run 2", fileSize, CachedCsvReaderBenchmark.Run2, csv, Field);
+#if !NETCOREAPP2_0
                 DoTest("TextFieldParser", fileSize, TextFieldParserBenchmark.Run, TestFile2, Field);
+#endif
                 DoTest("Regex", fileSize, RegexBenchmark.Run, TestFile2, Field);
 
                 // seems to not be working on Windows 7 with Office 2007 (and I'm not bothering to try to make it run on my machine)
+#if !NETCOREAPP2_0
                 //DoTest("OleDb", fileSize, OleDbBenchmark.Run, TestFile2, Field);
+#endif
 
                 Console.WriteLine();
                 Console.WriteLine();

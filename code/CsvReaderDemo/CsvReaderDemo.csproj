@@ -103,16 +103,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LumenWorks.Framework.IO\LumenWorks.Framework.IO.csproj">
-      <Project>{E3B83D68-C90C-4874-8E5F-DEC8D038BC7C}</Project>
-      <Name>LumenWorks.Framework.IO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LumenWorks.Framework.Tests.Unit\LumenWorks.Framework.Tests.Unit.csproj">
-      <Project>{DBF22390-41BC-4E33-BC9E-F381621EBF01}</Project>
-      <Name>LumenWorks.Framework.Tests.Unit</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -128,6 +118,16 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LumenWorks.Framework.IO\LumenWorks.Framework.IO.csproj">
+      <Project>{eb0a04a6-54de-4729-82b4-5162f614bfce}</Project>
+      <Name>LumenWorks.Framework.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LumenWorks.Framework.Tests.Unit\LumenWorks.Framework.Tests.Unit.csproj">
+      <Project>{44025b03-aa50-4e52-afe0-bd79b28a9be8}</Project>
+      <Name>LumenWorks.Framework.Tests.Unit</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
