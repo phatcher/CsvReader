@@ -19,7 +19,6 @@
 // FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 // A special thanks goes to "shriop" at CodeProject for providing many of the standard and Unicode parsing tests.
 
 namespace LumenWorks.Framework.Tests.Unit.IO.Csv
@@ -27,326 +26,14 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
     using System;
     using System.IO;
     using System.Text;
-    using System.Windows.Forms;
-
-    using NUnit.Framework;
 
     using Framework.IO.Csv;
+
+    using NUnit.Framework;
 
     [TestFixture()]
     public class CsvReaderWithNullRemovalTest
     {
-        #region Argument validation tests
-
-        #region Constructors
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ArgumentTestCtor1WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(null, false, Encoding.ASCII))
-            {
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentTestCtor2WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, 0))
-            {
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentTestCtor3WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, -1))
-            {
-            }
-        }
-
-        [Test]
-        public void ArgumentTestCtor4WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, 123))
-            {
-                Assert.AreEqual("hello world!".Length, csv.BufferSize);
-            }
-        }
-
-        #endregion
-
-        #region Indexers
-
-        [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentTestIndexer1WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                string s = csv[-1];
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentTestIndexer2WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                string s = csv[CsvReaderSampleData.SampleData1RecordCount];
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void ArgumentTestIndexer3WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                string s = csv["asdf"];
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void ArgumentTestIndexer4WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                string s = csv[CsvReaderSampleData.SampleData1Header0];
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ArgumentTestIndexer5WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                string s = csv[null];
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ArgumentTestIndexer6WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                string s = csv[string.Empty];
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ArgumentTestIndexer7WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                string s = csv[null];
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ArgumentTestIndexer8WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                string s = csv[string.Empty];
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void ArgumentTestIndexer9WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                string s = csv["asdf"];
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentTestIndexer10WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                string s = csv[-1, 0];
-            }
-        }
-
-        #endregion
-
-        #region CopyCurrentRecordTo
-
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ArgumentTestCopyCurrentRecordTo1WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                csv.CopyCurrentRecordTo(null);
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentTestCopyCurrentRecordTo2WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                csv.CopyCurrentRecordTo(new string[1], -1);
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ArgumentTestCopyCurrentRecordTo3WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                csv.CopyCurrentRecordTo(new string[1], 1);
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void ArgumentTestCopyCurrentRecordTo4WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                csv.ReadNextRecord();
-                csv.CopyCurrentRecordTo(new string[CsvReaderSampleData.SampleData1RecordCount - 1], 0);
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void ArgumentTestCopyCurrentRecordTo5WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                csv.ReadNextRecord();
-                csv.CopyCurrentRecordTo(new string[CsvReaderSampleData.SampleData1RecordCount], 1);
-            }
-        }
-
-        #endregion
-
-        #endregion
-
-        #region Parsing tests
-
-        [Test]
-        public void ParsingTest1WithNullRemovalStreamReader()
-        {
-            const string data = "1\r\n\r\n1";
-
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
-            {
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual("1", csv[0]);
-
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual("1", csv[0]);
-
-                Assert.IsFalse(csv.ReadNextRecord());
-            }
-        }
-
-        [Test]
-        public void ParsingTest2WithNullRemovalStreamReader()
-        {
-            // ["Bob said, ""Hey!""",2, 3 ]
-            const string data = "\"Bob said, \"\"Hey!\"\"\",2, 3 ";
-
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
-            {
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual(@"Bob said, ""Hey!""", csv[0]);
-                Assert.AreEqual("2", csv[1]);
-                Assert.AreEqual("3", csv[2]);
-
-                Assert.IsFalse(csv.ReadNextRecord());
-            }
-
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '"', '"', '#', ValueTrimmingOptions.None))
-            {
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual(@"Bob said, ""Hey!""", csv[0]);
-                Assert.AreEqual("2", csv[1]);
-                Assert.AreEqual(" 3 ", csv[2]);
-
-                Assert.IsFalse(csv.ReadNextRecord());
-            }
-        }
-
-        [Test]
-        public void ParsingTest3WithNullRemovalStreamReader()
-        {
-            const string data = "1\r2\n";
-
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
-            {
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual("1", csv[0]);
-
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual("2", csv[0]);
-
-                Assert.IsFalse(csv.ReadNextRecord());
-            }
-        }
-
-        [Test]
-        public void ParsingTest4WithNullRemovalStreamReader()
-        {
-            const string data = "\"\n\r\n\n\r\r\",,\t,\n";
-
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
-            {
-                Assert.IsTrue(csv.ReadNextRecord());
-
-                Assert.AreEqual(4, csv.FieldCount);
-
-                Assert.AreEqual("\n\r\n\n\r\r", csv[0]);
-                Assert.AreEqual("", csv[1]);
-                Assert.AreEqual("", csv[2]);
-                Assert.AreEqual("", csv[3]);
-
-                Assert.IsFalse(csv.ReadNextRecord());
-            }
-        }
-
-        [Test]
-        public void ParsingTest5WithNullRemovalStreamReader()
-        {
-            Checkdata5(1024);
-
-            // some tricky ones ...
-
-            Checkdata5(1);
-            Checkdata5(9);
-            Checkdata5(14);
-            Checkdata5(39);
-            Checkdata5(166);
-            Checkdata5(194);
-        }
-
-        [Test]
-        public void ParsingTest5_RandomBufferSizesWithNullRemovalStreamReader()
-        {
-            Random random = new Random();
-
-            for (int i = 0; i < 1000; i++)
-                Checkdata5(random.Next(1, 512));
-        }
-
         private void Checkdata5(int bufferSize)
         {
             const string data = CsvReaderSampleData.SampleData1;
@@ -364,67 +51,541 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             }
         }
 
-        [Test]
-        public void ParsingTest6WithNullRemovalStreamReader()
+        [TestCase((string)null)]
+        [TestCase("")]
+        [TestCase("AnotherName")]
+        public void GetFieldHeaders_WithEmptyHeaderNamesWithNullRemovalStreamReader(string defaultHeaderName)
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("1,2")), false, Encoding.ASCII))
+            if (defaultHeaderName == null)
             {
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual("1", csv[0]);
-                Assert.AreEqual("2", csv[1]);
-                Assert.AreEqual(',', csv.Delimiter);
-                Assert.AreEqual(0, csv.CurrentRecordIndex);
-                Assert.AreEqual(2, csv.FieldCount);
+                defaultHeaderName = "Column";
+            }
+
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(",  ,,aaa,\"   \",,,")), true, Encoding.ASCII))
+            {
+                csv.DefaultHeaderName = defaultHeaderName;
+
                 Assert.IsFalse(csv.ReadNextRecord());
+                Assert.AreEqual(8, csv.FieldCount);
+
+                string[] headers = csv.GetFieldHeaders();
+                Assert.AreEqual(csv.FieldCount, headers.Length);
+
+                Assert.AreEqual("aaa", headers[3]);
+                foreach (int index in new[] { 0, 1, 2, 4, 5, 6, 7 })
+                {
+                    Assert.AreEqual(defaultHeaderName + index, headers[index]);
+                }
+            }
+        }
+
+        [TestCase("", ValueTrimmingOptions.None, new string[] { })]
+        [TestCase("", ValueTrimmingOptions.QuotedOnly, new string[] { })]
+        [TestCase("", ValueTrimmingOptions.UnquotedOnly, new string[] { })]
+        [TestCase(" aaa , bbb , ccc ", ValueTrimmingOptions.None, new[] { " aaa ", " bbb ", " ccc " })]
+        [TestCase(" aaa , bbb , ccc ", ValueTrimmingOptions.QuotedOnly, new[] { " aaa ", " bbb ", " ccc " })]
+        [TestCase(" aaa , bbb , ccc ", ValueTrimmingOptions.UnquotedOnly, new[] { "aaa", "bbb", "ccc" })]
+        [TestCase("\" aaa \",\" bbb \",\" ccc \"", ValueTrimmingOptions.None, new[] { " aaa ", " bbb ", " ccc " })]
+        [TestCase("\" aaa \",\" bbb \",\" ccc \"", ValueTrimmingOptions.QuotedOnly, new[] { "aaa", "bbb", "ccc" })]
+        [TestCase("\" aaa \",\" bbb \",\" ccc \"", ValueTrimmingOptions.UnquotedOnly, new[] { " aaa ", " bbb ", " ccc " })]
+        [TestCase(" aaa , bbb ,\" ccc \"", ValueTrimmingOptions.None, new[] { " aaa ", " bbb ", " ccc " })]
+        [TestCase(" aaa , bbb ,\" ccc \"", ValueTrimmingOptions.QuotedOnly, new[] { " aaa ", " bbb ", "ccc" })]
+        [TestCase(" aaa , bbb ,\" ccc \"", ValueTrimmingOptions.UnquotedOnly, new[] { "aaa", "bbb", " ccc " })]
+        public void TrimFieldValuesTestWithNullRemovalStreamReader(string data, ValueTrimmingOptions trimmingOptions, params string[] expected)
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)),
+                                                 false,
+                                                 Encoding.ASCII,
+                                                 CsvReader.DefaultDelimiter,
+                                                 CsvReader.DefaultQuote,
+                                                 CsvReader.DefaultEscape,
+                                                 CsvReader.DefaultComment,
+                                                 trimmingOptions))
+            {
+                while (csv.ReadNextRecord())
+                {
+                    string[] actual = new string[csv.FieldCount];
+                    csv.CopyCurrentRecordTo(actual);
+
+                    CollectionAssert.AreEqual(expected, actual);
+                }
             }
         }
 
         [Test]
-        public void ParsingTest7WithNullRemovalStreamReader()
+        public void ArgumentTestCopyCurrentRecordTo1WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("\r\n1\r\n")), false, Encoding.ASCII))
+            Assert.Throws<ArgumentNullException>(() =>
             {
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual(',', csv.Delimiter);
-                Assert.AreEqual(0, csv.CurrentRecordIndex);
-                Assert.AreEqual(1, csv.FieldCount);
-                Assert.AreEqual("1", csv[0]);
-                Assert.IsFalse(csv.ReadNextRecord());
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    csv.CopyCurrentRecordTo(null);
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestCopyCurrentRecordTo2WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    csv.CopyCurrentRecordTo(new string[1], -1);
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestCopyCurrentRecordTo3WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    csv.CopyCurrentRecordTo(new string[1], 1);
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestCopyCurrentRecordTo4WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    csv.ReadNextRecord();
+                    csv.CopyCurrentRecordTo(new string[CsvReaderSampleData.SampleData1RecordCount - 1], 0);
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestCopyCurrentRecordTo5WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    csv.ReadNextRecord();
+                    csv.CopyCurrentRecordTo(new string[CsvReaderSampleData.SampleData1RecordCount], 1);
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestCtor1WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(null, false, Encoding.ASCII))
+                {
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestCtor2WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, 0))
+                {
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestCtor3WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, -1))
+                {
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestCtor4WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, 123))
+            {
+                Assert.AreEqual("hello world!".Length, csv.BufferSize);
             }
         }
 
         [Test]
-        public void ParsingTest8WithNullRemovalStreamReader()
+        public void ArgumentTestIndexer10WithNullRemovalStreamReader()
         {
-            const string data = "\"bob said, \"\"Hey!\"\"\",2, 3 ";
-
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.UnquotedOnly))
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual("bob said, \"Hey!\"", csv[0]);
-                Assert.AreEqual("2", csv[1]);
-                Assert.AreEqual("3", csv[2]);
-                Assert.AreEqual(',', csv.Delimiter);
-                Assert.AreEqual(0, csv.CurrentRecordIndex);
-                Assert.AreEqual(3, csv.FieldCount);
-                Assert.IsFalse(csv.ReadNextRecord());
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    string s = csv[-1, 0];
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestIndexer1WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    string s = csv[-1];
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestIndexer2WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    string s = csv[CsvReaderSampleData.SampleData1RecordCount];
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestIndexer3WithNullRemovalStreamReader()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    string s = csv["asdf"];
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestIndexer4WithNullRemovalStreamReader()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    string s = csv[CsvReaderSampleData.SampleData1Header0];
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestIndexer5WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    string s = csv[null];
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestIndexer6WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    string s = csv[string.Empty];
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestIndexer7WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+                {
+                    string s = csv[null];
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestIndexer8WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+                {
+                    string s = csv[string.Empty];
+                }
+            });
+        }
+
+        [Test]
+        public void ArgumentTestIndexer9WithNullRemovalStreamReader()
+        {
+            Assert.Throws<ArgumentException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+                {
+                    string s = csv["asdf"];
+                }
+            });
+        }
+
+#if !NETCOREAPP2_0
+        [Test]
+        public void CachedNoHeaderWithNullRemovalStreamReader()
+        {
+            CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("12345678;Hello\r\n78945612;World")), false, Encoding.ASCII, ';');
+            var dgv = new System.Windows.Forms.DataGridView();
+            dgv.Refresh();
+        }
+#endif
+
+        [Test]
+        public void CopyCurrentRecordToTest1WithNullRemovalStreamReader()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                {
+                    csv.CopyCurrentRecordTo(new string[CsvReaderSampleData.SampleData1RecordCount]);
+                }
+            });
+        }
+
+        [Test]
+        public void FieldCountTest1WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+            {
+                CsvReaderSampleData.CheckSampleData1(csv, true);
             }
         }
 
         [Test]
-        public void ParsingTest9WithNullRemovalStreamReader()
+        public void GetFieldHeadersTest_EmptyCsvWithNullRemovalStreamReader()
         {
-            const string data = ",";
-
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("#asdf\n\n#asdf,asdf")), true, Encoding.ASCII))
             {
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual(string.Empty, csv[0]);
-                Assert.AreEqual(string.Empty, csv[1]);
-                Assert.AreEqual(',', csv.Delimiter);
-                Assert.AreEqual(0, csv.CurrentRecordIndex);
-                Assert.AreEqual(2, csv.FieldCount);
-                Assert.IsFalse(csv.ReadNextRecord());
+                string[] headers = csv.GetFieldHeaders();
+
+                Assert.IsNotNull(headers);
+                Assert.AreEqual(0, headers.Length);
+            }
+        }
+
+        [Test]
+        public void GetFieldHeadersTest1WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+            {
+                string[] headers = csv.GetFieldHeaders();
+
+                Assert.IsNotNull(headers);
+                Assert.AreEqual(0, headers.Length);
+            }
+        }
+
+        [Test]
+        public void GetFieldHeadersTest2WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            {
+                string[] headers = csv.GetFieldHeaders();
+
+                Assert.IsNotNull(headers);
+                Assert.AreEqual(CsvReaderSampleData.SampleData1RecordCount, headers.Length);
+
+                Assert.AreEqual(CsvReaderSampleData.SampleData1Header0, headers[0]);
+                Assert.AreEqual(CsvReaderSampleData.SampleData1Header1, headers[1]);
+                Assert.AreEqual(CsvReaderSampleData.SampleData1Header2, headers[2]);
+                Assert.AreEqual(CsvReaderSampleData.SampleData1Header3, headers[3]);
+                Assert.AreEqual(CsvReaderSampleData.SampleData1Header4, headers[4]);
+                Assert.AreEqual(CsvReaderSampleData.SampleData1Header5, headers[5]);
+
+                Assert.AreEqual(0, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header0));
+                Assert.AreEqual(1, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header1));
+                Assert.AreEqual(2, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header2));
+                Assert.AreEqual(3, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header3));
+                Assert.AreEqual(4, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header4));
+                Assert.AreEqual(5, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header5));
+            }
+        }
+
+        [Test]
+        public void HasHeader_HeaderDoesNotExistWithNullRemovalStreamReader()
+        {
+            string header = "Phone Number";
+
+            using (CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            {
+                Assert.IsFalse(csvReader.HasHeader(header));
+            }
+        }
+
+        [Test]
+        public void HasHeader_HeaderExistsWithNullRemovalStreamReader()
+        {
+            string header = "First Name";
+
+            using (CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            {
+                Assert.IsTrue(csvReader.HasHeader(header));
+            }
+        }
+
+        [Test]
+        public void HasHeader_NullFieldHeadersWithNullRemovalStreamReader()
+        {
+            string header = "NonExistingHeader";
+
+            using (CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("Value1,Value2")), false, Encoding.ASCII))
+            {
+                Assert.IsFalse(csvReader.HasHeader(header));
+            }
+        }
+
+        [Test]
+        public void HasHeader_NullHeaderWithNullRemovalStreamReader()
+        {
+            using (CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("Header1,Header2\r\nValue1,Value2")), true, Encoding.ASCII))
+            {
+                Assert.Throws<ArgumentNullException>(delegate
+                {
+                    csvReader.HasHeader(null);
+                });
+            }
+        }
+
+        [Test]
+        public void IndexerTest1WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            {
+                for (int i = 0; i < CsvReaderSampleData.SampleData1RecordCount; i++)
+                {
+                    string s = csv[i, 0];
+                    CsvReaderSampleData.CheckSampleData1(i, csv);
+                }
+            }
+        }
+
+        [Test]
+        public void IndexerTest2WithNullRemovalStreamReader()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+                {
+                    string s = csv[1, 0];
+                    s = csv[0, 0];
+                }
+            });
+        }
+
+        [Test]
+        public void IndexerTest3WithNullRemovalStreamReader()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+                {
+                    string s = csv[CsvReaderSampleData.SampleData1RecordCount, 0];
+                }
+            });
+        }
+
+        [Test]
+        public void IterationTest1WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            {
+                int index = 0;
+
+                foreach (string[] record in csv)
+                {
+                    CsvReaderSampleData.CheckSampleData1(csv.HasHeaders, index, record);
+                    index++;
+                }
+            }
+        }
+
+        [Test]
+        public void IterationTest2WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            {
+                string[] previous = null;
+
+                foreach (string[] record in csv)
+                {
+                    Assert.IsFalse(ReferenceEquals(previous, record));
+
+                    previous = record;
+                }
+            }
+        }
+
+        [Test]
+        public void MoveToTest1WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            {
+                for (int i = 0; i < CsvReaderSampleData.SampleData1RecordCount; i++)
+                {
+                    Assert.IsTrue(csv.MoveTo(i));
+                    CsvReaderSampleData.CheckSampleData1(i, csv);
+                }
+            }
+        }
+
+        [Test]
+        public void MoveToTest2WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            {
+                Assert.IsTrue(csv.MoveTo(1));
+                Assert.IsFalse(csv.MoveTo(0));
+            }
+        }
+
+        [Test]
+        public void MoveToTest3WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            {
+                Assert.IsFalse(csv.MoveTo(CsvReaderSampleData.SampleData1RecordCount));
+            }
+        }
+
+        [Test]
+        public void MoveToTest4WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            {
+                csv.SupportsMultiline = false;
+
+                string[] headers = csv.GetFieldHeaders();
+
+                Assert.IsTrue(csv.MoveTo(2));
+                Assert.AreEqual(2, csv.CurrentRecordIndex);
+                CsvReaderSampleData.CheckSampleData1(csv, false);
+            }
+        }
+
+        [Test]
+        public void MoveToTest5WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+            {
+                Assert.IsTrue(csv.MoveTo(-1));
+                csv.MoveTo(0);
+                Assert.IsFalse(csv.MoveTo(-1));
             }
         }
 
@@ -583,6 +744,23 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
             using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+        }
+
+        [Test]
+        public void ParsingTest1WithNullRemovalStreamReader()
+        {
+            const string data = "1\r\n\r\n1";
+
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            {
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual("1", csv[0]);
+
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual("1", csv[0]);
+
                 Assert.IsFalse(csv.ReadNextRecord());
             }
         }
@@ -753,6 +931,33 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         }
 
         [Test]
+        public void ParsingTest2WithNullRemovalStreamReader()
+        {
+            // ["Bob said, ""Hey!""",2, 3 ]
+            const string data = "\"Bob said, \"\"Hey!\"\"\",2, 3 ";
+
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            {
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual(@"Bob said, ""Hey!""", csv[0]);
+                Assert.AreEqual("2", csv[1]);
+                Assert.AreEqual("3", csv[2]);
+
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '"', '"', '#', ValueTrimmingOptions.None))
+            {
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual(@"Bob said, ""Hey!""", csv[0]);
+                Assert.AreEqual("2", csv[1]);
+                Assert.AreEqual(" 3 ", csv[2]);
+
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+        }
+
+        [Test]
         public void ParsingTest30WithNullRemovalStreamReader()
         {
             const string data = "1\r\n\r\n1";
@@ -835,7 +1040,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         public void ParsingTest34WithNullRemovalStreamReader()
         {
             const string data = "\"Chicane\", \"Love on the Run\", \"Knight Rider\", \"This field contains a comma, but it doesn't matter as the field is quoted\"\r\n" +
-                      "\"Samuel Barber\", \"Adagio for Strings\", \"Classical\", \"This field contains a double quote character, \"\", but it doesn't matter as it is escaped\"";
+                                "\"Samuel Barber\", \"Adagio for Strings\", \"Classical\", \"This field contains a double quote character, \"\", but it doesn't matter as it is escaped\"";
 
             using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.UnquotedOnly))
             {
@@ -912,7 +1117,15 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest39WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00,01,   \n10,11,   ")), false, Encoding.ASCII, CsvReader.DefaultDelimiter, CsvReader.DefaultQuote, CsvReader.DefaultEscape, CsvReader.DefaultComment, ValueTrimmingOptions.UnquotedOnly, 1))
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00,01,   \n10,11,   ")),
+                                                 false,
+                                                 Encoding.ASCII,
+                                                 CsvReader.DefaultDelimiter,
+                                                 CsvReader.DefaultQuote,
+                                                 CsvReader.DefaultEscape,
+                                                 CsvReader.DefaultComment,
+                                                 ValueTrimmingOptions.UnquotedOnly,
+                                                 1))
             {
                 int fieldCount = csv.FieldCount;
 
@@ -925,6 +1138,23 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 Assert.AreEqual("10", csv[0]);
                 Assert.AreEqual("11", csv[1]);
                 Assert.AreEqual("", csv[2]);
+
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+        }
+
+        [Test]
+        public void ParsingTest3WithNullRemovalStreamReader()
+        {
+            const string data = "1\r2\n";
+
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            {
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual("1", csv[0]);
+
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual("2", csv[0]);
 
                 Assert.IsFalse(csv.ReadNextRecord());
             }
@@ -952,7 +1182,15 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest41WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("First record          ,Second record")), false, Encoding.ASCII, CsvReader.DefaultDelimiter, CsvReader.DefaultQuote, CsvReader.DefaultEscape, CsvReader.DefaultComment, ValueTrimmingOptions.UnquotedOnly, 16))
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("First record          ,Second record")),
+                                                 false,
+                                                 Encoding.ASCII,
+                                                 CsvReader.DefaultDelimiter,
+                                                 CsvReader.DefaultQuote,
+                                                 CsvReader.DefaultEscape,
+                                                 CsvReader.DefaultComment,
+                                                 ValueTrimmingOptions.UnquotedOnly,
+                                                 16))
             {
                 Assert.AreEqual(2, csv.FieldCount);
 
@@ -995,17 +1233,19 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             }
         }
 
-        [ExpectedException(typeof(MalformedCsvException))]
         [Test]
         public void ParsingTest44WithNullRemovalStreamReader()
         {
             const string data = "\"01234567891\"\r\ntest";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            Assert.Throws<MalformedCsvException>(() =>
             {
-                csv.MaxQuotedFieldLength = 10;
-                csv.ReadNextRecord();
-            }
+                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+                {
+                    csv.MaxQuotedFieldLength = 10;
+                    csv.ReadNextRecord();
+                }
+            });
         }
 
         [Test]
@@ -1021,9 +1261,156 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             }
         }
 
-        #endregion
+        [Test]
+        public void ParsingTest4WithNullRemovalStreamReader()
+        {
+            const string data = "\"\n\r\n\n\r\r\",,\t,\n";
 
-        #region UnicodeParsing tests
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            {
+                Assert.IsTrue(csv.ReadNextRecord());
+
+                Assert.AreEqual(4, csv.FieldCount);
+
+                Assert.AreEqual("\n\r\n\n\r\r", csv[0]);
+                Assert.AreEqual("", csv[1]);
+                Assert.AreEqual("", csv[2]);
+                Assert.AreEqual("", csv[3]);
+
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+        }
+
+        [Test]
+        public void ParsingTest5_RandomBufferSizesWithNullRemovalStreamReader()
+        {
+            Random random = new Random();
+
+            for (int i = 0; i < 1000; i++)
+            {
+                Checkdata5(random.Next(1, 512));
+            }
+        }
+
+        [Test]
+        public void ParsingTest5WithNullRemovalStreamReader()
+        {
+            Checkdata5(1024);
+
+            // some tricky ones ...
+
+            Checkdata5(1);
+            Checkdata5(9);
+            Checkdata5(14);
+            Checkdata5(39);
+            Checkdata5(166);
+            Checkdata5(194);
+        }
+
+        [Test]
+        public void ParsingTest6WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("1,2")), false, Encoding.ASCII))
+            {
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual("1", csv[0]);
+                Assert.AreEqual("2", csv[1]);
+                Assert.AreEqual(',', csv.Delimiter);
+                Assert.AreEqual(0, csv.CurrentRecordIndex);
+                Assert.AreEqual(2, csv.FieldCount);
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+        }
+
+        [Test]
+        public void ParsingTest7WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("\r\n1\r\n")), false, Encoding.ASCII))
+            {
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual(',', csv.Delimiter);
+                Assert.AreEqual(0, csv.CurrentRecordIndex);
+                Assert.AreEqual(1, csv.FieldCount);
+                Assert.AreEqual("1", csv[0]);
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+        }
+
+        [Test]
+        public void ParsingTest8WithNullRemovalStreamReader()
+        {
+            const string data = "\"bob said, \"\"Hey!\"\"\",2, 3 ";
+
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.UnquotedOnly))
+            {
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual("bob said, \"Hey!\"", csv[0]);
+                Assert.AreEqual("2", csv[1]);
+                Assert.AreEqual("3", csv[2]);
+                Assert.AreEqual(',', csv.Delimiter);
+                Assert.AreEqual(0, csv.CurrentRecordIndex);
+                Assert.AreEqual(3, csv.FieldCount);
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+        }
+
+        [Test]
+        public void ParsingTest9WithNullRemovalStreamReader()
+        {
+            const string data = ",";
+
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            {
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual(string.Empty, csv[0]);
+                Assert.AreEqual(string.Empty, csv[1]);
+                Assert.AreEqual(',', csv.Delimiter);
+                Assert.AreEqual(0, csv.CurrentRecordIndex);
+                Assert.AreEqual(2, csv.FieldCount);
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+        }
+
+        [Test]
+        public void SkipEmptyLinesTest1WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00\n\n10")), false, Encoding.ASCII))
+            {
+                csv.SkipEmptyLines = false;
+
+                Assert.AreEqual(1, csv.FieldCount);
+
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual("00", csv[0]);
+
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual(string.Empty, csv[0]);
+
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual("10", csv[0]);
+
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+        }
+
+        [Test]
+        public void SkipEmptyLinesTest2WithNullRemovalStreamReader()
+        {
+            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00\n\n10")), false, Encoding.ASCII))
+            {
+                csv.SkipEmptyLines = true;
+
+                Assert.AreEqual(1, csv.FieldCount);
+
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual("00", csv[0]);
+
+                Assert.IsTrue(csv.ReadNextRecord());
+                Assert.AreEqual("10", csv[0]);
+
+                Assert.IsFalse(csv.ReadNextRecord());
+            }
+        }
 
         [Test]
         public void UnicodeParsingTest1WithNullRemovalStreamReader()
@@ -1033,7 +1420,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             char[] raw = new char[65536 - 13];
 
             for (int i = 0; i < raw.Length; i++)
+            {
                 raw[i] = (char)(i + 14);
+            }
 
             raw[44 - 14] = ' '; // skip comma
 
@@ -1099,379 +1488,5 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 Assert.IsFalse(csv.ReadNextRecord());
             }
         }
-
-        #endregion
-
-        #region FieldCount
-
-        [Test]
-        public void FieldCountTest1WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                CsvReaderSampleData.CheckSampleData1(csv, true);
-            }
-        }
-
-        #endregion
-
-        #region GetFieldHeaders
-
-        [Test]
-        public void GetFieldHeadersTest1WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                string[] headers = csv.GetFieldHeaders();
-
-                Assert.IsNotNull(headers);
-                Assert.AreEqual(0, headers.Length);
-            }
-        }
-
-        [Test]
-        public void GetFieldHeadersTest2WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                string[] headers = csv.GetFieldHeaders();
-
-                Assert.IsNotNull(headers);
-                Assert.AreEqual(CsvReaderSampleData.SampleData1RecordCount, headers.Length);
-
-                Assert.AreEqual(CsvReaderSampleData.SampleData1Header0, headers[0]);
-                Assert.AreEqual(CsvReaderSampleData.SampleData1Header1, headers[1]);
-                Assert.AreEqual(CsvReaderSampleData.SampleData1Header2, headers[2]);
-                Assert.AreEqual(CsvReaderSampleData.SampleData1Header3, headers[3]);
-                Assert.AreEqual(CsvReaderSampleData.SampleData1Header4, headers[4]);
-                Assert.AreEqual(CsvReaderSampleData.SampleData1Header5, headers[5]);
-
-                Assert.AreEqual(0, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header0));
-                Assert.AreEqual(1, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header1));
-                Assert.AreEqual(2, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header2));
-                Assert.AreEqual(3, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header3));
-                Assert.AreEqual(4, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header4));
-                Assert.AreEqual(5, csv.GetFieldIndex(CsvReaderSampleData.SampleData1Header5));
-            }
-        }
-
-        [Test]
-        public void GetFieldHeadersTest_EmptyCsvWithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("#asdf\n\n#asdf,asdf")), true, Encoding.ASCII))
-            {
-                string[] headers = csv.GetFieldHeaders();
-
-                Assert.IsNotNull(headers);
-                Assert.AreEqual(0, headers.Length);
-            }
-        }
-
-        [TestCase((string)null)]
-        [TestCase("")]
-        [TestCase("AnotherName")]
-        public void GetFieldHeaders_WithEmptyHeaderNamesWithNullRemovalStreamReader(string defaultHeaderName)
-        {
-            if (defaultHeaderName == null)
-                defaultHeaderName = "Column";
-
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(",  ,,aaa,\"   \",,,")), true, Encoding.ASCII))
-            {
-                csv.DefaultHeaderName = defaultHeaderName;
-
-                Assert.IsFalse(csv.ReadNextRecord());
-                Assert.AreEqual(8, csv.FieldCount);
-
-                string[] headers = csv.GetFieldHeaders();
-                Assert.AreEqual(csv.FieldCount, headers.Length);
-
-                Assert.AreEqual("aaa", headers[3]);
-                foreach (int index in new[] { 0, 1, 2, 4, 5, 6, 7 })
-                    Assert.AreEqual(defaultHeaderName + index, headers[index]);
-            }
-        }
-
-        #endregion
-
-        [Test]
-        public void CachedNoHeaderWithNullRemovalStreamReader()
-        {
-            CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("12345678;Hello\r\n78945612;World")), false, Encoding.ASCII, ';');
-            DataGridView dgv = new DataGridView { DataSource = csv };
-            dgv.Refresh();
-        }
-
-        #region HasHeader
-
-        [Test]
-        public void HasHeader_NullHeaderWithNullRemovalStreamReader()
-        {
-            using(CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("Header1,Header2\r\nValue1,Value2")), true, Encoding.ASCII))
-            {
-                Assert.Throws<ArgumentNullException>(delegate
-                {
-                    csvReader.HasHeader(null);
-                });
-            }
-        }
-
-        [Test]
-        public void HasHeader_HeaderExistsWithNullRemovalStreamReader()
-        {
-            string header = "First Name";
-
-            using (CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                Assert.IsTrue(csvReader.HasHeader(header)); 
-            }
-        }
-
-        [Test]
-        public void HasHeader_HeaderDoesNotExistWithNullRemovalStreamReader()
-        {
-            string header = "Phone Number";
-
-            using (CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                Assert.IsFalse(csvReader.HasHeader(header));
-            }
-        }
-
-        [Test]
-        public void HasHeader_NullFieldHeadersWithNullRemovalStreamReader()
-        {
-            string header = "NonExistingHeader";
-
-            using (CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("Value1,Value2")), false, Encoding.ASCII))
-            {
-                Assert.IsFalse(csvReader.HasHeader(header));
-            }
-        }
-
-        #endregion
-
-        #region CopyCurrentRecordTo
-
-        [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void CopyCurrentRecordToTest1WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                csv.CopyCurrentRecordTo(new string[CsvReaderSampleData.SampleData1RecordCount]);
-            }
-        }
-
-        #endregion
-
-        #region MoveTo tests
-
-        [Test]
-        public void MoveToTest1WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                for (int i = 0; i < CsvReaderSampleData.SampleData1RecordCount; i++)
-                {
-                    Assert.IsTrue(csv.MoveTo(i));
-                    CsvReaderSampleData.CheckSampleData1(i, csv);
-                }
-            }
-        }
-
-        [Test]
-        public void MoveToTest2WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                Assert.IsTrue(csv.MoveTo(1));
-                Assert.IsFalse(csv.MoveTo(0));
-            }
-        }
-
-        [Test]
-        public void MoveToTest3WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                Assert.IsFalse(csv.MoveTo(CsvReaderSampleData.SampleData1RecordCount));
-            }
-        }
-
-        [Test]
-        public void MoveToTest4WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                csv.SupportsMultiline = false;
-
-                string[] headers = csv.GetFieldHeaders();
-
-                Assert.IsTrue(csv.MoveTo(2));
-                Assert.AreEqual(2, csv.CurrentRecordIndex);
-                CsvReaderSampleData.CheckSampleData1(csv, false);
-            }
-        }
-
-        [Test]
-        public void MoveToTest5WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
-            {
-                Assert.IsTrue(csv.MoveTo(-1));
-                csv.MoveTo(0);
-                Assert.IsFalse(csv.MoveTo(-1));
-            }
-        }
-
-        #endregion
-
-        #region Iteration tests
-
-        [Test]
-        public void IterationTest1WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                int index = 0;
-
-                foreach (string[] record in csv)
-                {
-                    CsvReaderSampleData.CheckSampleData1(csv.HasHeaders, index, record);
-                    index++;
-                }
-            }
-        }
-
-        [Test]
-        public void IterationTest2WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                string[] previous = null;
-
-                foreach (string[] record in csv)
-                {
-                    Assert.IsFalse(ReferenceEquals(previous, record));
-
-                    previous = record;
-                }
-            }
-        }
-
-        #endregion
-
-        #region Indexer tests
-
-        [Test]
-        public void IndexerTest1WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                for (int i = 0; i < CsvReaderSampleData.SampleData1RecordCount; i++)
-                {
-                    string s = csv[i, 0];
-                    CsvReaderSampleData.CheckSampleData1(i, csv);
-                }
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void IndexerTest2WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                string s = csv[1, 0];
-                s = csv[0, 0];
-            }
-        }
-
-        [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void IndexerTest3WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
-            {
-                string s = csv[CsvReaderSampleData.SampleData1RecordCount, 0];
-            }
-        }
-
-        #endregion
-
-        #region SkipEmptyLines
-
-        [Test]
-        public void SkipEmptyLinesTest1WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00\n\n10")), false, Encoding.ASCII))
-            {
-                csv.SkipEmptyLines = false;
-
-                Assert.AreEqual(1, csv.FieldCount);
-
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual("00", csv[0]);
-
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual(string.Empty, csv[0]);
-
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual("10", csv[0]);
-
-                Assert.IsFalse(csv.ReadNextRecord());
-            }
-        }
-
-        [Test]
-        public void SkipEmptyLinesTest2WithNullRemovalStreamReader()
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00\n\n10")), false, Encoding.ASCII))
-            {
-                csv.SkipEmptyLines = true;
-
-                Assert.AreEqual(1, csv.FieldCount);
-
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual("00", csv[0]);
-
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual("10", csv[0]);
-
-                Assert.IsFalse(csv.ReadNextRecord());
-            }
-        }
-
-        #endregion
-
-        #region Trimming tests
-
-        [TestCase("", ValueTrimmingOptions.None, new string[] { })]
-        [TestCase("", ValueTrimmingOptions.QuotedOnly, new string[] { })]
-        [TestCase("", ValueTrimmingOptions.UnquotedOnly, new string[] { })]
-        [TestCase(" aaa , bbb , ccc ", ValueTrimmingOptions.None, new[] { " aaa ", " bbb ", " ccc " })]
-        [TestCase(" aaa , bbb , ccc ", ValueTrimmingOptions.QuotedOnly, new[] { " aaa ", " bbb ", " ccc " })]
-        [TestCase(" aaa , bbb , ccc ", ValueTrimmingOptions.UnquotedOnly, new[] { "aaa", "bbb", "ccc" })]
-        [TestCase("\" aaa \",\" bbb \",\" ccc \"", ValueTrimmingOptions.None, new[] { " aaa ", " bbb ", " ccc " })]
-        [TestCase("\" aaa \",\" bbb \",\" ccc \"", ValueTrimmingOptions.QuotedOnly, new[] { "aaa", "bbb", "ccc" })]
-        [TestCase("\" aaa \",\" bbb \",\" ccc \"", ValueTrimmingOptions.UnquotedOnly, new[] { " aaa ", " bbb ", " ccc " })]
-        [TestCase(" aaa , bbb ,\" ccc \"", ValueTrimmingOptions.None, new[] { " aaa ", " bbb ", " ccc " })]
-        [TestCase(" aaa , bbb ,\" ccc \"", ValueTrimmingOptions.QuotedOnly, new[] { " aaa ", " bbb ", "ccc" })]
-        [TestCase(" aaa , bbb ,\" ccc \"", ValueTrimmingOptions.UnquotedOnly, new[] { "aaa", "bbb", " ccc " })]
-        public void TrimFieldValuesTestWithNullRemovalStreamReader(string data, ValueTrimmingOptions trimmingOptions, params string[] expected)
-        {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, CsvReader.DefaultDelimiter, CsvReader.DefaultQuote, CsvReader.DefaultEscape, CsvReader.DefaultComment, trimmingOptions))
-            {
-                while (csv.ReadNextRecord())
-                {
-                    string[] actual = new string[csv.FieldCount];
-                    csv.CopyCurrentRecordTo(actual);
-
-                    CollectionAssert.AreEqual(expected, actual);
-                }
-            }
-        }
-
-        #endregion
     }
 }

@@ -1,10 +1,10 @@
-using System.Data;
-using System.Data.OleDb;
-using System.IO;
-
 namespace CsvReaderDemo
 {
 #if !NETCOREAPP2_0
+    using System.Data;
+    using System.Data.OleDb;
+    using System.IO;
+
     public sealed class OleDbBenchmark
 	{
 		private OleDbBenchmark()
