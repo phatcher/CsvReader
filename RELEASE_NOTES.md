@@ -1,5 +1,5 @@
 #### 4.0.0 (2018-01-30)
-* Support .NET Framwork 2.0+ and .NET Standard 1.3+
+* Support .NET Framework 2.0+ and .NET Standard 1.3+
 * Use DateTime.TryParseExact if needed (@milcondoin)
 * Override column capability (@spintronic)
 * Fix handling of duplicate headers (@jonreis)
@@ -7,6 +7,7 @@
 * Added NullBytesRemoval functionality to reduce memory usage and runtime (@andrewpsy)
 * Fixed: Exception in GetFieldType() when hasHeaders is false (@molopony)
 * Fixed: Exception when reading data and hasHeaders is false (@molopony)
+* Fixed: ArgumentOutOfRangeException when hasHeaders is false (@molopony)
 
 #### 3.9.1 (2016-04-09)
 * Added max field length for quoted fields (@criteo)

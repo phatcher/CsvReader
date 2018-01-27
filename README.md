@@ -19,6 +19,8 @@ You can see the version history [here](RELEASE_NOTES.md).
 
 The tooling should be automatically installed by paket/Fake. The default build will compile and test the project, and also produce a nuget package.
 
+The library supports for .NET 2.0, 3.5, 4.5 and 4.6.1 and .netstandard 1.3 and 2.0, the netstandard1.3 version does not contain CachedCsvReader since the necessary interfaces are not available.
+
 ## Library License
 
 The library is available under the [MIT License](http://en.wikipedia.org/wiki/MIT_License), for more information see the [License file][1] in the GitHub repository.
