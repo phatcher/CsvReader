@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Reflection;
+
 namespace LumenWorks.Framework.IO.Csv.Resources {
     using System;
     
@@ -39,7 +41,11 @@ namespace LumenWorks.Framework.IO.Csv.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
+#if NETSTANDARD1_3 || NETSTANDARD2_0
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LumenWorks.Framework.IO.Csv.Resources.ExceptionMessage", typeof(ExceptionMessage).GetTypeInfo().Assembly);
+#else
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("LumenWorks.Framework.IO.Csv.Resources.ExceptionMessage", typeof(ExceptionMessage).Assembly);
+#endif
                     resourceMan = temp;
                 }
                 return resourceMan;
