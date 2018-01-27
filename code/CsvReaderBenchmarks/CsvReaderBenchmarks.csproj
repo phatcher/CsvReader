@@ -4,6 +4,8 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <OutputType>Exe</OutputType>
     <Description>Benchmarking for Lumenworks.Framework.IO</Description>
+    <OutputPath>$(SolutionDir)\build\$(Configuration)\$(AssemblyName)\$(TargetFramework)\</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
