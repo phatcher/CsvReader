@@ -20,7 +20,9 @@
 //	ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+#if !NETCOREAPP1_0
 using System.Data;
+#endif
 using System.Globalization;
 using System.IO;
 
@@ -30,7 +32,8 @@ using LumenWorks.Framework.IO.Csv;
 
 namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 {
-	[TestFixture()]
+#if !NETCOREAPP1_0
+    [TestFixture]
 	public class CsvReaderIDataReaderTest
 	{
 	    [Test]
@@ -765,4 +768,5 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 			}
 		}
 	}
+#endif
 }

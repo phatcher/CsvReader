@@ -1186,7 +1186,6 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             }
         }
 
-#if !NETCOREAPP2_0
         [Test]
         public void OverrideColumnValueTest()
         {
@@ -1205,6 +1204,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             }
         }
 
+#if !NETCOREAPP1_0 && !NETCOREAPP2_0 
         [Test]
         public void CachedNoHeader()
         {

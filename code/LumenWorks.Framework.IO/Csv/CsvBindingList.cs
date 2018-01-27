@@ -26,6 +26,7 @@ using System.ComponentModel;
 
 namespace LumenWorks.Framework.IO.Csv
 {
+#if !NETSTANDARD1_3
     /// <summary>
     /// Represents a binding list wrapper for a CSV reader.
     /// </summary>
@@ -329,9 +330,10 @@ namespace LumenWorks.Framework.IO.Csv
             get { return null; }
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
         }
     }
+#endif
 }

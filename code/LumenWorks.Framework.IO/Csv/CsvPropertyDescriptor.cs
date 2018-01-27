@@ -24,10 +24,11 @@ using System.ComponentModel;
 
 namespace LumenWorks.Framework.IO.Csv
 {
-	/// <summary>
-	/// Represents a CSV field property descriptor.
-	/// </summary>
-	public class CsvPropertyDescriptor : PropertyDescriptor
+#if !NETSTANDARD1_3
+    /// <summary>
+    /// Represents a CSV field property descriptor.
+    /// </summary>
+    public class CsvPropertyDescriptor : PropertyDescriptor
 	{
 		/// <summary>
 		/// Initializes a new instance of the CsvPropertyDescriptor class.
@@ -83,4 +84,5 @@ namespace LumenWorks.Framework.IO.Csv
 			get { return typeof(string); }
 		}
 	}
+#endif
 }

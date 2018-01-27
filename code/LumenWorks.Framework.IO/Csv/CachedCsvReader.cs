@@ -29,6 +29,7 @@ using LumenWorks.Framework.IO.Csv.Resources;
 
 namespace LumenWorks.Framework.IO.Csv
 {
+#if !NETSTANDARD1_3
     /// <summary>
     /// Represents a reader that provides fast, cached, dynamic access to CSV data.
     /// </summary>
@@ -365,4 +366,5 @@ namespace LumenWorks.Framework.IO.Csv
             return _bindingList ?? (_bindingList = new CsvBindingList(this));
         }
     }
+#endif
 }

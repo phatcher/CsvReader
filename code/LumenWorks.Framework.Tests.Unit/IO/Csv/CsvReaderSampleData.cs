@@ -29,9 +29,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 {
 	public class CsvReaderSampleData
 	{
-		#region Sample data
-
-		public const int SampleData1RecordCount = 6;
+	    public const int SampleData1RecordCount = 6;
 		public const int SampleData1FieldCount = 6;
 
 		public const string SampleData1Header0 = "First Name";
@@ -74,11 +72,7 @@ System.Boolean,System.DateTime,System.Single,System.Double,System.Decimal,System
 
 		public const string SampleNullValue = "_<null>_";
 
-		#endregion
-
-		#region Sample data utility methods
-
-		public static void CheckSampleData1(CsvReader csv, bool readToEnd)
+	    public static void CheckSampleData1(CsvReader csv, bool readToEnd)
 		{
 			if (readToEnd)
 			{
@@ -204,7 +198,5 @@ System.Boolean,System.DateTime,System.Single,System.Double,System.Decimal,System
 					throw new IndexOutOfRangeException(string.Format("Specified recordIndex is '{0}'. Possible range is [0, 5].", recordIndex));
 			}
 		}
-
-		#endregion
 	}
 }

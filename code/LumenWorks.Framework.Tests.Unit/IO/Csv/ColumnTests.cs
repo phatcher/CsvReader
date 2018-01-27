@@ -1,12 +1,12 @@
-﻿namespace LumenWorks.Framework.Tests.Unit.IO.Csv
+﻿using System;
+using System.Collections.Generic;
+
+using LumenWorks.Framework.IO.Csv;
+
+using NUnit.Framework;
+
+namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 {
-    using System;
-
-    using LumenWorks.Framework.IO.Csv;
-
-    using NUnit.Framework;
-    using System.Collections.Generic;
-
     [TestFixture]
     public class ColumnTests
     {

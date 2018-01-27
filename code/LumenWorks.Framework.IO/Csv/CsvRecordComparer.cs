@@ -22,11 +22,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Debug = System.Diagnostics.Debug;
 using System.Globalization;
+
+using Debug = System.Diagnostics.Debug;
 
 namespace LumenWorks.Framework.IO.Csv
 {
+#if !NETSTANDARD1_3
     /// <summary>
     /// Represents a CSV record comparer.
     /// </summary>
@@ -67,4 +69,5 @@ namespace LumenWorks.Framework.IO.Csv
             return (Direction == ListSortDirection.Ascending ? result : -result);
         }
     }
+#endif
 }

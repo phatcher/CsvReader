@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net20;net35;net45;net461;netcoreapp20</TargetFrameworks>
+    <TargetFrameworks>net20;net35;net45;net461;netcoreapp10;netcoreapp20</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <OutputType>Exe</OutputType>
     <Description>Benchmarking for Lumenworks.Framework.IO</Description>

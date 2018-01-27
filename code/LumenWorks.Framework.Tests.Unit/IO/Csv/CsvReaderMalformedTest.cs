@@ -32,7 +32,7 @@ using LumenWorks.Framework.IO.Csv;
 
 namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 {
-    [TestFixture()]
+    [TestFixture]
     public class CsvReaderMalformedTest
     {
         private void CheckMissingFieldUnquoted(long recordCount, int fieldCount, long badRecordIndex, int badFieldIndex, int bufferSize)

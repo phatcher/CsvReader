@@ -22,20 +22,27 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+#if !NETSTANDARD1_3
 using System.Data;
 using System.Data.Common;
-using Debug = System.Diagnostics.Debug;
+#endif
 using System.Globalization;
 using System.IO;
 
 using LumenWorks.Framework.IO.Csv.Resources;
+
+using Debug = System.Diagnostics.Debug;
 
 namespace LumenWorks.Framework.IO.Csv
 {
     /// <summary>
     /// Represents a reader that provides fast, non-cached, forward-only access to CSV data.  
     /// </summary>
+#if NETSTANDARD1_3
+    public partial class CsvReader : IEnumerable<string[]>//, IDispoable
+#else
     public partial class CsvReader : IDataReader, IEnumerable<string[]>
+#endif
     {
         /// <summary>
         /// Defines the default buffer size.
@@ -326,7 +333,9 @@ namespace LumenWorks.Framework.IO.Csv
         public CsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, int bufferSize, string nullValue = null)
         {
 #if DEBUG
+#if !NETSTANDARD1_3
             _allocStack = new System.Diagnostics.StackTrace();
+#endif
 #endif
 
             if (reader == null)
@@ -2011,7 +2020,8 @@ namespace LumenWorks.Framework.IO.Csv
             return length;
         }
 
-        int IDataReader.RecordsAffected
+#if !NETSTANDARD1_3
+        int System.Data.IDataReader.RecordsAffected
         {
             get
             {
@@ -2020,7 +2030,7 @@ namespace LumenWorks.Framework.IO.Csv
             }
         }
 
-        bool IDataReader.IsClosed
+        bool System.Data.IDataReader.IsClosed
         {
             get
             {
@@ -2028,26 +2038,26 @@ namespace LumenWorks.Framework.IO.Csv
             }
         }
 
-        bool IDataReader.NextResult()
+        bool System.Data.IDataReader.NextResult()
         {
             ValidateDataReader(DataReaderValidations.IsNotClosed);
 
             return false;
         }
 
-        void IDataReader.Close()
+        void System.Data.IDataReader.Close()
         {
             Dispose();
         }
 
-        bool IDataReader.Read()
+        bool System.Data.IDataReader.Read()
         {
             ValidateDataReader(DataReaderValidations.IsNotClosed);
 
             return ReadNextRecord();
         }
 
-        int IDataReader.Depth
+        int System.Data.IDataReader.Depth
         {
             get
             {
@@ -2057,7 +2067,7 @@ namespace LumenWorks.Framework.IO.Csv
             }
         }
 
-        DataTable IDataReader.GetSchemaTable()
+        System.Data.DataTable System.Data.IDataReader.GetSchemaTable()
         {
             EnsureInitialize();
             ValidateDataReader(DataReaderValidations.IsNotClosed);
@@ -2353,7 +2363,7 @@ namespace LumenWorks.Framework.IO.Csv
             ValidateDataReader(DataReaderValidations.IsInitialized | DataReaderValidations.IsNotClosed);
             return short.Parse(this[i], CultureInfo.CurrentCulture);
         }
-
+#endif
         object FieldValue(int i)
         {
             var value = this[i];
@@ -2402,10 +2412,12 @@ namespace LumenWorks.Framework.IO.Csv
         }
 
 #if DEBUG
+#if !NETSTANDARD1_3
         /// <summary>
         /// Contains the stack when the object was allocated.
         /// </summary>
         private System.Diagnostics.StackTrace _allocStack;
+#endif
 #endif
 
         /// <summary>
@@ -2540,9 +2552,10 @@ namespace LumenWorks.Framework.IO.Csv
         ~CsvReader()
         {
 #if DEBUG
+#if !NETSTANDARD1_3
             Debug.WriteLine("FinalizableObject was not disposed" + _allocStack.ToString());
 #endif
-
+#endif
             Dispose(false);
         }
     }

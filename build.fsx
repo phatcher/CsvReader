@@ -11,7 +11,7 @@ open Fake.Testing.NUnit3
 let projectName = "LumenWorks.Framework.IO"
 let projectSummary = ""
 let authors = ["Sébastien Lorion"; "Paul Hatcher"]
-let copyright = "Copyright © 2016 Paul Hatcher"
+let copyright = "Copyright © 2005 Sébastien Lorion, 2014 Paul Hatcher"
 
 let release = LoadReleaseNotes "RELEASE_NOTES.md"
 

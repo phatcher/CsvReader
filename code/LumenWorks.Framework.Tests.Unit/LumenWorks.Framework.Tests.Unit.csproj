@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net20;net35;net45;net461;netcoreapp20</TargetFrameworks>
+    <TargetFrameworks>net20;net35;net45;net461;netcoreapp1.0;netcoreapp2.0</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.9.0" />
   </ItemGroup>
-  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp20'">
+  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp2.0'">
      <PackageReference Include="Microsoft.Net.Test.Sdk" Version="15.5.0" />
      <PackageReference Include="NUnit3TestAdapter" Version="3.9.0" />
   </ItemGroup>
-  <ItemGroup Condition="$(TargetFramework) != 'netcoreapp20'">
+  <ItemGroup Condition="$(TargetFramework) != 'netstandard1.3' and $(TargetFramework) != 'netcoreapp1.0' and $(TargetFramework) != 'netcoreapp2.0'">
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
