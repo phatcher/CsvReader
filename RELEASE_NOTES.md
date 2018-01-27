@@ -5,6 +5,8 @@
 * Fix handling of duplicate headers (@jonreis)
 * Reduced exception overhead (@spintronic)
 * Added NullBytesRemoval functionality to reduce memory usage and runtime (@andrewpsy)
+* Fixed: Exception in GetFieldType() when hasHeaders is false (@molopony)
+* Fixed: Exception when reading data and hasHeaders is false (@molopony)
 
 #### 3.9.1 (2016-04-09)
 * Added max field length for quoted fields (@criteo)

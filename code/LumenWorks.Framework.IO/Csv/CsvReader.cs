@@ -2377,7 +2377,7 @@ namespace LumenWorks.Framework.IO.Csv
             if (i < 0 || i >= _fieldCount)
                 throw new ArgumentOutOfRangeException("i", i, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, i));
 
-            if (Columns == null)
+            if (Columns == null || i < 0 || i >= Columns.Count)
             {
                 return typeof(string);
             }
@@ -2410,8 +2410,15 @@ namespace LumenWorks.Framework.IO.Csv
             EnsureInitialize();
             ValidateDataReader(DataReaderValidations.IsNotClosed);
 
-            if (i < 0 || i >= Columns.Count)
+            if (i < 0 || i >= FieldCount)
+            {
                 throw new ArgumentOutOfRangeException("i", i, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, i));
+            }
+
+            if (i >= Columns.Count)
+            {
+                return null;
+            }
 
             return Columns[i].Name;
         }
@@ -2518,7 +2525,7 @@ namespace LumenWorks.Framework.IO.Csv
         object FieldValue(int i)
         {
             var value = this[i];
-            if (Columns == null)
+            if (Columns == null || i < 0 || i >= Columns.Count)
             {
                 return value;
             }

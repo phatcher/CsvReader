@@ -767,6 +767,24 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 				}
 			}
 		}
+
+		[Test]
+		public void HasNoHeadersTest()
+		{
+			using (IDataReader reader = new CsvReader(new StringReader(CsvReaderSampleData.SampleData1), false))
+			{
+				var recordCount = 0;
+				while (reader.Read())
+				{
+					var values = new object[reader.FieldCount];
+					reader.GetValues(values);
+					reader.GetFieldType(0);
+					recordCount++;
+				}
+
+				Assert.AreNotEqual(0, recordCount);
+			}
+		}
 	}
 #endif
 }
