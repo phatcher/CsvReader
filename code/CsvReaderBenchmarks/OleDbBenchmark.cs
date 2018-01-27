@@ -1,10 +1,12 @@
+#if !NETCOREAPP1_0 && !NETCOREAPP2_0
 using System.Data;
 using System.Data.OleDb;
+#endif
 using System.IO;
 
 namespace CsvReaderDemo
 {
-#if !NETCOREAPP2_0
+#if !NETCOREAPP1_0 && !NETCOREAPP2_0
     public sealed class OleDbBenchmark
 	{
 		private OleDbBenchmark()

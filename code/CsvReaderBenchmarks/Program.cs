@@ -19,9 +19,11 @@ namespace CsvReaderDemo
 			const string TestFile2 = @"..\..\test2.csv";
 			const string TestFile3 = @"..\..\test3.csv";
 
-			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+#if !NETCOREAPP1_0
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+#endif
 
-			if (args.Length > 0)
+            if (args.Length > 0)
 			{
 				if (args.Length == 1)
 				{
@@ -32,7 +34,7 @@ namespace CsvReaderDemo
 						case "CSVREADER":
 							CsvReaderBenchmark.Run(TestFile3);
 							return;
-#if !NETCOREAPP2_0
+#if !NETCOREAPP1_0 && !NETCOREAPP2_0
                         case "OLEDB":
 							OleDbBenchmark.Run(TestFile3);
 							return;
@@ -57,9 +59,11 @@ namespace CsvReaderDemo
 				Console.WriteLine("Test pass #{0} - All fields\n", i);
 
 				DoTest("CsvReader - No cache", fileSize, CsvReaderBenchmark.Run, TestFile2);
-				csv = DoTest("CachedCsvReader - Run 1", fileSize, CachedCsvReaderBenchmark.Run1, TestFile2);
+#if !NETCOREAPP1_0
+                csv = DoTest("CachedCsvReader - Run 1", fileSize, CachedCsvReaderBenchmark.Run1, TestFile2);
 				DoTest("CachedCsvReader - Run 2", fileSize, CachedCsvReaderBenchmark.Run2, csv);
-#if !NETCOREAPP2_0
+#endif
+#if !NETCOREAPP1_0 && !NETCOREAPP2_0
                 DoTest("TextFieldParser", fileSize, TextFieldParserBenchmark.Run, TestFile2);
 #endif
                 DoTest("Regex", fileSize, RegexBenchmark.Run, TestFile2);
@@ -72,15 +76,17 @@ namespace CsvReaderDemo
 				Console.WriteLine("Test pass #{0} - Field #{1} (middle)\n", i, field);
 
 				DoTest("CsvReader - No cache", fileSize, CsvReaderBenchmark.Run, TestFile2, field);
-				csv = DoTest("CachedCsvReader - Run 1", fileSize, CachedCsvReaderBenchmark.Run1, TestFile2, field);
+#if !NETCOREAPP1_0
+                csv = DoTest("CachedCsvReader - Run 1", fileSize, CachedCsvReaderBenchmark.Run1, TestFile2, field);
 				DoTest("CachedCsvReader - Run 2", fileSize, CachedCsvReaderBenchmark.Run2, csv, field);
-#if !NETCOREAPP2_0
+#endif
+#if !NETCOREAPP1_0 && !NETCOREAPP2_0
                 DoTest("TextFieldParser", fileSize, TextFieldParserBenchmark.Run, TestFile2, field);
 #endif
                 DoTest("Regex", fileSize, RegexBenchmark.Run, TestFile2, field);
 
                 // seems to not be working on Windows 7 with Office 2007 (and I'm not bothering to try to make it run on my machine)
-#if !NETCOREAPP2_0
+#if !NETCOREAPP1_0 && !NETCOREAPP2_0
                 //DoTest("OleDb", fileSize, OleDbBenchmark.Run, TestFile2, Field);
 #endif
                 Console.WriteLine();
@@ -125,7 +131,8 @@ namespace CsvReaderDemo
 			rate = fileSize / time;
 		}
 
-		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+#if !NETCOREAPP1_0
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			if (e.ExceptionObject != null)
 				Console.WriteLine("Unhandled exception :\n\n'{0}'.", e.ExceptionObject.ToString());
@@ -134,5 +141,6 @@ namespace CsvReaderDemo
 
 			Console.ReadLine();
 		}
-	}
+#endif
+    }
 }

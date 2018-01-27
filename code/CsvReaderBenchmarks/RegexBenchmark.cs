@@ -43,30 +43,35 @@ namespace CsvReaderDemo
 
 			int fieldGroupIndex = regex.GroupNumberFromName("field");
 
-			using (StreamReader csv = new StreamReader(path))
-			{
-				string s;
+#if NETCOREAPP1_0
+            var fileStream = new FileStream(path, FileMode.Open);
+            using (var csv = new StreamReader(fileStream))
+#else
+            using (var csv = new StreamReader(path))
+#endif
+            {
+                string s;
 
-				if (field == -1)
-				{
-					while ((s = csv.ReadLine()) != null)
-					{
-						MatchCollection m = regex.Matches(s);
+                if (field == -1)
+                {
+                    while ((s = csv.ReadLine()) != null)
+                    {
+                        MatchCollection m = regex.Matches(s);
 
-						for (int i = 0; i < m.Count; i += 2)
-							s = m[i].Groups[fieldGroupIndex].Value;
-					}
-				}
-				else
-				{
-					while ((s = csv.ReadLine()) != null)
-					{
-						MatchCollection m = regex.Matches(s);
+                        for (int i = 0; i < m.Count; i += 2)
+                            s = m[i].Groups[fieldGroupIndex].Value;
+                    }
+                }
+                else
+                {
+                    while ((s = csv.ReadLine()) != null)
+                    {
+                        MatchCollection m = regex.Matches(s);
 
-						s = m[field << 1].Groups[fieldGroupIndex].Value;
-					}
-				}
-			}
+                        s = m[field << 1].Groups[fieldGroupIndex].Value;
+                    }
+                }
+            }
 		}
 	}
 }

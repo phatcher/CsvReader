@@ -1,12 +1,8 @@
-#region Using directives
-
 using System;
 using System.IO;
 using System.Text;
 
 using LumenWorks.Framework.IO.Csv;
-
-#endregion
 
 namespace CsvReaderDemo
 {
@@ -18,12 +14,16 @@ namespace CsvReaderDemo
 
 		public static object Run(object[] args)
 		{
-			if (args.Length == 1)
-				Run((string) args[0]);
-			else
-				Run((string) args[0], (int) args[1]);
+		    if (args.Length == 1)
+		    {
+		        Run((string) args[0]);
+		    }
+		    else
+		    {
+		        Run((string) args[0], (int) args[1]);
+		    }
 
-			return null;
+		    return null;
 		}
 
 		public static void Run(string path)
@@ -33,7 +33,12 @@ namespace CsvReaderDemo
 
 		public static void Run(string path, int field)
 		{
-			using (CsvReader csv = new CsvReader(new StreamReader(path), false))
+#if NETCOREAPP1_0
+		    var fileStream = new FileStream(path, FileMode.Open);
+		    using (var csv = new CsvReader(new StreamReader(fileStream), false))
+#else
+            using (var csv = new CsvReader(new StreamReader(path), false))
+#endif
 			{
 				csv.SupportsMultiline = false;
 				string s;

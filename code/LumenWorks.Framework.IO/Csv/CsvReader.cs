@@ -39,7 +39,7 @@ namespace LumenWorks.Framework.IO.Csv
     /// Represents a reader that provides fast, non-cached, forward-only access to CSV data.  
     /// </summary>
 #if NETSTANDARD1_3
-    public partial class CsvReader : IEnumerable<string[]>//, IDispoable
+    public partial class CsvReader : IEnumerable<string[]>, IDisposable
 #else
     public partial class CsvReader : IDataReader, IEnumerable<string[]>
 #endif

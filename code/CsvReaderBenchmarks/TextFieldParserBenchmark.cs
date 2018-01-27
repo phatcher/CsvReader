@@ -2,8 +2,8 @@ using System.IO;
 
 namespace CsvReaderDemo
 {
-#if !NETCOREAPP2_0
-	public sealed class TextFieldParserBenchmark
+#if !NETCOREAPP1_0 && !NETCOREAPP2_0
+    public sealed class TextFieldParserBenchmark
 	{
 		private TextFieldParserBenchmark()
 		{

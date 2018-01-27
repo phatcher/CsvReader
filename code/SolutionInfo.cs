@@ -2,16 +2,16 @@
 using System.Reflection;
 
 [assembly: AssemblyProductAttribute("LumenWorks.Framework.IO")]
-[assembly: AssemblyCopyrightAttribute("Copyright © 2016 Paul Hatcher")]
+[assembly: AssemblyCopyrightAttribute("Copyright © 2005 Sébastien Lorion, 2014 Paul Hatcher")]
 [assembly: AssemblyVersionAttribute("3.9.1")]
 [assembly: AssemblyFileVersionAttribute("3.9.1")]
-[assembly: AssemblyInformationalVersionAttribute("3.9.1 831fec")]
+[assembly: AssemblyInformationalVersionAttribute("3.9.1 0b774d")]
 namespace System {
     internal static class AssemblyVersionInformation {
         internal const System.String AssemblyProduct = "LumenWorks.Framework.IO";
-        internal const System.String AssemblyCopyright = "Copyright © 2016 Paul Hatcher";
+        internal const System.String AssemblyCopyright = "Copyright © 2005 Sébastien Lorion, 2014 Paul Hatcher";
         internal const System.String AssemblyVersion = "3.9.1";
         internal const System.String AssemblyFileVersion = "3.9.1";
-        internal const System.String AssemblyInformationalVersion = "3.9.1 831fec";
+        internal const System.String AssemblyInformationalVersion = "3.9.1 0b774d";
     }
 }

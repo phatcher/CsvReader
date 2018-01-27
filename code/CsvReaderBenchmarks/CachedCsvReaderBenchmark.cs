@@ -1,16 +1,13 @@
-#region Using directives
-
 using System;
 using System.IO;
 using System.Text;
 
 using LumenWorks.Framework.IO.Csv;
 
-#endregion
-
 namespace CsvReaderDemo
 {
-	public sealed class CachedCsvReaderBenchmark
+#if !NETCOREAPP1_0
+    public sealed class CachedCsvReaderBenchmark
 	{
 		private CachedCsvReaderBenchmark()
 		{
@@ -90,4 +87,5 @@ namespace CsvReaderDemo
 		}
 		
 	}
+#endif
 }
