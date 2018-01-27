@@ -29,7 +29,7 @@ Target "Clean" (fun _ ->
 
 Target "PackageRestore" (fun _ ->
     !! solutionFile
-    |> MSBuildRelease buildDir "Restore"
+    |> MSBuildRelease "" "Restore"
     |> Log "AppBuild-Output: "
 )
 
@@ -50,7 +50,7 @@ Target "SetVersion" (fun _ ->
 
 Target "Build" (fun _ ->
     !! solutionFile
-    |> MSBuild buildDir "Build"
+    |> MSBuild "" "Build"
         [
             "Configuration", "Release"
             "Platform", "Any CPU"
@@ -68,7 +68,7 @@ Target "Test" (fun _ ->
        {p with
           ToolPath = nunitPath
           // Oddity as this creates a build directory in the build directory
-          WorkingDir = buildDir
+          //WorkingDir = buildDir
           ShadowCopy = false})
 )
 

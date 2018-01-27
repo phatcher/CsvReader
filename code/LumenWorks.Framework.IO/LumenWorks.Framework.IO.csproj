@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net20;net35;net45;net461;netstandard1.3;netstandard20</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;net20;net35;net45;net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -20,7 +20,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>LumenWorks.Framework.snk</AssemblyOriginatorKeyFile>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <OutputPath>$(SolutionDir)\build\$(AssemblyName)$(Configuration)\$(TargetFramework)\</OutputPath>
+    <OutputPath>$(SolutionDir)\build\$(Configuration)\$(AssemblyName)\$(TargetFramework)\</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
