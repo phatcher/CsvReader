@@ -1,3 +1,10 @@
+#### 4.0.0 (2018-01-30)
+* Support .NET Framwork 2.0+ and .NET Standard 1.3+
+* Use DateTime.TryParseExact if needed (@milcondoin)
+* Override column capability (@spintronic)
+* Fix handling of duplicate headers (@jonreis)
+* Reduced exception overhead (@spintronic)
+
 #### 3.9.1 (2016-04-09)
 * Added max field length for quoted fields (@criteo)
 * Strengthen Debug.Assert condition in GetSchemaWithoutHeaders (@joshgo)

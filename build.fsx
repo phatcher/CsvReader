@@ -1,4 +1,4 @@
-/// FAKE Build script
+﻿/// FAKE Build script
 
 #r "packages/build/FAKE/tools/FakeLib.dll"
 open Fake
@@ -6,10 +6,10 @@ open Fake.AssemblyInfoFile
 open Fake.Git
 open Fake.ReleaseNotesHelper
 open Fake.Testing.NUnit3
+open System.IO
 
 // Version info
 let projectName = "LumenWorks.Framework.IO"
-let projectSummary = ""
 let authors = ["Sébastien Lorion"; "Paul Hatcher"]
 let copyright = "Copyright © 2005 Sébastien Lorion, 2014 Paul Hatcher"
 
@@ -63,7 +63,9 @@ Target "Build" (fun _ ->
 )
 
 Target "Test" (fun _ ->
-    !! (buildDir + "/*.Tests.Unit.dll")
+    Directory.GetFiles(buildDir, "*.Tests.Unit.dll", SearchOption.AllDirectories)
+    // Filter out the NET Core versions as the NUnit runner can't execute them
+    |> Array.filter (fun x -> x.Contains("netcoreapp") = false)
     |> NUnit3 (fun p ->
        {p with
           ToolPath = nunitPath
