@@ -139,18 +139,6 @@ namespace LumenWorks.Framework.IO.Csv
         }
 
         /// <summary>
-        /// Initializes a new instance of the CsvReader class.
-        /// </summary>
-        /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
-        /// <param name="hasHeaders"><see langword="true"/>If field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-        /// <exception cref="T:ArgumentNullException"><paramref name="reader"/> is a <see langword="null"/>.</exception>
-        /// <exception cref="T:ArgumentException">Cannot read from <paramref name="reader"/>.</exception>
-        public CsvReader(TextReader reader, bool hasHeaders)
-            : this(reader, hasHeaders, DefaultDelimiter, DefaultQuote, DefaultEscape, DefaultComment, ValueTrimmingOptions.UnquotedOnly, DefaultBufferSize)
-        {
-        }
-
-        /// <summary>
         /// Like CsvReader(TextReader reader, bool hasHeaders, int bufferSize) but removes consecutive null bytes above a threshold from source stream.
         /// </summary>
         /// <param name="stream">A <see cref="T:Stream"/> pointing to the CSV file.</param>
@@ -163,19 +151,6 @@ namespace LumenWorks.Framework.IO.Csv
         /// <exception cref="T:ArgumentException">Cannot read from <paramref name="stream"/>.</exception>
         public CsvReader(Stream stream, bool hasHeaders, Encoding encoding, int bufferSize, bool addMark = DefaultAddMark, int threshold = DefaultThreshold)
             : this(new NullRemovalStreamReader(stream, addMark, threshold, encoding, bufferSize), hasHeaders, bufferSize)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the CsvReader class.
-        /// </summary>
-        /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
-        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-        /// <param name="bufferSize">The buffer size in bytes.</param>
-        /// <exception cref="T:ArgumentNullException"><paramref name="reader"/> is a <see langword="null"/>.</exception>
-        /// <exception cref="T:ArgumentException">Cannot read from <paramref name="reader"/>.</exception>
-        public CsvReader(TextReader reader, bool hasHeaders, int bufferSize)
-            : this(reader, hasHeaders, DefaultDelimiter, DefaultQuote, DefaultEscape, DefaultComment, ValueTrimmingOptions.UnquotedOnly, bufferSize)
         {
         }
 
@@ -196,19 +171,6 @@ namespace LumenWorks.Framework.IO.Csv
         }
 
         /// <summary>
-        /// Initializes a new instance of the CsvReader class.
-        /// </summary>
-        /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
-        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-        /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
-        /// <exception cref="T:ArgumentNullException"><paramref name="reader"/> is a <see langword="null"/>.</exception>
-        /// <exception cref="T:ArgumentException">Cannot read from <paramref name="reader"/>.</exception>
-        public CsvReader(TextReader reader, bool hasHeaders, char delimiter)
-            : this(reader, hasHeaders, delimiter, DefaultQuote, DefaultEscape, DefaultComment, ValueTrimmingOptions.UnquotedOnly, DefaultBufferSize)
-        {
-        }
-
-        /// <summary>
         /// Like CsvReader(TextReader reader, bool hasHeaders, char delimiter, int bufferSize) but removes consecutive null bytes above a threshold from source stream.
         /// </summary>
         /// <param name="stream">A <see cref="T:Stream"/> pointing to the CSV file.</param>
@@ -222,20 +184,6 @@ namespace LumenWorks.Framework.IO.Csv
         /// <exception cref="T:ArgumentException">Cannot read from <paramref name="stream"/>.</exception>
         public CsvReader(Stream stream, bool hasHeaders, Encoding encoding, char delimiter, int bufferSize, bool addMark = DefaultAddMark, int threshold = DefaultThreshold)
             : this(new NullRemovalStreamReader(stream, addMark, threshold, encoding, bufferSize), hasHeaders, delimiter, bufferSize)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the CsvReader class.
-        /// </summary>
-        /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
-        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-        /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
-        /// <param name="bufferSize">The buffer size in bytes.</param>
-        /// <exception cref="T:ArgumentNullException"><paramref name="reader"/> is a <see langword="null"/>.</exception>
-        /// <exception cref="T:ArgumentException">Cannot read from <paramref name="reader"/>.</exception>
-        public CsvReader(TextReader reader, bool hasHeaders, char delimiter, int bufferSize)
-            : this(reader, hasHeaders, delimiter, DefaultQuote, DefaultEscape, DefaultComment, ValueTrimmingOptions.UnquotedOnly, bufferSize)
         {
         }
 
@@ -260,28 +208,7 @@ namespace LumenWorks.Framework.IO.Csv
         /// <exception cref="T:ArgumentNullException"><paramref name="stream"/> is a <see langword="null"/>.</exception>
         /// <exception cref="T:ArgumentException">Cannot read from <paramref name="stream"/>.</exception>
         public CsvReader(Stream stream, bool hasHeaders, Encoding encoding, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, string nullValue = null, bool addMark = DefaultAddMark, int threshold = DefaultThreshold)
-            : this(new NullRemovalStreamReader(stream, addMark, threshold, encoding), hasHeaders, delimiter, quote, escape, comment, trimmingOptions, nullValue)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the CsvReader class.
-        /// </summary>
-        /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
-        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-        /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
-        /// <param name="quote">The quotation character wrapping every field (default is ''').</param>
-        /// <param name="escape">
-        /// The escape character letting insert quotation characters inside a quoted field (default is '\').
-        /// If no escape character, set to '\0' to gain some performance.
-        /// </param>
-        /// <param name="comment">The comment character indicating that a line is commented out (default is '#').</param>
-        /// <param name="trimmingOptions">Determines which values should be trimmed.</param>
-        /// <param name="nullValue">The value which denotes a DbNull-value.</param>
-        /// <exception cref="T:ArgumentNullException"><paramref name="reader"/> is a <see langword="null"/>.</exception>
-        /// <exception cref="T:ArgumentException">Cannot read from <paramref name="reader"/>.</exception>
-        public CsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, string nullValue = null)
-            : this(reader, hasHeaders, delimiter, quote, escape, comment, trimmingOptions, DefaultBufferSize, nullValue)
+            : this(new NullRemovalStreamReader(stream, addMark, threshold, encoding), hasHeaders, delimiter, quote, escape, comment, trimmingOptions, DefaultBufferSize, nullValue)
         {
         }
 
@@ -315,6 +242,54 @@ namespace LumenWorks.Framework.IO.Csv
         /// Initializes a new instance of the CsvReader class.
         /// </summary>
         /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
+        /// <param name="hasHeaders"><see langword="true"/>If field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+        /// <exception cref="T:ArgumentNullException"><paramref name="reader"/> is a <see langword="null"/>.</exception>
+        /// <exception cref="T:ArgumentException">Cannot read from <paramref name="reader"/>.</exception>
+        public CsvReader(TextReader reader, bool hasHeaders) : this(reader, hasHeaders, DefaultDelimiter, DefaultQuote)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CsvReader class.
+        /// </summary>
+        /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
+        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+        /// <param name="bufferSize">The buffer size in bytes.</param>
+        /// <exception cref="T:ArgumentNullException"><paramref name="reader"/> is a <see langword="null"/>.</exception>
+        /// <exception cref="T:ArgumentException">Cannot read from <paramref name="reader"/>.</exception>
+        public CsvReader(TextReader reader, bool hasHeaders, int bufferSize) : this(reader, hasHeaders, DefaultDelimiter, DefaultQuote, bufferSize: bufferSize)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CsvReader class.
+        /// </summary>
+        /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
+        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+        /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
+        /// <exception cref="T:ArgumentNullException"><paramref name="reader"/> is a <see langword="null"/>.</exception>
+        /// <exception cref="T:ArgumentException">Cannot read from <paramref name="reader"/>.</exception>
+        public CsvReader(TextReader reader, bool hasHeaders, char delimiter) : this(reader, hasHeaders, delimiter, DefaultQuote)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CsvReader class.
+        /// </summary>
+        /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
+        /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
+        /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
+        /// <param name="bufferSize">The buffer size in bytes.</param>
+        /// <exception cref="T:ArgumentNullException"><paramref name="reader"/> is a <see langword="null"/>.</exception>
+        /// <exception cref="T:ArgumentException">Cannot read from <paramref name="reader"/>.</exception>
+        public CsvReader(TextReader reader, bool hasHeaders, char delimiter, int bufferSize) : this(reader, hasHeaders, delimiter, DefaultQuote, bufferSize: bufferSize)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CsvReader class.
+        /// </summary>
+        /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
         /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
         /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
         /// <param name="quote">The quotation character wrapping every field (default is ''').</param>
@@ -328,7 +303,7 @@ namespace LumenWorks.Framework.IO.Csv
         /// <param name="nullValue">The value which denotes a DbNull-value.</param>
         /// <exception cref="T:ArgumentNullException"><paramref name="reader"/> is a <see langword="null"/>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="bufferSize"/> must be 1 or more.</exception>
-        public CsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, int bufferSize, string nullValue = null)
+        public CsvReader(TextReader reader, bool hasHeaders = true, char delimiter = DefaultDelimiter, char quote = DefaultQuote, char escape = DefaultEscape, char comment = DefaultComment, ValueTrimmingOptions trimmingOptions = ValueTrimmingOptions.UnquotedOnly, int bufferSize = DefaultBufferSize, string nullValue = null)
         {
 #if DEBUG
 #if !NETSTANDARD1_3

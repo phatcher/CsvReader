@@ -35,13 +35,9 @@ namespace LumenWorks.Framework.IO.Csv
         /// </summary>
         /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
         /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
-        /// <exception cref="T:ArgumentNullException">
-        ///        <paramref name="reader"/> is a <see langword="null"/>.
-        /// </exception>
-        /// <exception cref="T:ArgumentException">
-        ///        Cannot read from <paramref name="reader"/>.
-        /// </exception>
-        public CachedCsvReader(TextReader reader, bool hasHeaders) : this(reader, hasHeaders, DefaultBufferSize)
+        /// <exception cref="T:ArgumentNullException"><paramref name="reader"/> is a <see langword="null"/>.</exception>
+        /// <exception cref="T:ArgumentException">Cannot read from <paramref name="reader"/>.</exception>
+        public CachedCsvReader(TextReader reader, bool hasHeaders = true) : this(reader, hasHeaders, DefaultBufferSize)
         {
         }
 
@@ -177,21 +173,11 @@ namespace LumenWorks.Framework.IO.Csv
         /// Gets the field at the specified index.
         /// </summary>
         /// <value>The field at the specified index.</value>
-        /// <exception cref="T:ArgumentOutOfRangeException">
-        ///        <paramref name="field"/> must be included in [0, <see cref="M:FieldCount"/>[.
-        /// </exception>
-        /// <exception cref="T:InvalidOperationException">
-        ///        No record read yet. Call ReadLine() first.
-        /// </exception>
-        /// <exception cref="MissingFieldCsvException">
-        ///        The CSV data appears to be missing a field.
-        /// </exception>
-        /// <exception cref="T:MalformedCsvException">
-        ///        The CSV appears to be corrupt at the current position.
-        /// </exception>
-        /// <exception cref="T:System.ComponentModel.ObjectDisposedException">
-        ///        The instance has been disposed of.
-        /// </exception>
+        /// <exception cref="T:ArgumentOutOfRangeException"><paramref name="field"/> must be included in [0, <see cref="M:FieldCount"/>[.</exception>
+        /// <exception cref="T:InvalidOperationException">No record read yet. Call ReadLine() first.</exception>
+        /// <exception cref="MissingFieldCsvException">The CSV data appears to be missing a field.</exception>
+        /// <exception cref="T:MalformedCsvException">The CSV appears to be corrupt at the current position.</exception>
+        /// <exception cref="T:System.ComponentModel.ObjectDisposedException">The instance has been disposed of.</exception>
         public override string this[int field]
         {
             get
@@ -314,9 +300,7 @@ namespace LumenWorks.Framework.IO.Csv
         /// </summary>
         /// <param name="record">The record index.</param>
         /// <returns><c>true</c> if the operation was successful; otherwise, <c>false</c>.</returns>
-        /// <exception cref="T:System.ComponentModel.ObjectDisposedException">
-        ///        The instance has been disposed of.
-        /// </exception>
+        /// <exception cref="T:System.ComponentModel.ObjectDisposedException">The instance has been disposed of.</exception>
         public override bool MoveTo(long record)
         {
             if (record < -1)

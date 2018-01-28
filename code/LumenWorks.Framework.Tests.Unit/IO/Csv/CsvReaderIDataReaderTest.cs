@@ -682,7 +682,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             using (var csv = new CsvReader(new StringReader(CsvReaderSampleData.SampleTypedData1), true, 
                 CsvReader.DefaultDelimiter, CsvReader.DefaultQuote, CsvReader.DefaultEscape, CsvReader.DefaultComment,
-                ValueTrimmingOptions.UnquotedOnly, CsvReaderSampleData.SampleNullValue))
+                ValueTrimmingOptions.UnquotedOnly, nullValue: CsvReaderSampleData.SampleNullValue))
             {
                 IDataReader reader = csv;
 
