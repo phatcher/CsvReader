@@ -38,12 +38,14 @@ namespace LumenWorks.Framework.IO.Csv
             public RecordEnumerator(CsvReader reader)
             {
                 if (reader == null)
-                    throw new ArgumentNullException("reader");
+                {
+                    throw new ArgumentNullException(nameof(reader));
+                }
 
                 _reader = reader;
                 _current = null;
 
-                _currentRecordIndex = reader._currentRecordIndex;
+                _currentRecordIndex = reader.CurrentRecordIndex;
             }
 
             /// <summary>
@@ -60,7 +62,7 @@ namespace LumenWorks.Framework.IO.Csv
             /// <returns><see langword="true"/> if the enumerator was successfully advanced to the next record, <see langword="false"/> if the enumerator has passed the end of the CSV.</returns>
             public bool MoveNext()
             {
-                if (_reader._currentRecordIndex != _currentRecordIndex)
+                if (_reader.CurrentRecordIndex != _currentRecordIndex)
                 {
                     throw new InvalidOperationException(ExceptionMessage.EnumerationVersionCheckFailed);
                 }
@@ -70,14 +72,14 @@ namespace LumenWorks.Framework.IO.Csv
                     _current = new string[_reader._fieldCount];
 
                     _reader.CopyCurrentRecordTo(_current);
-                    _currentRecordIndex = _reader._currentRecordIndex;
+                    _currentRecordIndex = _reader.CurrentRecordIndex;
 
                     return true;
                 }
                 else
                 {
                     _current = null;
-                    _currentRecordIndex = _reader._currentRecordIndex;
+                    _currentRecordIndex = _reader.CurrentRecordIndex;
 
                     return false;
                 }
@@ -88,7 +90,7 @@ namespace LumenWorks.Framework.IO.Csv
             /// </summary>
             public void Reset()
             {
-                if (_reader._currentRecordIndex != _currentRecordIndex)
+                if (_reader.CurrentRecordIndex != _currentRecordIndex)
                 {
                     throw new InvalidOperationException(ExceptionMessage.EnumerationVersionCheckFailed);
                 }
@@ -96,7 +98,7 @@ namespace LumenWorks.Framework.IO.Csv
                 _reader.MoveTo(-1);
 
                 _current = null;
-                _currentRecordIndex = _reader._currentRecordIndex;
+                _currentRecordIndex = _reader.CurrentRecordIndex;
             }
 
             /// <summary>
@@ -106,7 +108,7 @@ namespace LumenWorks.Framework.IO.Csv
             {
                 get
                 {
-                    if (_reader._currentRecordIndex != _currentRecordIndex)
+                    if (_reader.CurrentRecordIndex != _currentRecordIndex)
                     {
                         throw new InvalidOperationException(ExceptionMessage.EnumerationVersionCheckFailed);
                     }

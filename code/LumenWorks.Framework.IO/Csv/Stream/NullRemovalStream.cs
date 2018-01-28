@@ -23,6 +23,7 @@ namespace LumenWorks.Framework.IO
         ///     <see langword="false" />
         /// </param>
         /// <param name="threshold"> only consecutive null bytes above this threshold will be removed or replaced by a mark</param>
+        /// <param name="bufferSize">Size of buffer</param>
         public NullRemovalStream(Stream source, bool addMark = true, int threshold = 60, int bufferSize = 4096)
         {
             if (bufferSize <= 0)
