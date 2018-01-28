@@ -2,7 +2,7 @@ using System.IO;
 
 using LumenWorks.Framework.IO.Csv;
 
-namespace CsvReaderDemo
+namespace CsvReaderBenchmarks
 {
     public sealed class CsvReaderBenchmark
     {
@@ -33,30 +33,34 @@ namespace CsvReaderDemo
             Run(path, -1);
         }
 
-		public static void Run(string path, int field)
-		{
+        public static void Run(string path, int field)
+        {
 #if NETCOREAPP1_0
-		    var fileStream = new FileStream(path, FileMode.Open);
-		    using (var csv = new CsvReader(new StreamReader(fileStream), false))
+            var fileStream = new FileStream(path, FileMode.Open);
+            using (var csv = new CsvReader(new StreamReader(fileStream), false))
 #else
             using (var csv = new CsvReader(new StreamReader(path), false))
 #endif
-			{
-				csv.SupportsMultiline = false;
-				string s;
+            {
+                csv.SupportsMultiline = false;
+                string s;
 
                 if (field == -1)
                 {
                     while (csv.ReadNextRecord())
                     {
                         for (int i = 0; i < csv.FieldCount; i++)
+                        {
                             s = csv[i];
+                        }
                     }
                 }
                 else
                 {
                     while (csv.ReadNextRecord())
+                    {
                         s = csv[field];
+                    }
                 }
             }
         }
@@ -64,7 +68,7 @@ namespace CsvReaderDemo
         private static string RunWithNullRemoval(string path, int field, bool addMark)
         {
 #if NETCOREAPP1_0
-		    var fileStream = new FileStream(path, FileMode.Open);
+            var fileStream = new FileStream(path, FileMode.Open);
             using (var stream = new StreamReader(fileStream))
 #else
             using (var stream = new StreamReader(path))
@@ -79,14 +83,18 @@ namespace CsvReaderDemo
                     while (csv.ReadNextRecord())
                     {
                         for (int i = 0; i < csv.FieldCount; i++)
+                        {
                             cell = csv[i];
+                        }
                     }
                     return string.Format(@"AddMark =({0}) LastCell =({1})", addMark, cell);
                 }
                 else
                 {
                     while (csv.ReadNextRecord())
+                    {
                         cell = csv[field];
+                    }
                 }
             }
             return string.Empty;

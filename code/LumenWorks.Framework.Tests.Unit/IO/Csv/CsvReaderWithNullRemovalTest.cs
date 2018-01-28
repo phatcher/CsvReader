@@ -1,36 +1,13 @@
-// LumenWorks.Framework.Tests.Unit.IO.CSV.CsvReaderWithNullRmovalTest
-// Copyright (c) 2005 Sébastien Lorion
-//
-// MIT license (http://en.wikipedia.org/wiki/MIT_License)
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights 
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-// of the Software, and to permit persons to whom the Software is furnished to do so, 
-// subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all 
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
-// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
-// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+using System;
+using System.IO;
+using System.Text;
 
-// A special thanks goes to "shriop" at CodeProject for providing many of the standard and Unicode parsing tests.
+using LumenWorks.Framework.IO.Csv;
+
+using NUnit.Framework;
 
 namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 {
-    using System;
-    using System.IO;
-    using System.Text;
-
-    using Framework.IO.Csv;
-
-    using NUnit.Framework;
-
     [TestFixture()]
     public class CsvReaderWithNullRemovalTest
     {
@@ -40,7 +17,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
             try
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), true, Encoding.ASCII, bufferSize))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), true, Encoding.ASCII, bufferSize))
                 {
                     CsvReaderSampleData.CheckSampleData1(csv, true);
                 }
@@ -61,18 +38,18 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 defaultHeaderName = "Column";
             }
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(",  ,,aaa,\"   \",,,")), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(",  ,,aaa,\"   \",,,")), true, Encoding.ASCII))
             {
                 csv.DefaultHeaderName = defaultHeaderName;
 
                 Assert.IsFalse(csv.ReadNextRecord());
                 Assert.AreEqual(8, csv.FieldCount);
 
-                string[] headers = csv.GetFieldHeaders();
+                var headers = csv.GetFieldHeaders();
                 Assert.AreEqual(csv.FieldCount, headers.Length);
 
                 Assert.AreEqual("aaa", headers[3]);
-                foreach (int index in new[] { 0, 1, 2, 4, 5, 6, 7 })
+                foreach (var index in new[] { 0, 1, 2, 4, 5, 6, 7 })
                 {
                     Assert.AreEqual(defaultHeaderName + index, headers[index]);
                 }
@@ -93,7 +70,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [TestCase(" aaa , bbb ,\" ccc \"", ValueTrimmingOptions.UnquotedOnly, new[] { "aaa", "bbb", " ccc " })]
         public void TrimFieldValuesTestWithNullRemovalStreamReader(string data, ValueTrimmingOptions trimmingOptions, params string[] expected)
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)),
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)),
                                                  false,
                                                  Encoding.ASCII,
                                                  CsvReader.DefaultDelimiter,
@@ -104,7 +81,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             {
                 while (csv.ReadNextRecord())
                 {
-                    string[] actual = new string[csv.FieldCount];
+                    var actual = new string[csv.FieldCount];
                     csv.CopyCurrentRecordTo(actual);
 
                     CollectionAssert.AreEqual(expected, actual);
@@ -117,7 +94,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
                     csv.CopyCurrentRecordTo(null);
                 }
@@ -129,7 +106,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
                     csv.CopyCurrentRecordTo(new string[1], -1);
                 }
@@ -141,7 +118,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
                     csv.CopyCurrentRecordTo(new string[1], 1);
                 }
@@ -153,7 +130,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
                     csv.ReadNextRecord();
                     csv.CopyCurrentRecordTo(new string[CsvReaderSampleData.SampleData1RecordCount - 1], 0);
@@ -166,7 +143,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
                     csv.ReadNextRecord();
                     csv.CopyCurrentRecordTo(new string[CsvReaderSampleData.SampleData1RecordCount], 1);
@@ -179,7 +156,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                using (CsvReader csv = new CsvReader(null, false, Encoding.ASCII))
+                using (var csv = new CsvReader(null, false, Encoding.ASCII))
                 {
                 }
             });
@@ -190,7 +167,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, 0))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, 0))
                 {
                 }
             });
@@ -201,7 +178,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, -1))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, -1))
                 {
                 }
             });
@@ -210,7 +187,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ArgumentTestCtor4WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, 123))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("hello world!")), false, Encoding.ASCII, 123))
             {
                 Assert.AreEqual("hello world!".Length, csv.BufferSize);
             }
@@ -221,9 +198,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
-                    string s = csv[-1, 0];
+                    var s = csv[-1, 0];
                 }
             });
         }
@@ -233,9 +210,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
-                    string s = csv[-1];
+                    var s = csv[-1];
                 }
             });
         }
@@ -245,9 +222,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
-                    string s = csv[CsvReaderSampleData.SampleData1RecordCount];
+                    var s = csv[CsvReaderSampleData.SampleData1RecordCount];
                 }
             });
         }
@@ -257,9 +234,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<InvalidOperationException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
-                    string s = csv["asdf"];
+                    var s = csv["asdf"];
                 }
             });
         }
@@ -269,9 +246,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<InvalidOperationException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
-                    string s = csv[CsvReaderSampleData.SampleData1Header0];
+                    var s = csv[CsvReaderSampleData.SampleData1Header0];
                 }
             });
         }
@@ -281,9 +258,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
-                    string s = csv[null];
+                    var s = csv[null];
                 }
             });
         }
@@ -293,9 +270,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
-                    string s = csv[string.Empty];
+                    var s = csv[string.Empty];
                 }
             });
         }
@@ -305,9 +282,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
                 {
-                    string s = csv[null];
+                    var s = csv[null];
                 }
             });
         }
@@ -317,9 +294,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
                 {
-                    string s = csv[string.Empty];
+                    var s = csv[string.Empty];
                 }
             });
         }
@@ -329,9 +306,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<ArgumentException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
                 {
-                    string s = csv["asdf"];
+                    var s = csv["asdf"];
                 }
             });
         }
@@ -340,7 +317,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void CachedNoHeaderWithNullRemovalStreamReader()
         {
-            CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("12345678;Hello\r\n78945612;World")), false, Encoding.ASCII, ';');
+            var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("12345678;Hello\r\n78945612;World")), false, Encoding.ASCII, ';');
             var dgv = new System.Windows.Forms.DataGridView();
             dgv.Refresh();
         }
@@ -351,7 +328,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<InvalidOperationException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
                 {
                     csv.CopyCurrentRecordTo(new string[CsvReaderSampleData.SampleData1RecordCount]);
                 }
@@ -361,7 +338,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void FieldCountTest1WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
             {
                 CsvReaderSampleData.CheckSampleData1(csv, true);
             }
@@ -370,9 +347,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void GetFieldHeadersTest_EmptyCsvWithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("#asdf\n\n#asdf,asdf")), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("#asdf\n\n#asdf,asdf")), true, Encoding.ASCII))
             {
-                string[] headers = csv.GetFieldHeaders();
+                var headers = csv.GetFieldHeaders();
 
                 Assert.IsNotNull(headers);
                 Assert.AreEqual(0, headers.Length);
@@ -382,9 +359,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void GetFieldHeadersTest1WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
             {
-                string[] headers = csv.GetFieldHeaders();
+                var headers = csv.GetFieldHeaders();
 
                 Assert.IsNotNull(headers);
                 Assert.AreEqual(0, headers.Length);
@@ -394,9 +371,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void GetFieldHeadersTest2WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
             {
-                string[] headers = csv.GetFieldHeaders();
+                var headers = csv.GetFieldHeaders();
 
                 Assert.IsNotNull(headers);
                 Assert.AreEqual(CsvReaderSampleData.SampleData1RecordCount, headers.Length);
@@ -420,9 +397,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void HasHeader_HeaderDoesNotExistWithNullRemovalStreamReader()
         {
-            string header = "Phone Number";
+            var header = "Phone Number";
 
-            using (CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            using (var csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
             {
                 Assert.IsFalse(csvReader.HasHeader(header));
             }
@@ -431,9 +408,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void HasHeader_HeaderExistsWithNullRemovalStreamReader()
         {
-            string header = "First Name";
+            var header = "First Name";
 
-            using (CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            using (var csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
             {
                 Assert.IsTrue(csvReader.HasHeader(header));
             }
@@ -442,9 +419,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void HasHeader_NullFieldHeadersWithNullRemovalStreamReader()
         {
-            string header = "NonExistingHeader";
+            var header = "NonExistingHeader";
 
-            using (CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("Value1,Value2")), false, Encoding.ASCII))
+            using (var csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("Value1,Value2")), false, Encoding.ASCII))
             {
                 Assert.IsFalse(csvReader.HasHeader(header));
             }
@@ -453,7 +430,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void HasHeader_NullHeaderWithNullRemovalStreamReader()
         {
-            using (CsvReader csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("Header1,Header2\r\nValue1,Value2")), true, Encoding.ASCII))
+            using (var csvReader = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("Header1,Header2\r\nValue1,Value2")), true, Encoding.ASCII))
             {
                 Assert.Throws<ArgumentNullException>(delegate
                 {
@@ -465,11 +442,11 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void IndexerTest1WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
             {
-                for (int i = 0; i < CsvReaderSampleData.SampleData1RecordCount; i++)
+                for (var i = 0; i < CsvReaderSampleData.SampleData1RecordCount; i++)
                 {
-                    string s = csv[i, 0];
+                    var s = csv[i, 0];
                     CsvReaderSampleData.CheckSampleData1(i, csv);
                 }
             }
@@ -480,9 +457,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<InvalidOperationException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
                 {
-                    string s = csv[1, 0];
+                    var s = csv[1, 0];
                     s = csv[0, 0];
                 }
             });
@@ -493,9 +470,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             Assert.Throws<InvalidOperationException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
                 {
-                    string s = csv[CsvReaderSampleData.SampleData1RecordCount, 0];
+                    var s = csv[CsvReaderSampleData.SampleData1RecordCount, 0];
                 }
             });
         }
@@ -503,11 +480,11 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void IterationTest1WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
             {
-                int index = 0;
+                var index = 0;
 
-                foreach (string[] record in csv)
+                foreach (var record in csv)
                 {
                     CsvReaderSampleData.CheckSampleData1(csv.HasHeaders, index, record);
                     index++;
@@ -518,11 +495,11 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void IterationTest2WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
             {
                 string[] previous = null;
 
-                foreach (string[] record in csv)
+                foreach (var record in csv)
                 {
                     Assert.IsFalse(ReferenceEquals(previous, record));
 
@@ -534,9 +511,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void MoveToTest1WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
             {
-                for (int i = 0; i < CsvReaderSampleData.SampleData1RecordCount; i++)
+                for (var i = 0; i < CsvReaderSampleData.SampleData1RecordCount; i++)
                 {
                     Assert.IsTrue(csv.MoveTo(i));
                     CsvReaderSampleData.CheckSampleData1(i, csv);
@@ -547,7 +524,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void MoveToTest2WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.MoveTo(1));
                 Assert.IsFalse(csv.MoveTo(0));
@@ -557,7 +534,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void MoveToTest3WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
             {
                 Assert.IsFalse(csv.MoveTo(CsvReaderSampleData.SampleData1RecordCount));
             }
@@ -566,11 +543,11 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void MoveToTest4WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
             {
                 csv.SupportsMultiline = false;
 
-                string[] headers = csv.GetFieldHeaders();
+                var headers = csv.GetFieldHeaders();
 
                 Assert.IsTrue(csv.MoveTo(2));
                 Assert.AreEqual(2, csv.CurrentRecordIndex);
@@ -581,7 +558,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void MoveToTest5WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.MoveTo(-1));
                 csv.MoveTo(0);
@@ -594,7 +571,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\r2";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -613,7 +590,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\n2";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -632,7 +609,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\r\n2";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -651,7 +628,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\r";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -666,7 +643,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\n";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -681,7 +658,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\r\n";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -696,7 +673,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\r2\n";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, '\r', '"', '\"', '#', ValueTrimmingOptions.UnquotedOnly))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, '\r', '"', '\"', '#', ValueTrimmingOptions.UnquotedOnly))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -712,7 +689,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\"July 4th, 2005\"";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("July 4th, 2005", csv[0]);
@@ -727,7 +704,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = " 1";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.None))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.None))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(" 1", csv[0]);
@@ -740,9 +717,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest19WithNullRemovalStreamReader()
         {
-            string data = string.Empty;
+            var data = string.Empty;
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsFalse(csv.ReadNextRecord());
             }
@@ -753,7 +730,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\r\n\r\n1";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -770,7 +747,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "user_id,name\r\n1,Bruce";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), true, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -789,7 +766,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\"data \r\n here\"";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.None))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.None))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("data \r\n here", csv[0]);
@@ -804,7 +781,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\r\r\n1\r";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, '\r', '\"', '\"', '#', ValueTrimmingOptions.None))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, '\r', '\"', '\"', '#', ValueTrimmingOptions.None))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(3, csv.FieldCount);
@@ -826,7 +803,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\"double\"\"\"\"double quotes\"";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.None))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.None))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("double\"\"double quotes", csv[0]);
@@ -841,7 +818,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\r";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -856,7 +833,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\r\n";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -871,7 +848,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\n";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -886,7 +863,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "'bob said, ''Hey!''',2, 3 ";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\'', '\'', '#', ValueTrimmingOptions.UnquotedOnly))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\'', '\'', '#', ValueTrimmingOptions.UnquotedOnly))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("bob said, 'Hey!'", csv[0]);
@@ -904,7 +881,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\"data \"\" here\"";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\0', '\\', '#', ValueTrimmingOptions.None))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\0', '\\', '#', ValueTrimmingOptions.None))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("\"data \"\" here\"", csv[0]);
@@ -917,9 +894,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest29WithNullRemovalStreamReader()
         {
-            string data = new string('a', 75) + "," + new string('b', 75);
+            var data = new string('a', 75) + "," + new string('b', 75);
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(new string('a', 75), csv[0]);
@@ -936,7 +913,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             // ["Bob said, ""Hey!""",2, 3 ]
             const string data = "\"Bob said, \"\"Hey!\"\"\",2, 3 ";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(@"Bob said, ""Hey!""", csv[0]);
@@ -946,7 +923,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 Assert.IsFalse(csv.ReadNextRecord());
             }
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '"', '"', '#', ValueTrimmingOptions.None))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '"', '"', '#', ValueTrimmingOptions.None))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(@"Bob said, ""Hey!""", csv[0]);
@@ -962,7 +939,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\r\n\r\n1";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -981,7 +958,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\r\n# bunch of crazy stuff here\r\n1";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.None))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.None))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -1000,7 +977,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\"1\",Bruce\r\n\"2\n\",Toni\r\n\"3\",Brian\r\n";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.None))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.None))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -1026,7 +1003,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\"double\\\\\\\\double backslash\"";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\\', '#', ValueTrimmingOptions.None))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\\', '#', ValueTrimmingOptions.None))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("double\\\\double backslash", csv[0]);
@@ -1042,7 +1019,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             const string data = "\"Chicane\", \"Love on the Run\", \"Knight Rider\", \"This field contains a comma, but it doesn't matter as the field is quoted\"\r\n" +
                                 "\"Samuel Barber\", \"Adagio for Strings\", \"Classical\", \"This field contains a double quote character, \"\", but it doesn't matter as it is escaped\"";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.UnquotedOnly))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.UnquotedOnly))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("Chicane", csv[0]);
@@ -1065,7 +1042,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest35WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("\t")), false, Encoding.ASCII, '\t'))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("\t")), false, Encoding.ASCII, '\t'))
             {
                 Assert.AreEqual(2, csv.FieldCount);
 
@@ -1081,7 +1058,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest36WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), true, Encoding.ASCII))
             {
                 csv.SupportsMultiline = false;
                 CsvReaderSampleData.CheckSampleData1(csv, true);
@@ -1091,7 +1068,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest37WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(CsvReaderSampleData.SampleData1)), false, Encoding.ASCII))
             {
                 csv.SupportsMultiline = false;
                 CsvReaderSampleData.CheckSampleData1(csv, true);
@@ -1101,9 +1078,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest38WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("abc,def,ghi\n")), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("abc,def,ghi\n")), false, Encoding.ASCII))
             {
-                int fieldCount = csv.FieldCount;
+                var fieldCount = csv.FieldCount;
 
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("abc", csv[0]);
@@ -1117,7 +1094,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest39WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00,01,   \n10,11,   ")),
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00,01,   \n10,11,   ")),
                                                  false,
                                                  Encoding.ASCII,
                                                  CsvReader.DefaultDelimiter,
@@ -1127,7 +1104,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                                                  ValueTrimmingOptions.UnquotedOnly,
                                                  1))
             {
-                int fieldCount = csv.FieldCount;
+                var fieldCount = csv.FieldCount;
 
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("00", csv[0]);
@@ -1148,7 +1125,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "1\r2\n";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -1163,7 +1140,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest40WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("\"00\",\n\"10\",")), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("\"00\",\n\"10\",")), false, Encoding.ASCII))
             {
                 Assert.AreEqual(2, csv.FieldCount);
 
@@ -1182,7 +1159,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest41WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("First record          ,Second record")),
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("First record          ,Second record")),
                                                  false,
                                                  Encoding.ASCII,
                                                  CsvReader.DefaultDelimiter,
@@ -1205,7 +1182,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest42WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(" ")), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(" ")), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(1, csv.FieldCount);
@@ -1217,7 +1194,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest43WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("a,b\n   ")), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("a,b\n   ")), false, Encoding.ASCII))
             {
                 csv.SkipEmptyLines = true;
                 csv.MissingFieldAction = MissingFieldAction.ReplaceByNull;
@@ -1240,7 +1217,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
             Assert.Throws<MalformedCsvException>(() =>
             {
-                using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+                using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
                 {
                     csv.MaxQuotedFieldLength = 10;
                     csv.ReadNextRecord();
@@ -1253,7 +1230,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\"01234567891\"\r\ntest";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 csv.MaxQuotedFieldLength = 11;
                 csv.ReadNextRecord();
@@ -1266,7 +1243,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\"\n\r\n\n\r\r\",,\t,\n";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
 
@@ -1284,9 +1261,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest5_RandomBufferSizesWithNullRemovalStreamReader()
         {
-            Random random = new Random();
+            var random = new Random();
 
-            for (int i = 0; i < 1000; i++)
+            for (var i = 0; i < 1000; i++)
             {
                 Checkdata5(random.Next(1, 512));
             }
@@ -1310,7 +1287,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest6WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("1,2")), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("1,2")), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
@@ -1325,7 +1302,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest7WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("\r\n1\r\n")), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("\r\n1\r\n")), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(',', csv.Delimiter);
@@ -1341,7 +1318,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\"bob said, \"\"Hey!\"\"\",2, 3 ";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.UnquotedOnly))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII, ',', '\"', '\"', '#', ValueTrimmingOptions.UnquotedOnly))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("bob said, \"Hey!\"", csv[0]);
@@ -1359,7 +1336,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = ",";
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes(data)), false, Encoding.ASCII))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(string.Empty, csv[0]);
@@ -1374,7 +1351,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void SkipEmptyLinesTest1WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00\n\n10")), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00\n\n10")), false, Encoding.ASCII))
             {
                 csv.SkipEmptyLines = false;
 
@@ -1396,7 +1373,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void SkipEmptyLinesTest2WithNullRemovalStreamReader()
         {
-            using (CsvReader csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00\n\n10")), false, Encoding.ASCII))
+            using (var csv = new CsvReader(new MemoryStream(Encoding.ASCII.GetBytes("00\n\n10")), false, Encoding.ASCII))
             {
                 csv.SkipEmptyLines = true;
 
@@ -1417,21 +1394,21 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             // control characters and comma are skipped
 
-            char[] raw = new char[65536 - 13];
+            var raw = new char[65536 - 13];
 
-            for (int i = 0; i < raw.Length; i++)
+            for (var i = 0; i < raw.Length; i++)
             {
                 raw[i] = (char)(i + 14);
             }
 
             raw[44 - 14] = ' '; // skip comma
 
-            string data = new string(raw);
+            var data = new string(raw);
 
-            byte[] dataBytes = Encoding.Unicode.GetBytes(data);
-            string dataBack = Encoding.Unicode.GetString(dataBytes);
+            var dataBytes = Encoding.Unicode.GetBytes(data);
+            var dataBack = Encoding.Unicode.GetString(dataBytes);
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(dataBytes), false, Encoding.Unicode))
+            using (var csv = new CsvReader(new MemoryStream(dataBytes), false, Encoding.Unicode))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(dataBack, csv[0]);
@@ -1444,9 +1421,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             byte[] buffer;
 
-            string test = "München";
+            var test = "München";
 
-            using (MemoryStream stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
                 using (TextWriter writer = new StreamWriter(stream, Encoding.UTF8))
                 {
@@ -1456,7 +1433,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 buffer = stream.ToArray();
             }
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(buffer), false, Encoding.UTF8))
+            using (var csv = new CsvReader(new MemoryStream(buffer), false, Encoding.UTF8))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(test, csv[0]);
@@ -1469,9 +1446,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             byte[] buffer;
 
-            string test = "München";
+            var test = "München";
 
-            using (MemoryStream stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
                 using (TextWriter writer = new StreamWriter(stream, Encoding.UTF32))
                 {
@@ -1481,7 +1458,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 buffer = stream.ToArray();
             }
 
-            using (CsvReader csv = new CsvReader(new MemoryStream(buffer), false, Encoding.UTF32))
+            using (var csv = new CsvReader(new MemoryStream(buffer), false, Encoding.UTF32))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(test, csv[0]);

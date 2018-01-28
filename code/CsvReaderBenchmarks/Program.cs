@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace CsvReaderDemo
+namespace CsvReaderBenchmarks
 {
     class Program
     {
@@ -29,7 +29,7 @@ namespace CsvReaderDemo
             {
                 if (args.Length == 1)
                 {
-                    string s = args[0].ToUpper();
+                    var s = args[0].ToUpper();
 
                     switch (s)
                     {
@@ -59,16 +59,16 @@ namespace CsvReaderDemo
             const int field = 72;
             fileSize = new System.IO.FileInfo(TestFile2).Length / 1024 / 1024;
 
-            for (int i = 1; i < 4; i++)
+            for (var i = 1; i < 4; i++)
             {
                 object csv;
 
                 Console.WriteLine("Test pass #{0} - All fields\n", i);
 
-				DoTest("CsvReader - No cache", fileSize, CsvReaderBenchmark.Run, TestFile2);
+                DoTest("CsvReader - No cache", fileSize, CsvReaderBenchmark.Run, TestFile2);
 #if !NETCOREAPP1_0
                 csv = DoTest("CachedCsvReader - Run 1", fileSize, CachedCsvReaderBenchmark.Run1, TestFile2);
-				DoTest("CachedCsvReader - Run 2", fileSize, CachedCsvReaderBenchmark.Run2, csv);
+                DoTest("CachedCsvReader - Run 2", fileSize, CachedCsvReaderBenchmark.Run2, csv);
 #endif
 #if !NETCOREAPP1_0 && !NETCOREAPP2_0
                 DoTest("TextFieldParser", fileSize, TextFieldParserBenchmark.Run, TestFile2);
@@ -82,10 +82,10 @@ namespace CsvReaderDemo
 
                 Console.WriteLine("Test pass #{0} - Field #{1} (middle)\n", i, field);
 
-				DoTest("CsvReader - No cache", fileSize, CsvReaderBenchmark.Run, TestFile2, field);
+                DoTest("CsvReader - No cache", fileSize, CsvReaderBenchmark.Run, TestFile2, field);
 #if !NETCOREAPP1_0
                 csv = DoTest("CachedCsvReader - Run 1", fileSize, CachedCsvReaderBenchmark.Run1, TestFile2, field);
-				DoTest("CachedCsvReader - Run 2", fileSize, CachedCsvReaderBenchmark.Run2, csv, field);
+                DoTest("CachedCsvReader - Run 2", fileSize, CachedCsvReaderBenchmark.Run2, csv, field);
 #endif
 #if !NETCOREAPP1_0 && !NETCOREAPP2_0
                 DoTest("TextFieldParser", fileSize, TextFieldParserBenchmark.Run, TestFile2, field);
@@ -123,7 +123,7 @@ namespace CsvReaderDemo
             GC.Collect();
 
             QueryPerformanceCounter(out start);
-            object value = testCallback(args);
+            var value = testCallback(args);
             QueryPerformanceCounter(out end);
             GetStats(start, end, frequency, fileSize, out clocks, out time, out rate);
 
@@ -141,11 +141,15 @@ namespace CsvReaderDemo
 
 #if !NETCOREAPP1_0
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-		{
-			if (e.ExceptionObject != null)
-				Console.WriteLine("Unhandled exception :\n\n'{0}'.", e.ExceptionObject.ToString());
-			else
-				Console.WriteLine("Unhandled exception occured.");
+        {
+            if (e.ExceptionObject != null)
+            {
+                Console.WriteLine("Unhandled exception :\n\n'{0}'.", e.ExceptionObject.ToString());
+            }
+            else
+            {
+                Console.WriteLine("Unhandled exception occured.");
+            }
 
             Console.ReadLine();
         }
@@ -153,14 +157,14 @@ namespace CsvReaderDemo
 
         private static void PerformanceTestWithNullRemovalStreamReader()
         {
-            string path = string.Empty;
+            var path = string.Empty;
             try
             {
                 path = GenerateCsvFile();
-                long fileSize = new FileInfo(path).Length / 1024 / 1024;
+                var fileSize = new FileInfo(path).Length / 1024 / 1024;
                 DoTest("CsvReader -     without using NullRemovalStreamReader", fileSize, CsvReaderBenchmark.Run, path);
                 Console.WriteLine();
-                object result = DoTest("CsvReader - with NullRemovalStreamReader without mark", fileSize, CsvReaderBenchmark.Run, path, -1, false);
+                var result = DoTest("CsvReader - with NullRemovalStreamReader without mark", fileSize, CsvReaderBenchmark.Run, path, -1, false);
                 Console.WriteLine(result + Environment.NewLine);
                 result = DoTest("CsvReader - with NullRemovalStreamReader with    mark", fileSize, CsvReaderBenchmark.Run, path, -1, true);
                 Console.WriteLine(result);
@@ -178,11 +182,11 @@ namespace CsvReaderDemo
         {
             // generate around 20 million null bytes; file size will be a little over 20MB
             long numberOfNullBytes = 20 * 1024 * 1024;
-            string path = Path.GetTempFileName();
+            var path = Path.GetTempFileName();
 
-            using(StreamWriter sw = File.AppendText(path))
+            using(var sw = File.AppendText(path))
             {
-                for(int i = 1; i <= 5; i++)
+                for(var i = 1; i <= 5; i++)
                 {
                     sw.WriteLine("cell{0}1,cell{0}2,cell{0}3", i);
                 }

@@ -1,13 +1,13 @@
-﻿namespace LumenWorks.Framework.Tests.Unit.IO
+﻿using System;
+using System.IO;
+using System.Text;
+
+using LumenWorks.Framework.IO;
+
+using NUnit.Framework;
+
+namespace LumenWorks.Framework.Tests.Unit.IO
 {
-    using System;
-    using System.IO;
-    using System.Text;
-
-    using Framework.IO;
-
-    using NUnit.Framework;
-
     public class NullRemovalStreamTest
     {
         [Test]
@@ -15,12 +15,12 @@
         [TestCase(false, "", 50000)]
         public void TestInputContainsOnlyNull(bool addMark, string template, int size)
         {
-            byte[] input = new byte[size];
-            byte[] buffer = new byte[4096];
-            string expected = string.Format(template, size);
+            var input = new byte[size];
+            var buffer = new byte[4096];
+            var expected = string.Format(template, size);
 
-            StringBuilder result = new StringBuilder();
-            int total = ReadFromNullRemovalStream(input, buffer, result, addMark);
+            var result = new StringBuilder();
+            var total = ReadFromNullRemovalStream(input, buffer, result, addMark);
             Assert.AreEqual(expected.Length, total);
             Assert.AreEqual(expected, result.ToString());
         }
@@ -30,11 +30,11 @@
         [TestCase(false, "", 20000, 100)]
         public void TestInputWithNullPrefix(bool addMark, string template, int size, int numberOfNull)
         {
-            byte[] input = new byte[size];
-            byte[] buffer = new byte[4096];
-            string expected = string.Format(template, numberOfNull) + new string('a', size - numberOfNull);
+            var input = new byte[size];
+            var buffer = new byte[4096];
+            var expected = string.Format(template, numberOfNull) + new string('a', size - numberOfNull);
 
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
             {
                 if (i >= numberOfNull)
                 {
@@ -46,8 +46,8 @@
                 }
             }
 
-            StringBuilder result = new StringBuilder();
-            int total = ReadFromNullRemovalStream(input, buffer, result, addMark);
+            var result = new StringBuilder();
+            var total = ReadFromNullRemovalStream(input, buffer, result, addMark);
             Assert.AreEqual(expected.Length, total);
             Assert.AreEqual(expected, result.ToString());
         }
@@ -57,11 +57,11 @@
         [TestCase(false, "", 10000, 400)]
         public void TestInputWithNullSuffix(bool addMark, string template, int size, int numberOfNonNull)
         {
-            byte[] input = new byte[size];
-            byte[] buffer = new byte[4096];
-            string expected = new string('a', numberOfNonNull) + string.Format(template, size - numberOfNonNull);
+            var input = new byte[size];
+            var buffer = new byte[4096];
+            var expected = new string('a', numberOfNonNull) + string.Format(template, size - numberOfNonNull);
 
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
             {
                 if (i < numberOfNonNull)
                 {
@@ -73,8 +73,8 @@
                 }
             }
 
-            StringBuilder result = new StringBuilder();
-            int total = ReadFromNullRemovalStream(input, buffer, result, addMark);
+            var result = new StringBuilder();
+            var total = ReadFromNullRemovalStream(input, buffer, result, addMark);
             Assert.AreEqual(expected.Length, total);
             Assert.AreEqual(expected, result.ToString());
         }
@@ -84,11 +84,11 @@
         [TestCase(false, "", 30000, 300)]
         public void TestInputWithNullInTheMiddle(bool addMark, string template, int size, int numberOfNull)
         {
-            byte[] input = new byte[size];
-            byte[] buffer = new byte[4096];
-            string expected = new string('a', numberOfNull) + string.Format(template, numberOfNull) + new string('a', size - numberOfNull * 2);
+            var input = new byte[size];
+            var buffer = new byte[4096];
+            var expected = new string('a', numberOfNull) + string.Format(template, numberOfNull) + new string('a', size - numberOfNull * 2);
 
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
             {
                 if (i < numberOfNull || i >= numberOfNull + numberOfNull)
                 {
@@ -100,8 +100,8 @@
                 }
             }
 
-            StringBuilder result = new StringBuilder();
-            int total = ReadFromNullRemovalStream(input, buffer, result, addMark);
+            var result = new StringBuilder();
+            var total = ReadFromNullRemovalStream(input, buffer, result, addMark);
             Assert.AreEqual(expected.Length, total);
             Assert.AreEqual(expected, result.ToString());
         }
@@ -111,11 +111,11 @@
         [TestCase(false, "", 40000, 10000)]
         public void TestInputWithNullAtBothEnds(bool addMark, string template, int size, int numberOfNull)
         {
-            byte[] input = new byte[size];
-            byte[] buffer = new byte[4096];
-            string expected = string.Format(template, numberOfNull) + new string('a', numberOfNull * 2) + string.Format(template, numberOfNull);
+            var input = new byte[size];
+            var buffer = new byte[4096];
+            var expected = string.Format(template, numberOfNull) + new string('a', numberOfNull * 2) + string.Format(template, numberOfNull);
 
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
             {
                 if (i < numberOfNull || i >= numberOfNull * 3)
                 {
@@ -127,8 +127,8 @@
                 }
             }
 
-            StringBuilder result = new StringBuilder();
-            int total = ReadFromNullRemovalStream(input, buffer, result, addMark);
+            var result = new StringBuilder();
+            var total = ReadFromNullRemovalStream(input, buffer, result, addMark);
             Assert.AreEqual(expected.Length, total);
             Assert.AreEqual(expected, result.ToString());
         }
@@ -138,11 +138,11 @@
         [TestCase(false, 200, 59)]
         public void TestInputWithFewerThanThresholdNullBytes(bool addMark, int size, int numberOfNull)
         {
-            byte[] input = new byte[size];
-            byte[] buffer = new byte[4096];
-            string expected = new string(new char[numberOfNull]) + new string('a', size - numberOfNull);
+            var input = new byte[size];
+            var buffer = new byte[4096];
+            var expected = new string(new char[numberOfNull]) + new string('a', size - numberOfNull);
 
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
             {
                 if (i >= numberOfNull)
                 {
@@ -154,8 +154,8 @@
                 }
             }
 
-            StringBuilder result = new StringBuilder();
-            int total = ReadFromNullRemovalStream(input, buffer, result, addMark);
+            var result = new StringBuilder();
+            var total = ReadFromNullRemovalStream(input, buffer, result, addMark);
             Assert.AreEqual(expected.Length, total);
             Assert.AreEqual(expected, result.ToString());
         }
@@ -165,11 +165,11 @@
         [TestCase(false, 200, 60, "")]
         public void TestInputWithExactThresholdNullBytes(bool addMark, int size, int numberOfNull, string template)
         {
-            byte[] input = new byte[size];
-            byte[] buffer = new byte[4096];
-            string expected = (addMark ? string.Format(template, numberOfNull) : "") + new string('a', size - numberOfNull);
+            var input = new byte[size];
+            var buffer = new byte[4096];
+            var expected = (addMark ? string.Format(template, numberOfNull) : "") + new string('a', size - numberOfNull);
 
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
             {
                 if (i >= numberOfNull)
                 {
@@ -181,19 +181,19 @@
                 }
             }
 
-            StringBuilder result = new StringBuilder();
-            int total = ReadFromNullRemovalStream(input, buffer, result, addMark);
+            var result = new StringBuilder();
+            var total = ReadFromNullRemovalStream(input, buffer, result, addMark);
             Assert.AreEqual(expected.Length, total);
             Assert.AreEqual(expected, result.ToString());
         }
 
         private int ReadFromNullRemovalStream(byte[] input, byte[] buffer, StringBuilder sb, bool addMark)
         {
-            using (MemoryStream memoryStream = new MemoryStream(input))
-            using (NullRemovalStream nullRemovalStream = new NullRemovalStream(memoryStream, addMark))
+            using (var memoryStream = new MemoryStream(input))
+            using (var nullRemovalStream = new NullRemovalStream(memoryStream, addMark))
             {
-                int readCount = nullRemovalStream.Read(buffer, 0, 4096);
-                int total = readCount;
+                var readCount = nullRemovalStream.Read(buffer, 0, 4096);
+                var total = readCount;
                 while (readCount != 0)
                 {
                     sb.Append(Encoding.ASCII.GetString(buffer, 0, readCount));

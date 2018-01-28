@@ -1,28 +1,3 @@
-//	LumenWorks.Framework.Tests.Unit.IO.CSV.CsvReaderTest
-//	Copyright (c) 2005 Sébastien Lorion
-//
-//	MIT license (http://en.wikipedia.org/wiki/MIT_License)
-//
-//	Permission is hereby granted, free of charge, to any person obtaining a copy
-//	of this software and associated documentation files (the "Software"), to deal
-//	in the Software without restriction, including without limitation the rights 
-//	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-//	of the Software, and to permit persons to whom the Software is furnished to do so, 
-//	subject to the following conditions:
-//
-//	The above copyright notice and this permission notice shall be included in all 
-//	copies or substantial portions of the Software.
-//
-//	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
-//	INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-//	PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
-//	FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-//	ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-// A special thanks goes to "shriop" at CodeProject for providing many of the standard and Unicode parsing tests.
-
-
 using System;
 using System.IO;
 using System.Text;
@@ -427,8 +402,8 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             using (var csv = new CsvReader(new System.IO.StringReader(data), false))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual(String.Empty, csv[0]);
-                Assert.AreEqual(String.Empty, csv[1]);
+                Assert.AreEqual(string.Empty, csv[0]);
+                Assert.AreEqual(string.Empty, csv[1]);
                 Assert.AreEqual(',', csv.Delimiter);
                 Assert.AreEqual(0, csv.CurrentRecordIndex);
                 Assert.AreEqual(2, csv.FieldCount);
@@ -587,7 +562,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest19()
         {
-            var data = String.Empty;
+            var data = string.Empty;
 
             using (var csv = new CsvReader(new System.IO.StringReader(data), false))
             {
@@ -639,13 +614,13 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(3, csv.FieldCount);
 
-                Assert.AreEqual(String.Empty, csv[0]);
-                Assert.AreEqual(String.Empty, csv[1]);
-                Assert.AreEqual(String.Empty, csv[2]);
+                Assert.AreEqual(string.Empty, csv[0]);
+                Assert.AreEqual(string.Empty, csv[1]);
+                Assert.AreEqual(string.Empty, csv[2]);
                 Assert.AreEqual(0, csv.CurrentRecordIndex);
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual("1", csv[0]);
-                Assert.AreEqual(String.Empty, csv[1]);
+                Assert.AreEqual(string.Empty, csv[1]);
                 Assert.AreEqual(1, csv.CurrentRecordIndex);
                 Assert.IsFalse(csv.ReadNextRecord());
             }
@@ -747,13 +722,13 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void ParsingTest29()
         {
-            var data = new String('a', 75) + "," + new String('b', 75);
+            var data = new string('a', 75) + "," + new string('b', 75);
 
             using (var csv = new CsvReader(new System.IO.StringReader(data), false))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual(new String('a', 75), csv[0]);
-                Assert.AreEqual(new String('b', 75), csv[1]);
+                Assert.AreEqual(new string('a', 75), csv[0]);
+                Assert.AreEqual(new string('b', 75), csv[1]);
                 Assert.AreEqual(0, csv.CurrentRecordIndex);
                 Assert.AreEqual(2, csv.FieldCount);
                 Assert.IsFalse(csv.ReadNextRecord());

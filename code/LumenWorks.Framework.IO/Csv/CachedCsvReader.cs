@@ -1,24 +1,3 @@
-//	LumenWorks.Framework.IO.CSV.CachedCsvReader
-//	Copyright (c) 2005 Sébastien Lorion
-//
-//	MIT license (http://en.wikipedia.org/wiki/MIT_License)
-//
-//	Permission is hereby granted, free of charge, to any person obtaining a copy
-//	of this software and associated documentation files (the "Software"), to deal
-//	in the Software without restriction, including without limitation the rights 
-//	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-//	of the Software, and to permit persons to whom the Software is furnished to do so, 
-//	subject to the following conditions:
-//
-//	The above copyright notice and this permission notice shall be included in all 
-//	copies or substantial portions of the Software.
-//
-//	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
-//	INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-//	PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
-//	FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-//	ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -57,13 +36,12 @@ namespace LumenWorks.Framework.IO.Csv
         /// <param name="reader">A <see cref="T:TextReader"/> pointing to the CSV file.</param>
         /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
         /// <exception cref="T:ArgumentNullException">
-        ///		<paramref name="reader"/> is a <see langword="null"/>.
+        ///        <paramref name="reader"/> is a <see langword="null"/>.
         /// </exception>
         /// <exception cref="T:ArgumentException">
-        ///		Cannot read from <paramref name="reader"/>.
+        ///        Cannot read from <paramref name="reader"/>.
         /// </exception>
-        public CachedCsvReader(TextReader reader, bool hasHeaders)
-            : this(reader, hasHeaders, DefaultBufferSize)
+        public CachedCsvReader(TextReader reader, bool hasHeaders) : this(reader, hasHeaders, DefaultBufferSize)
         {
         }
 
@@ -79,10 +57,10 @@ namespace LumenWorks.Framework.IO.Csv
         /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
         /// <param name="bufferSize">The buffer size in bytes.</param>
         /// <exception cref="T:ArgumentNullException">
-        ///		<paramref name="reader"/> is a <see langword="null"/>.
+        ///        <paramref name="reader"/> is a <see langword="null"/>.
         /// </exception>
         /// <exception cref="T:ArgumentException">
-        ///		Cannot read from <paramref name="reader"/>.
+        ///        Cannot read from <paramref name="reader"/>.
         /// </exception>
         public CachedCsvReader(TextReader reader, bool hasHeaders, int bufferSize)
             : this(reader, hasHeaders, DefaultDelimiter, DefaultQuote, DefaultEscape, DefaultComment, ValueTrimmingOptions.UnquotedOnly, bufferSize)
@@ -96,10 +74,10 @@ namespace LumenWorks.Framework.IO.Csv
         /// <param name="hasHeaders"><see langword="true"/> if field names are located on the first non commented line, otherwise, <see langword="false"/>.</param>
         /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
         /// <exception cref="T:ArgumentNullException">
-        ///		<paramref name="reader"/> is a <see langword="null"/>.
+        ///        <paramref name="reader"/> is a <see langword="null"/>.
         /// </exception>
         /// <exception cref="T:ArgumentException">
-        ///		Cannot read from <paramref name="reader"/>.
+        ///        Cannot read from <paramref name="reader"/>.
         /// </exception>
         public CachedCsvReader(TextReader reader, bool hasHeaders, char delimiter)
             : this(reader, hasHeaders, delimiter, DefaultQuote, DefaultEscape, DefaultComment, ValueTrimmingOptions.UnquotedOnly, DefaultBufferSize)
@@ -114,10 +92,10 @@ namespace LumenWorks.Framework.IO.Csv
         /// <param name="delimiter">The delimiter character separating each field (default is ',').</param>
         /// <param name="bufferSize">The buffer size in bytes.</param>
         /// <exception cref="T:ArgumentNullException">
-        ///		<paramref name="reader"/> is a <see langword="null"/>.
+        ///        <paramref name="reader"/> is a <see langword="null"/>.
         /// </exception>
         /// <exception cref="T:ArgumentException">
-        ///		Cannot read from <paramref name="reader"/>.
+        ///        Cannot read from <paramref name="reader"/>.
         /// </exception>
         public CachedCsvReader(TextReader reader, bool hasHeaders, char delimiter, int bufferSize)
             : this(reader, hasHeaders, delimiter, DefaultQuote, DefaultEscape, DefaultComment, ValueTrimmingOptions.UnquotedOnly, bufferSize)
@@ -139,10 +117,10 @@ namespace LumenWorks.Framework.IO.Csv
         /// <param name="trimmingOptions">Determines how values should be trimmed.</param>
         /// <param name="nullValue">The value which denotes a DbNull-value.</param>
         /// <exception cref="T:ArgumentNullException">
-        ///		<paramref name="reader"/> is a <see langword="null"/>.
+        ///        <paramref name="reader"/> is a <see langword="null"/>.
         /// </exception>
         /// <exception cref="T:ArgumentException">
-        ///		Cannot read from <paramref name="reader"/>.
+        ///        Cannot read from <paramref name="reader"/>.
         /// </exception>
         public CachedCsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, string nullValue = null)
             : this(reader, hasHeaders, delimiter, quote, escape, comment, trimmingOptions, DefaultBufferSize, nullValue)
@@ -165,10 +143,10 @@ namespace LumenWorks.Framework.IO.Csv
         /// <param name="bufferSize">The buffer size in bytes.</param>
         /// <param name="nullValue">The value which denotes a DbNull-value.</param>
         /// <exception cref="T:ArgumentNullException">
-        ///		<paramref name="reader"/> is a <see langword="null"/>.
+        ///        <paramref name="reader"/> is a <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        ///		<paramref name="bufferSize"/> must be 1 or more.
+        ///        <paramref name="bufferSize"/> must be 1 or more.
         /// </exception>
         public CachedCsvReader(TextReader reader, bool hasHeaders, char delimiter, char quote, char escape, char comment, ValueTrimmingOptions trimmingOptions, int bufferSize, string nullValue = null)
             : base(reader, hasHeaders, delimiter, quote, escape, comment, trimmingOptions, bufferSize, nullValue)
@@ -200,19 +178,19 @@ namespace LumenWorks.Framework.IO.Csv
         /// </summary>
         /// <value>The field at the specified index.</value>
         /// <exception cref="T:ArgumentOutOfRangeException">
-        ///		<paramref name="field"/> must be included in [0, <see cref="M:FieldCount"/>[.
+        ///        <paramref name="field"/> must be included in [0, <see cref="M:FieldCount"/>[.
         /// </exception>
         /// <exception cref="T:InvalidOperationException">
-        ///		No record read yet. Call ReadLine() first.
+        ///        No record read yet. Call ReadLine() first.
         /// </exception>
         /// <exception cref="MissingFieldCsvException">
-        ///		The CSV data appears to be missing a field.
+        ///        The CSV data appears to be missing a field.
         /// </exception>
         /// <exception cref="T:MalformedCsvException">
-        ///		The CSV appears to be corrupt at the current position.
+        ///        The CSV appears to be corrupt at the current position.
         /// </exception>
         /// <exception cref="T:System.ComponentModel.ObjectDisposedException">
-        ///		The instance has been disposed of.
+        ///        The instance has been disposed of.
         /// </exception>
         public override string this[int field]
         {
@@ -241,7 +219,7 @@ namespace LumenWorks.Framework.IO.Csv
         /// Reads the CSV stream from the current position to the end of the stream.
         /// </summary>
         /// <exception cref="T:System.ComponentModel.ObjectDisposedException">
-        ///	The instance has been disposed of.
+        ///    The instance has been disposed of.
         /// </exception>
         public virtual void ReadToEnd()
         {
@@ -263,7 +241,7 @@ namespace LumenWorks.Framework.IO.Csv
         /// </param>
         /// <returns><see langword="true"/> if a record has been successfully reads; otherwise, <see langword="false"/>.</returns>
         /// <exception cref="T:System.ComponentModel.ObjectDisposedException">
-        ///	The instance has been disposed of.
+        ///    The instance has been disposed of.
         /// </exception>
         protected override bool ReadNextRecord(bool onlyReadHeaders, bool skipToNextLine)
         {
@@ -337,7 +315,7 @@ namespace LumenWorks.Framework.IO.Csv
         /// <param name="record">The record index.</param>
         /// <returns><c>true</c> if the operation was successful; otherwise, <c>false</c>.</returns>
         /// <exception cref="T:System.ComponentModel.ObjectDisposedException">
-        ///		The instance has been disposed of.
+        ///        The instance has been disposed of.
         /// </exception>
         public override bool MoveTo(long record)
         {

@@ -1,10 +1,10 @@
-﻿namespace LumenWorks.Framework.IO
+﻿using System;
+using System.IO;
+
+using LumenWorks.Framework.IO.Csv.Resources;
+
+namespace LumenWorks.Framework.IO
 {
-    using System;
-    using System.IO;
-
-    using Csv.Resources;
-
     public class NullRemovalStream : Stream
     {
         private bool _addMark;
