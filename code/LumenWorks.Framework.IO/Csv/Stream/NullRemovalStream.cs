@@ -30,42 +30,26 @@ namespace LumenWorks.Framework.IO
             {
                 throw new ArgumentOutOfRangeException(nameof(bufferSize), bufferSize, ExceptionMessage.BufferSizeTooSmall);
             }
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
 
-            _source = source;
+            _source = source ?? throw new ArgumentNullException(nameof(source));
             _addMark = addMark;
             _buffer = new byte [bufferSize];
             _threshold = threshold < 60 ? 60 : threshold;
             PopulateBuffer();
         }
 
-        public override bool CanRead
-        {
-            get { return _source.CanRead; }
-        }
+        public override bool CanRead => _source.CanRead;
 
-        public override bool CanSeek
-        {
-            get { return _source.CanSeek; }
-        }
+        public override bool CanSeek => _source.CanSeek;
 
-        public override bool CanWrite
-        {
-            get { return _source.CanWrite; }
-        }
+        public override bool CanWrite => _source.CanWrite;
 
-        public override long Length
-        {
-            get { return _source.Length; }
-        }
+        public override long Length => _source.Length;
 
         public override long Position
         {
-            get { return _source.Position; }
-            set { _source.Position = value; }
+            get => _source.Position;
+            set => _source.Position = value;
         }
 
 #if !NETSTANDARD1_3
@@ -140,6 +124,10 @@ namespace LumenWorks.Framework.IO
                     {
                         // first non null byte
                         newTargetIndex = Process(target, targetIndex, nullCount);
+                        if (newTargetIndex == target.Length)
+                        {
+                            return dataRead + newTargetIndex - targetIndex;
+                        }
                         nullCount = 0;
                     }
                     target[newTargetIndex] = current;
@@ -158,10 +146,12 @@ namespace LumenWorks.Framework.IO
 
         private int Process(byte[] target, int targetIndex, int nullCount)
         {
-            if (nullCount < _threshold)
+            var template = "[removed {0} null bytes]";
+            var mark = string.Format(template, nullCount);
+
+            if (nullCount < _threshold || (_addMark && targetIndex + mark.Length > target.Length))
             {
-                // add null bytes back to target if (addMark == true but nullCount < _threshold)
-                while (nullCount > 0)
+                while (nullCount > 0 && targetIndex < target.Length)
                 {
                     target[targetIndex] = 0;
                     targetIndex++;
@@ -176,9 +166,7 @@ namespace LumenWorks.Framework.IO
             }
 
             // nullCount >= _threshold
-            string template = "[removed {0} null bytes]";
-            string mark = string.Format(template, nullCount);
-            foreach (char c in mark)
+            foreach (var c in mark)
             {
                 target[targetIndex] = Convert.ToByte(c);
                 targetIndex++;
