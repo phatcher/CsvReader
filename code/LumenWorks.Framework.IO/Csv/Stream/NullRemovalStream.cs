@@ -91,7 +91,7 @@ namespace LumenWorks.Framework.IO
             while (dataRead < count)
             {
                 lastByteInBuffer = 1;
-                var current = 0;
+                byte current = 0;
                 var readFromStorage = false;
                 if (_storageSize > 0)
                 {
