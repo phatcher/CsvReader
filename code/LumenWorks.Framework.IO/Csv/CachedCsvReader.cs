@@ -16,11 +16,6 @@ namespace LumenWorks.Framework.IO.Csv
     public class CachedCsvReader : CsvReader, IListSource
     {
         /// <summary>
-        /// Contains the current record index (inside the cached records array).
-        /// </summary>
-        private long _currentRecordIndex;
-
-        /// <summary>
         /// Indicates if a new record is being read from the CSV stream.
         /// </summary>
         private bool _readingStream;
@@ -148,26 +143,25 @@ namespace LumenWorks.Framework.IO.Csv
             : base(reader, hasHeaders, delimiter, quote, escape, comment, trimmingOptions, bufferSize, nullValue)
         {
             Records = new List<string[]>();
-            _currentRecordIndex = -1;
+            CacheRecordIndex = -1;
         }
 
         /// <summary>
         /// Gets the current record index in the CSV file.
         /// </summary>
         /// <value>The current record index in the CSV file.</value>
-        public override long CurrentRecordIndex
-        {
-            get { return _currentRecordIndex; }
-        }
+        public override long CurrentRecordIndex => CacheRecordIndex;
+
+        /// <summary>
+        /// Contains the current record index (inside the cached records array).
+        /// </summary>
+        protected long CacheRecordIndex { get; private set; }
 
         /// <summary>
         /// Gets a value that indicates whether the current stream position is at the end of the stream.
         /// </summary>
         /// <value><see langword="true"/> if the current stream position is at the end of the stream; otherwise <see langword="false"/>.</value>
-        public override bool EndOfStream
-        {
-            get { return _currentRecordIndex >= base.CurrentRecordIndex && base.EndOfStream; }
-        }
+        public override bool EndOfStream => CacheRecordIndex >= FileRecordIndex && base.EndOfStream;
 
         /// <summary>
         /// Gets the field at the specified index.
@@ -187,14 +181,14 @@ namespace LumenWorks.Framework.IO.Csv
                     return base[field];
                 }
 
-                if (_currentRecordIndex > -1)
+                if (CacheRecordIndex > -1)
                 {
-                    if (field > -1 && field < this.FieldCount)
+                    if (field > -1 && field < FieldCount)
                     {
-                        return Records[(int) _currentRecordIndex][field];
+                        return Records[(int) CacheRecordIndex][field];
                     }
 
-                    throw new ArgumentOutOfRangeException("field", field, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, field));
+                    throw new ArgumentOutOfRangeException(nameof(field), field, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, field));
                 }
                
                 throw new InvalidOperationException(ExceptionMessage.NoCurrentRecord);
@@ -209,7 +203,7 @@ namespace LumenWorks.Framework.IO.Csv
         /// </exception>
         public virtual void ReadToEnd()
         {
-            _currentRecordIndex = base.CurrentRecordIndex;
+            CacheRecordIndex = FileRecordIndex;
 
             while (ReadNextRecord()) ;
         }
@@ -231,24 +225,24 @@ namespace LumenWorks.Framework.IO.Csv
         /// </exception>
         protected override bool ReadNextRecord(bool onlyReadHeaders, bool skipToNextLine)
         {
-            if (_currentRecordIndex < base.CurrentRecordIndex)
+            if (CacheRecordIndex < FileRecordIndex)
             {
-                _currentRecordIndex++;
+                CacheRecordIndex++;
                 return true;
             }
             else
             {
                 _readingStream = true;
-
+                
                 try
                 {
-                    bool canRead = base.ReadNextRecord(onlyReadHeaders, skipToNextLine);
+                    var canRead = base.ReadNextRecord(onlyReadHeaders, skipToNextLine);
 
                     if (canRead)
                     {
-                        string[] record = new string[this.FieldCount];
+                        var record = new string[FieldCount];
 
-                        if (base.CurrentRecordIndex > -1)
+                        if (FileRecordIndex > -1)
                         {
                             CopyCurrentRecordTo(record);
                             Records.Add(record);
@@ -256,13 +250,17 @@ namespace LumenWorks.Framework.IO.Csv
                         else
                         {
                             if (MoveTo(0))
+                            {
                                 CopyCurrentRecordTo(record);
+                            }
 
                             MoveTo(-1);
                         }
 
                         if (!onlyReadHeaders)
-                            _currentRecordIndex++;
+                        {
+                            CacheRecordIndex++;
+                        }
                     }
                     else
                     {
@@ -284,7 +282,7 @@ namespace LumenWorks.Framework.IO.Csv
         /// </summary>
         public void MoveToStart()
         {
-            _currentRecordIndex = -1;
+            CacheRecordIndex = -1;
         }
 
         /// <summary>
@@ -292,7 +290,7 @@ namespace LumenWorks.Framework.IO.Csv
         /// </summary>
         public void MoveToLastCachedRecord()
         {
-            _currentRecordIndex = base.CurrentRecordIndex;
+            CacheRecordIndex = FileRecordIndex;
         }
 
         /// <summary>
@@ -308,20 +306,17 @@ namespace LumenWorks.Framework.IO.Csv
                 record = -1;
             }
 
-            if (record <= base.CurrentRecordIndex)
+            if (record <= FileRecordIndex)
             {
-                _currentRecordIndex = record;
+                CacheRecordIndex = record;
                 return true;
             }
 
-            _currentRecordIndex = base.CurrentRecordIndex;
+            CacheRecordIndex = FileRecordIndex;
             return base.MoveTo(record);
         }
 
-        bool IListSource.ContainsListCollection
-        {
-            get { return false; }
-        }
+        bool IListSource.ContainsListCollection => false;
 
         System.Collections.IList IListSource.GetList()
         {

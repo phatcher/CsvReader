@@ -353,7 +353,7 @@ namespace LumenWorks.Framework.IO.Csv
             Columns = new List<Column>();
             DefaultHeaderName = "Column";
 
-            CurrentRecordIndex = -1;
+            FileRecordIndex = -1;
             DefaultParseErrorAction = ParseErrorAction.RaiseEvent;
         }
 
@@ -520,7 +520,17 @@ namespace LumenWorks.Framework.IO.Csv
         /// </para>
         /// </summary>
         /// <value>The current record index in the CSV file.</value>
-        public virtual long CurrentRecordIndex { get; private set; }
+        protected long FileRecordIndex { get; private set; }
+
+        /// <summary>
+        /// Gets the current record index in the CSV file.
+        /// <para>
+        /// A value of <see cref="M:Int32.MinValue"/> means that the reader has not been initialized yet.
+        /// Otherwise, a negative value means that no record has been read yet.
+        /// </para>
+        /// </summary>
+        /// <value>The current record index in the CSV file.</value>
+        public virtual long CurrentRecordIndex => FileRecordIndex;
 
         /// <summary>
         /// Indicates if one or more field are missing for the current record.
@@ -678,7 +688,7 @@ namespace LumenWorks.Framework.IO.Csv
 
             if (string.IsNullOrEmpty(header))
             {
-                throw new ArgumentNullException("header");
+                throw new ArgumentNullException(nameof(header));
             }
 
             if (_fieldHeaderIndexes != null)
@@ -712,7 +722,7 @@ namespace LumenWorks.Framework.IO.Csv
                 throw new ArgumentOutOfRangeException(nameof(index), index, string.Empty);
             }
 
-            if (CurrentRecordIndex < 0 || !_initialized)
+            if (FileRecordIndex < 0 || !_initialized)
             {
                 throw new InvalidOperationException(ExceptionMessage.NoCurrentRecord);
             }
@@ -779,13 +789,13 @@ namespace LumenWorks.Framework.IO.Csv
         /// <exception cref="T:System.ComponentModel.ObjectDisposedException">The instance has been disposed of.</exception>
         public virtual bool MoveTo(long record)
         {
-            if (record < CurrentRecordIndex)
+            if (record < FileRecordIndex)
             {
                 return false;
             }
 
             // Get number of record to read
-            var offset = record - CurrentRecordIndex;
+            var offset = record - FileRecordIndex;
 
             while (offset > 0)
             {
@@ -956,7 +966,7 @@ namespace LumenWorks.Framework.IO.Csv
                     throw new ArgumentOutOfRangeException(nameof(field), field, string.Format(CultureInfo.InvariantCulture, ExceptionMessage.FieldIndexOutOfRange, field));
                 }
 
-                if (CurrentRecordIndex < 0)
+                if (FileRecordIndex < 0)
                 {
                     throw new InvalidOperationException(ExceptionMessage.NoCurrentRecord);
                 }
@@ -1243,7 +1253,7 @@ namespace LumenWorks.Framework.IO.Csv
 
                                 if (MaxQuotedFieldLength.HasValue && fieldLength > MaxQuotedFieldLength.Value)
                                 {
-                                    HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, CurrentRecordIndex), index), ref _nextFieldStart);
+                                    HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, FileRecordIndex), index), ref _nextFieldStart);
                                     return null;
                                 }
 
@@ -1268,7 +1278,7 @@ namespace LumenWorks.Framework.IO.Csv
 
                                 if (!ReadBuffer())
                                 {
-                                    HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, CurrentRecordIndex), index), ref _nextFieldStart);
+                                    HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, FileRecordIndex), index), ref _nextFieldStart);
                                     return null;
                                 }
                             }
@@ -1331,7 +1341,7 @@ namespace LumenWorks.Framework.IO.Csv
                             // If no delimiter is present after the quoted field and it is not the last field, then it is a parsing error
                             if (!delimiterSkipped && !_eof && !(_eol || IsNewLine(_nextFieldStart)))
                             {
-                                HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, CurrentRecordIndex), index), ref _nextFieldStart);
+                                HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, FileRecordIndex), index), ref _nextFieldStart);
                             }
                         }
 
@@ -1383,7 +1393,7 @@ namespace LumenWorks.Framework.IO.Csv
             }
 
             // Getting here is bad ...
-            HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, CurrentRecordIndex), index), ref _nextFieldStart);
+            HandleParseError(new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, FileRecordIndex), index), ref _nextFieldStart);
             return null;
         }
 
@@ -1417,7 +1427,7 @@ namespace LumenWorks.Framework.IO.Csv
                 if (_firstRecordInCache)
                 {
                     _firstRecordInCache = false;
-                    CurrentRecordIndex++;
+                    FileRecordIndex++;
 
                     return true;
                 }
@@ -1486,7 +1496,7 @@ namespace LumenWorks.Framework.IO.Csv
                 if (HasHeaders)
                 {
                     // Don't count first record as it was the headers
-                    CurrentRecordIndex = -1;
+                    FileRecordIndex = -1;
 
                     _firstRecordInCache = false;
 
@@ -1544,7 +1554,7 @@ namespace LumenWorks.Framework.IO.Csv
                         _nextFieldIndex = 0;
                         _eol = false;
 
-                        CurrentRecordIndex++;
+                        FileRecordIndex++;
                         return true;
                     }
                 }
@@ -1559,12 +1569,12 @@ namespace LumenWorks.Framework.IO.Csv
                     if (onlyReadHeaders)
                     {
                         _firstRecordInCache = true;
-                        CurrentRecordIndex = -1;
+                        FileRecordIndex = -1;
                     }
                     else
                     {
                         _firstRecordInCache = false;
-                        CurrentRecordIndex = 0;
+                        FileRecordIndex = 0;
                     }
                 }
             }
@@ -1574,7 +1584,7 @@ namespace LumenWorks.Framework.IO.Csv
                 {
                     SkipToNewLine(ref _nextFieldStart);
                 }
-                else if (CurrentRecordIndex > -1 && !MissingFieldFlag)
+                else if (FileRecordIndex > -1 && !MissingFieldFlag)
                 {
                     // If not already at end of record, move there
                     if (!_eol && !_eof)
@@ -1608,7 +1618,7 @@ namespace LumenWorks.Framework.IO.Csv
 
                 MissingFieldFlag = false;
                 ParseErrorFlag = false;
-                CurrentRecordIndex++;
+                FileRecordIndex++;
             }
 
             return true;
@@ -1622,7 +1632,7 @@ namespace LumenWorks.Framework.IO.Csv
             }
             else
             {
-                var exception = new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, CurrentRecordIndex), currentFieldIndex);
+                var exception = new MalformedCsvException(GetCurrentRawData(), _nextFieldStart, Math.Max(0, FileRecordIndex), currentFieldIndex);
 
                 if (DefaultParseErrorAction == ParseErrorAction.RaiseEvent)
                 {
@@ -1862,7 +1872,7 @@ namespace LumenWorks.Framework.IO.Csv
                 switch (MissingFieldAction)
                 {
                     case MissingFieldAction.ParseError:
-                        HandleParseError(new MissingFieldCsvException(GetCurrentRawData(), currentPosition, Math.Max(0, CurrentRecordIndex), fieldIndex), ref currentPosition);
+                        HandleParseError(new MissingFieldCsvException(GetCurrentRawData(), currentPosition, Math.Max(0, FileRecordIndex), fieldIndex), ref currentPosition);
                         return value;
 
                     case MissingFieldAction.ReplaceByEmpty:

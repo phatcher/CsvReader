@@ -27,20 +27,20 @@ namespace CsvReaderBenchmarks
             {
                 if (args.Length == 1)
                 {
-                    var s = args[0].ToUpper();
-
-                    switch (s)
+                    switch (args[0].ToUpperInvariant())
                     {
                         case "CSVREADER":
                             CsvReaderBenchmark.Run(TestFile3);
                             return;
 
-                        case "CSVNULLREMOVALSTREAMREADER":
+                        case "NULLREMOVAL":
                             PerformanceTestWithNullRemovalStreamReader();
                             return;
-                        case "CSVSTRINGBUILDER":
+
+                        case "STRINGBUILDER":
                             PerformanceTestWithStringBuilder();
                             return;
+
 #if !NETCOREAPP1_0 && !NETCOREAPP2_0
                         case "OLEDB":
                             OleDbBenchmark.Run(TestFile3);
@@ -49,15 +49,18 @@ namespace CsvReaderBenchmarks
                         case "REGEX":
                             RegexBenchmark.Run(TestFile3);
                             return;
+
+                        default:
+                            Console.WriteLine(@"Possible values: CsvReader, NullRemoval, StringBuilder, OleDb, Regex");
+                            break;
                     }
                 }
 
-                Console.WriteLine(@"Possible values : CsvReader, CsvNullRemovalStreamReader, CsvStringBuilder, OleDb, Regex");
                 return;
             }
 
             const int field = 72;
-            long fileSize = new FileInfo(TestFile2).Length / 1024 / 1024;
+            var fileSize = new FileInfo(TestFile2).Length / 1024 / 1024;
 
             for (var i = 1; i < 4; i++)
             {

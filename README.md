@@ -211,18 +211,18 @@ When addMark is true, consecutive null bytes will be replaced by [removed x null
 
 Performance differences shown when tested with 20 million null bytes (20MB in storage) :
 ```csharp
-CsvReader -     without using NullRemovalStreamReader : 156248815 ticks, 57.2749 sec., 0.3492 MB/sec.
+CsvReader -     without using NullRemovalStreamReader : 536968 ticks, 0.2120 sec., 94.3518 MB/sec.
 
-CsvReader - with NullRemovalStreamReader without mark : 447185 ticks, 0.1639 sec., 122.0100 MB/sec.
+CsvReader - with NullRemovalStreamReader without mark : 191137 ticks, 0.0755 sec., 265.0660 MB/sec.
 AddMark =(False) LastCell =(cell63 followed by 20971520 null bytes)
 
-CsvReader - with NullRemovalStreamReader with    mark : 447222 ticks, 0.1639 sec., 121.9999 MB/sec.
+CsvReader - with NullRemovalStreamReader with    mark : 168819 ticks, 0.0666 sec., 300.1079 MB/sec.
 AddMark =(True) LastCell =(cell63 followed by 20971520 null bytes[removed 20971520 null bytes])
 ```
 
 Adjust number of null bytes in benchmark to see how much memory/time you will be able to save:
 ```csharp
-X:\Path\CsvReader\build\Debug\CsvReaderBenchmarks\net461>CsvReaderBenchmarks.exe CsvNullRemovalStreamReader
+X:\Path\CsvReader\build\Debug\CsvReaderBenchmarks\net461>CsvReaderBenchmarks.exe NullRemoval
 ```
 
 
@@ -231,55 +231,55 @@ One of the main reasons for using this library is its excellent performance on r
 ```csharp
 Test pass #1 - All fields
 
-CsvReader - No cache      : 3495429 ticks, 1.7940 sec., 24.5265 MB/sec.
-CachedCsvReader - Run 1   : 6641089 ticks, 3.4084 sec., 12.9091 MB/sec.
-CachedCsvReader - Run 2   : 4393 ticks, 0.0023 sec., 19515.3071 MB/sec.
-TextFieldParser           : 36877894 ticks, 18.9270 sec., 2.3247 MB/sec.
-Regex                     : 15011358 ticks, 7.7044 sec., 5.7111 MB/sec.
+CsvReader - No cache      : 3134597 ticks, 1.2374 sec., 35.5582 MB/sec.
+CachedCsvReader - Run 1   : 7452030 ticks, 2.9418 sec., 14.9571 MB/sec.
+CachedCsvReader - Run 2   : 4525 ticks, 0.0018 sec., 24632.1821 MB/sec.
+TextFieldParser           : 31568009 ticks, 12.4617 sec., 3.5308 MB/sec.
+Regex                     : 11273590 ticks, 4.4503 sec., 9.8869 MB/sec.
 
 Test pass #1 - Field #72 (middle)
 
-CsvReader - No cache      : 2085871 ticks, 1.0705 sec., 41.1007 MB/sec.
-CachedCsvReader - Run 1   : 6205399 ticks, 3.1848 sec., 13.8155 MB/sec.
-CachedCsvReader - Run 2   : 214 ticks, 0.0001 sec., 400610.9533 MB/sec.
-TextFieldParser           : 36458115 ticks, 18.7116 sec., 2.3515 MB/sec.
-Regex                     : 6976827 ticks, 3.5808 sec., 12.2879 MB/sec.
+CsvReader - No cache      : 2358656 ticks, 0.9311 sec., 47.2560 MB/sec.
+CachedCsvReader - Run 1   : 7119186 ticks, 2.8104 sec., 15.6564 MB/sec.
+CachedCsvReader - Run 2   : 325 ticks, 0.0001 sec., 342955.7662 MB/sec.
+TextFieldParser           : 31171440 ticks, 12.3052 sec., 3.5757 MB/sec.
+Regex                     : 5793093 ticks, 2.2869 sec., 19.2403 MB/sec.
 
 
 Test pass #2 - All fields
 
-CsvReader - No cache      : 3431492 ticks, 1.7612 sec., 24.9835 MB/sec.
-CachedCsvReader - Run 1   : 6110812 ticks, 3.1363 sec., 14.0294 MB/sec.
-CachedCsvReader - Run 2   : 173 ticks, 0.0001 sec., 495553.4335 MB/sec.
-TextFieldParser           : 36671647 ticks, 18.8212 sec., 2.3378 MB/sec.
-Regex                     : 15064341 ticks, 7.7315 sec., 5.6910 MB/sec.
+CsvReader - No cache      : 2941954 ticks, 1.1614 sec., 37.8866 MB/sec.
+CachedCsvReader - Run 1   : 7204077 ticks, 2.8439 sec., 15.4719 MB/sec.
+CachedCsvReader - Run 2   : 314 ticks, 0.0001 sec., 354970.1401 MB/sec.
+TextFieldParser           : 31213609 ticks, 12.3218 sec., 3.5709 MB/sec.
+Regex                     : 11095897 ticks, 4.3802 sec., 10.0452 MB/sec.
 
 Test pass #2 - Field #72 (middle)
 
-CsvReader - No cache      : 2162568 ticks, 1.1099 sec., 39.6430 MB/sec.
-CachedCsvReader - Run 1   : 5135074 ticks, 2.6355 sec., 16.6951 MB/sec.
-CachedCsvReader - Run 2   : 220 ticks, 0.0001 sec., 389685.2000 MB/sec.
-TextFieldParser           : 36913575 ticks, 18.9453 sec., 2.3225 MB/sec.
-Regex                     : 7107108 ticks, 3.6476 sec., 12.0627 MB/sec.
+CsvReader - No cache      : 2186909 ticks, 0.8633 sec., 50.9672 MB/sec.
+CachedCsvReader - Run 1   : 7131654 ticks, 2.8153 sec., 15.6290 MB/sec.
+CachedCsvReader - Run 2   : 296 ticks, 0.0001 sec., 376556.1622 MB/sec.
+TextFieldParser           : 31381026 ticks, 12.3879 sec., 3.5518 MB/sec.
+Regex                     : 5151353 ticks, 2.0335 sec., 21.6372 MB/sec.
 
 
 Test pass #3 - All fields
 
-CsvReader - No cache      : 3552781 ticks, 1.8234 sec., 24.1306 MB/sec.
-CachedCsvReader - Run 1   : 5668694 ticks, 2.9094 sec., 15.1235 MB/sec.
-CachedCsvReader - Run 2   : 186 ticks, 0.0001 sec., 460917.9785 MB/sec.
-TextFieldParser           : 36650220 ticks, 18.8102 sec., 2.3392 MB/sec.
-Regex                     : 15108079 ticks, 7.7540 sec., 5.6745 MB/sec.
+CsvReader - No cache      : 2693834 ticks, 1.0634 sec., 41.3762 MB/sec.
+CachedCsvReader - Run 1   : 7105358 ticks, 2.8049 sec., 15.6868 MB/sec.
+CachedCsvReader - Run 2   : 326 ticks, 0.0001 sec., 341903.7546 MB/sec.
+TextFieldParser           : 31323784 ticks, 12.3653 sec., 3.5583 MB/sec.
+Regex                     : 11303752 ticks, 4.4622 sec., 9.8605 MB/sec.
 
 Test pass #3 - Field #72 (middle)
 
-CsvReader - No cache      : 2212999 ticks, 1.1358 sec., 38.7396 MB/sec.
-CachedCsvReader - Run 1   : 5246701 ticks, 2.6928 sec., 16.3399 MB/sec.
-CachedCsvReader - Run 2   : 214 ticks, 0.0001 sec., 400610.9533 MB/sec.
-TextFieldParser           : 36718316 ticks, 18.8451 sec., 2.3348 MB/sec.
-Regex                     : 7049832 ticks, 3.6182 sec., 12.1607 MB/sec.
+CsvReader - No cache      : 2177773 ticks, 0.8597 sec., 51.1810 MB/sec.
+CachedCsvReader - Run 1   : 7326816 ticks, 2.8923 sec., 15.2127 MB/sec.
+CachedCsvReader - Run 2   : 328 ticks, 0.0001 sec., 339818.9756 MB/sec.
+TextFieldParser           : 31168390 ticks, 12.3040 sec., 3.5761 MB/sec.
+Regex                     : 5134853 ticks, 2.0270 sec., 21.7067 MB/sec.
 
 
 Done
 ```
-This was run on a high-spec machine (Xeon E5-2620, 16Gb RAM and 512Gb SSD; you have to have some toys!) so the overall thoughput would be good, but CsvReader performs at 10x the speed the TextFieldParser and 5x faster than Regex
+This was run on a high-spec machine (Xeon E5-2640, 32Gb RAM and M.2 1Tb SSD; you have to have some toys!) so the overall thoughput would be good, but CsvReader performs at 10x the speed the TextFieldParser and 5x faster than Regex
