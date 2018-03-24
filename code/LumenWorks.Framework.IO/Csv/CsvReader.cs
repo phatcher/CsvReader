@@ -1001,11 +1001,15 @@ namespace LumenWorks.Framework.IO.Csv
                     ReadBuffer();
                 }
 
-                string value = null;
+                StringBuilder value = null;
 
                 if (MissingFieldFlag)
                 {
-                    value = HandleMissingField(value, index, ref _nextFieldStart);
+                    string result = HandleMissingField(value?.ToString(), index, ref _nextFieldStart);
+                    if(value == null && result == string.Empty && MissingFieldAction == MissingFieldAction.ReplaceByEmpty)
+                    {
+                        value = new StringBuilder();
+                    }
                 }
                 else if (_nextFieldStart == _bufferLength)
                 {
@@ -1018,15 +1022,19 @@ namespace LumenWorks.Framework.IO.Csv
                     {
                         if (!discardValue)
                         {
-                            value = string.Empty;
-                            _fields[index] = value;
+                            value = new StringBuilder();
+                            _fields[index] = string.Empty;
                         }
 
                         MissingFieldFlag = true;
                     }
                     else
                     {
-                        value = HandleMissingField(value, index, ref _nextFieldStart);
+                        string result = HandleMissingField(value?.ToString(), index, ref _nextFieldStart);
+                        if(value == null && result == string.Empty && MissingFieldAction == MissingFieldAction.ReplaceByEmpty)
+                        {
+                            value = new StringBuilder();
+                        }
                     }
                 }
                 else
@@ -1039,8 +1047,8 @@ namespace LumenWorks.Framework.IO.Csv
 
                     if (_eof)
                     {
-                        value = string.Empty;
-                        _fields[field] = value;
+                        value = new StringBuilder();
+                        _fields[field] = string.Empty;
 
                         if (field < _fieldCount)
                         {
@@ -1087,7 +1095,8 @@ namespace LumenWorks.Framework.IO.Csv
                             {
                                 if (!discardValue)
                                 {
-                                    value += new string(_buffer, start, pos - start);
+                                    value = value ?? new StringBuilder();
+                                    value.Append(_buffer, start, pos - start);
                                 }
 
                                 start = 0;
@@ -1095,7 +1104,9 @@ namespace LumenWorks.Framework.IO.Csv
                                 _nextFieldStart = 0;
 
                                 if (!ReadBuffer())
+                                {
                                     break;
+                                }
                             }
                         }
 
@@ -1105,7 +1116,8 @@ namespace LumenWorks.Framework.IO.Csv
                             {
                                 if (!_eof && pos > start)
                                 {
-                                    value += new string(_buffer, start, pos - start);
+                                    value = value ?? new StringBuilder();
+                                    value.Append(_buffer, start, pos - start);
                                 }
                             }
                             else
@@ -1123,7 +1135,8 @@ namespace LumenWorks.Framework.IO.Csv
 
                                     if (pos > 0)
                                     {
-                                        value += new string(_buffer, start, pos - start);
+                                        value = value ?? new StringBuilder();
+                                        value.Append(_buffer, start, pos - start);
                                     }
                                 }
                                 else
@@ -1135,7 +1148,7 @@ namespace LumenWorks.Framework.IO.Csv
                                 // and the concatenated value needs to be trimmed too.
                                 if (pos <= 0)
                                 {
-                                    pos = (value == null ? -1 : value.Length - 1);
+                                    pos = value?.Length - 1 ?? -1;
 
                                     // Do the trimming
                                     while (pos > -1 && IsWhiteSpace(value[pos]))
@@ -1147,15 +1160,12 @@ namespace LumenWorks.Framework.IO.Csv
 
                                     if (pos > 0 && pos != value.Length)
                                     {
-                                        value = value.Substring(0, pos);
+                                        value.Length = pos;
                                     }
                                 }
                             }
 
-                            if (value == null)
-                            {
-                                value = string.Empty;
-                            }
+                            value = value ?? new StringBuilder();
                         }
 
                         if (_eol || _eof)
@@ -1170,13 +1180,17 @@ namespace LumenWorks.Framework.IO.Csv
                                     value = null;
                                 }
 
-                                value = HandleMissingField(value, index, ref _nextFieldStart);
+                                string result = HandleMissingField(value?.ToString(), index, ref _nextFieldStart);
+                                if(value == null && result == string.Empty && MissingFieldAction == MissingFieldAction.ReplaceByEmpty)
+                                {
+                                    value = new StringBuilder();
+                                }
                             }
                         }
 
                         if (!discardValue)
                         {
-                            _fields[index] = value;
+                            _fields[index] = value?.ToString();
                         }
                     }
                     else
@@ -1213,7 +1227,8 @@ namespace LumenWorks.Framework.IO.Csv
                                 {
                                     if (!discardValue)
                                     {
-                                        value += new string(_buffer, start, pos - start);
+                                        value = value ?? new StringBuilder();
+                                        value.Append(_buffer, start, pos - start);
                                     }
 
                                     escaped = true;
@@ -1243,7 +1258,8 @@ namespace LumenWorks.Framework.IO.Csv
                             {
                                 if (!discardValue && !escaped)
                                 {
-                                    value += new string(_buffer, start, pos - start);
+                                    value = value ?? new StringBuilder();
+                                    value.Append(_buffer, start, pos - start);
                                 }
 
                                 start = 0;
@@ -1263,7 +1279,8 @@ namespace LumenWorks.Framework.IO.Csv
                             // Append remaining parsed buffer content
                             if (!discardValue && pos > start)
                             {
-                                value += new string(_buffer, start, pos - start);
+                                value = value ?? new StringBuilder();
+                                value.Append(_buffer, start, pos - start);
                             }
 
                             if (!discardValue && value != null && (TrimmingOption & ValueTrimmingOptions.QuotedOnly) != 0)
@@ -1276,7 +1293,7 @@ namespace LumenWorks.Framework.IO.Csv
 
                                 if (newLength < value.Length)
                                 {
-                                    value = value.Substring(0, newLength);
+                                    value.Length = newLength;
                                 }
                             }
 
@@ -1323,18 +1340,18 @@ namespace LumenWorks.Framework.IO.Csv
                         {
                             if (!initializing && index < _fieldCount - 1)
                             {
-                                value = HandleMissingField(value, index, ref _nextFieldStart);
+                                string result = HandleMissingField(value?.ToString(), index, ref _nextFieldStart);
+                                if(value == null && result == string.Empty && MissingFieldAction == MissingFieldAction.ReplaceByEmpty)
+                                {
+                                    value = new StringBuilder();
+                                }
                             }
                         }
 
                         if (!discardValue)
                         {
-                            if (value == null)
-                            {
-                                value = string.Empty;
-                            }
-
-                            _fields[index] = value;
+                            value = value ?? new StringBuilder();
+                            _fields[index] = value.ToString();
                         }
                     }
                 }
@@ -1353,12 +1370,12 @@ namespace LumenWorks.Framework.IO.Csv
                         }
                         else
                         {
-                            return string.IsNullOrEmpty(value) ? string.Empty : value;
+                            return value == null ? string.Empty : value.ToString();
                         }
                     }
                     else
                     {
-                        return value;
+                        return value?.ToString();
                     }
                 }
 

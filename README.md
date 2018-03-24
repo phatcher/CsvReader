@@ -7,7 +7,7 @@ and provides fast parsing and reading of CSV files
 [![NuGet](https://img.shields.io/nuget/v/LumenWorksCsvReader.svg)](https://www.nuget.org/packages/LumenWorksCsvReader/)
 [![Build status](https://ci.appveyor.com/api/projects/status/ouvglmaox83bpyti/branch/master?svg=true)](https://ci.appveyor.com/project/PaulHatcher/csvreader/branch/master)
 
-To this end it is a straight drop-in replacement for the existing NuGet package [LumenWork.Framework.IO](https://www.nuget.org/packages/LumenWorks.Framework.IO/), but with additional
+To this end it is a straight drop-in replacement for the existing NuGet package [LumenWorks.Framework.IO](https://www.nuget.org/packages/LumenWorks.Framework.IO/), but with additional
 capabilities; the other rationale for the project is that the code is not available elsewhere in a public source repository, making it difficult to extend/contribute to.
 
 Welcome to contributions from anyone.
@@ -32,18 +32,18 @@ A good starting point is to look at Sébastien's [article](http://www.codeprojec
 
 A basic use of the reader something like this...
 ```csharp
-    using System.IO;
-    using LumenWorks.Framework.IO.Csv;
+using System.IO;
+using LumenWorks.Framework.IO.Csv;
 
-    void ReadCsv()
+void ReadCsv()
+{
+    // open the file "data.csv" which is a CSV file with headers
+    using (var csv = new CachedCsvReader(new StreamReader("data.csv"), true))
     {
-        // open the file "data.csv" which is a CSV file with headers
-        using (var csv = new CachedCsvReader(new StreamReader("data.csv"), true))
-        {
-            // Field headers will automatically be used as column names
-            myDataGrid.DataSource = csv;
-        }
+        // Field headers will automatically be used as column names
+        myDataGrid.DataSource = csv;
     }
+}
 ```
 Having said that, there are some extensions built into this version of the library that it is worth mentioning.
 
@@ -97,40 +97,40 @@ One use of CSV Reader is to have a nice .NET way of using SQL Bulk Copy (SBC) ra
 A couple of issues arise when using SBC
     1. SBC wants the data presented as the correct type rather than as string
     2. You need to map between the table destination columns and the CSV if the order does not match *exactly*
-    
+
 Below is a example using the Columns collection to set up the correct metadata for SBC
 ```csharp
-    public void Import(string fileName, string connectionString)
+public void Import(string fileName, string connectionString)
+{
+    using (var reader = new CsvReader(new StreamReader(fileName), false))
     {
-        using (var reader = new CsvReader(new StreamReader(fileName), false))
+        reader.Columns = new List<LumenWorks.Framework.IO.Csv.Column>
         {
-            reader.Columns = new List<LumenWorks.Framework.IO.Csv.Column>
-            {
-                new LumenWorks.Framework.IO.Csv.Column { Name = "PriceDate", Type = typeof(DateTime) },
-                new LumenWorks.Framework.IO.Csv.Column { Name = "OpenPrice", Type = typeof(decimal) },
-                new LumenWorks.Framework.IO.Csv.Column { Name = "HighPrice", Type = typeof(decimal) },
-                new LumenWorks.Framework.IO.Csv.Column { Name = "LowPrice", Type = typeof(decimal) },
-                new LumenWorks.Framework.IO.Csv.Column { Name = "ClosePrice", Type = typeof(decimal) },
-                new LumenWorks.Framework.IO.Csv.Column { Name = "Volume", Type = typeof(int) },
-            };
+            new LumenWorks.Framework.IO.Csv.Column { Name = "PriceDate", Type = typeof(DateTime) },
+            new LumenWorks.Framework.IO.Csv.Column { Name = "OpenPrice", Type = typeof(decimal) },
+            new LumenWorks.Framework.IO.Csv.Column { Name = "HighPrice", Type = typeof(decimal) },
+            new LumenWorks.Framework.IO.Csv.Column { Name = "LowPrice", Type = typeof(decimal) },
+            new LumenWorks.Framework.IO.Csv.Column { Name = "ClosePrice", Type = typeof(decimal) },
+            new LumenWorks.Framework.IO.Csv.Column { Name = "Volume", Type = typeof(int) },
+        };
 
-            // Now use SQL Bulk Copy to move the data
-            using (var sbc = new SqlBulkCopy(connectionString))
-            {
-                sbc.DestinationTableName = "dbo.DailyPrice";
-                sbc.BatchSize = 1000;
+        // Now use SQL Bulk Copy to move the data
+        using (var sbc = new SqlBulkCopy(connectionString))
+        {
+            sbc.DestinationTableName = "dbo.DailyPrice";
+            sbc.BatchSize = 1000;
 
-                sbc.AddColumnMapping("PriceDate", "PriceDate");
-                sbc.AddColumnMapping("OpenPrice", "OpenPrice");
-                sbc.AddColumnMapping("HighPrice", "HighPrice");
-                sbc.AddColumnMapping("LowPrice", "LowPrice");
-                sbc.AddColumnMapping("ClosePrice", "ClosePrice");
-                sbc.AddColumnMapping("Volume", "Volume");
+            sbc.AddColumnMapping("PriceDate", "PriceDate");
+            sbc.AddColumnMapping("OpenPrice", "OpenPrice");
+            sbc.AddColumnMapping("HighPrice", "HighPrice");
+            sbc.AddColumnMapping("LowPrice", "LowPrice");
+            sbc.AddColumnMapping("ClosePrice", "ClosePrice");
+            sbc.AddColumnMapping("Volume", "Volume");
 
-                sbc.WriteToServer(reader);
-            }
+            sbc.WriteToServer(reader);
         }
     }
+}
 ```
 The method AddColumnMapping is an extension I wrote to simplify adding mappings to SBC
 ```csharp
@@ -152,64 +152,64 @@ public static class SqlBulkCopyExtensions
         return map;
     }
 }
-```    
+```
 
 One other issue recently arose where we wanted to use SBC but some of the data was not in the file itself, but metadata that needed to be included on every row. The solution was to amend the CSV reader and Columns collection to allow default values to be provided that are not in the data.
 
 The additional columns should be added at the end of the Columns collection to avoid interfering with the parsing, see the amended example below...
 ```csharp
-    public void Import(string fileName, string connectionString)
+public void Import(string fileName, string connectionString)
+{
+    using (var reader = new CsvReader(new StreamReader(fileName), false))
     {
-        using (var reader = new CsvReader(new StreamReader(fileName), false))
+        reader.Columns = new List<LumenWorks.Framework.IO.Csv.Column>
         {
-            reader.Columns = new List<LumenWorks.Framework.IO.Csv.Column>
-            {
-                ...
-                new LumenWorks.Framework.IO.Csv.Column { Name = "Volume", Type = typeof(int) },
-                // NB Fake column so bulk import works
-                new LumenWorks.Framework.IO.Csv.Column { Name = "Ticker", Type = typeof(string) },
-            };
+            ...
+            new LumenWorks.Framework.IO.Csv.Column { Name = "Volume", Type = typeof(int) },
+            // NB Fake column so bulk import works
+            new LumenWorks.Framework.IO.Csv.Column { Name = "Ticker", Type = typeof(string) },
+        };
 
-            // Fix up the column defaults with the values we need
-            reader.UseColumnDefaults = true;
-            reader.Columns[reader.GetFieldIndex("Ticker")] = Path.GetFileNameWithoutExtension(fileName);
+        // Fix up the column defaults with the values we need
+        reader.UseColumnDefaults = true;
+        reader.Columns[reader.GetFieldIndex("Ticker")] = Path.GetFileNameWithoutExtension(fileName);
 
-            // Now use SQL Bulk Copy to move the data
-            using (var sbc = new SqlBulkCopy(connectionString))
-            {
-                ...
-                sbc.AddColumnMapping("Ticker", "Ticker");
+        // Now use SQL Bulk Copy to move the data
+        using (var sbc = new SqlBulkCopy(connectionString))
+        {
+            ...
+            sbc.AddColumnMapping("Ticker", "Ticker");
 
-                sbc.WriteToServer(reader);
-            }
+            sbc.WriteToServer(reader);
         }
     }
+}
 ```
 To give an idea of performance, this took a naive sample app using an ORM from 2m 27s to 1.37s using SBC and the full import took just over 11m to import 9.8m records.
 
-### Null Bytes Removal StreamReader
+### Null Byte Removal StreamReader
 Use NullRemovalStreamReader when CSV files contain large number of null bytes and you do not control how to generate CSV files.
 
-If you ever experienced "System.OutOfMemoryException" or long processing time, you will most likely to get a huge performance gain with NullRemovalStreamReader.
+If you ever experienced "System.OutOfMemoryException" or long processing time, you will most likely get a huge performance gain with NullRemovalStreamReader.
 ```csharp
-    public void Process(string path, bool addMark)
+public void Process(string path, bool addMark)
+{
+    using (StreamReader stream = new StreamReader(path))
+    using (CsvReader csv = new CsvReader(stream.BaseStream, false, stream.CurrentEncoding, addMark))
+    // or using (CsvReader csv = new CsvReader(File.OpenRead(path), false, Encoding.UTF8, addMark))
     {
-        using (StreamReader stream = new StreamReader(path))
-        using (CsvReader csv = new CsvReader(stream.BaseStream, false, stream.CurrentEncoding, addMark))
-        // or using (CsvReader csv = new CsvReader(File.OpenRead(path), false, Encoding.UTF8, addMark))
+        while (csv.ReadNextRecord())
         {
-            while (csv.ReadNextRecord())
-            {
-                string data = csv[i];
-                // do stuff with the data
-            }
+            string data = csv[i];
+            // do stuff
         }
     }
+}
 ```
 
-When addMark is true, consecutive null bytes will be replaced by [removed x null bytes] to indicate the removal, you can see this from benchmark output below.
+When addMark is true, consecutive null bytes will be replaced by [removed x null bytes] to indicate the removal, you can see this from the benchmark output below.
 
-Performance difference when tested with 20 million null bytes (20MB in storage) :
+Performance differences shown when tested with 20 million null bytes (20MB in storage) :
 ```csharp
 CsvReader -     without using NullRemovalStreamReader : 156248815 ticks, 57.2749 sec., 0.3492 MB/sec.
 
@@ -220,9 +220,9 @@ CsvReader - with NullRemovalStreamReader with    mark : 447222 ticks, 0.1639 sec
 AddMark =(True) LastCell =(cell63 followed by 20971520 null bytes[removed 20971520 null bytes])
 ```
 
-Adjust number of null bytes and run benchmark to see how much memory/time you will be able to save:
+Adjust number of null bytes in benchmark to see how much memory/time you will be able to save:
 ```csharp
-X:\Path\CsvReader\code\CsvReaderBenchmarks\bin\Debug>CsvReaderBenchmarks.exe CsvNullRemovalStreamReader
+X:\Path\CsvReader\build\Debug\CsvReaderBenchmarks\net461>CsvReaderBenchmarks.exe CsvNullRemovalStreamReader
 ```
 
 
