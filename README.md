@@ -57,7 +57,7 @@ using LumenWorks.Framework.IO.Csv;
 
 void ReadCsv()
 {
-    // open the file "data.csv" which is a CSV file with headers
+    // open the file "data.csv" which is a CSV file without headers
     using (var csv = new CachedCsvReader(new StreamReader("data.csv"), false))
     {
         csv.DefaultColumnHeader = "Fred"
@@ -75,7 +75,7 @@ using LumenWorks.Framework.IO.Csv;
 
 void ReadCsv()
 {
-    // open the file "data.csv" which is a CSV file with headers
+    // open the file "data.csv" which is a CSV file without headers
     using (var csv = new CachedCsvReader(new StreamReader("data.csv"), false))
     {
         csv.Columns.Add(new Column { Name = "PriceDate", Type = typeof(DateTime) });
