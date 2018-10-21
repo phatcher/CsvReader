@@ -441,5 +441,22 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
             return ep;
         }
+
+        [Test]
+        public void QuotationMarkIsFirstCharacterButFieldIsNotQuoted()
+        {
+            const string data = "good,Also\"good\",\"wrong\"Field,goodToo";
+
+            using (var csv = new CsvReader(new System.IO.StringReader(data), false, ','))
+            {
+                while (csv.ReadNextRecord())
+                {
+                    for (var i = 0; i < csv.FieldCount; i++)
+                    {
+                        var s = csv[i];
+                    }
+                }
+            }
+        }
     }
 }
