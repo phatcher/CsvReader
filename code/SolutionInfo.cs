@@ -3,15 +3,15 @@ using System.Reflection;
 
 [assembly: AssemblyProductAttribute("LumenWorks.Framework.IO")]
 [assembly: AssemblyCopyrightAttribute("Copyright © 2005 Sébastien Lorion, 2014 Paul Hatcher")]
-[assembly: AssemblyVersionAttribute("4.0.0")]
-[assembly: AssemblyFileVersionAttribute("4.0.0")]
-[assembly: AssemblyInformationalVersionAttribute("4.0.0 f5962d")]
+[assembly: AssemblyVersionAttribute("4.0.1")]
+[assembly: AssemblyFileVersionAttribute("4.0.1")]
+[assembly: AssemblyInformationalVersionAttribute("4.0.1 c26ad0")]
 namespace System {
     internal static class AssemblyVersionInformation {
         internal const System.String AssemblyProduct = "LumenWorks.Framework.IO";
         internal const System.String AssemblyCopyright = "Copyright © 2005 Sébastien Lorion, 2014 Paul Hatcher";
-        internal const System.String AssemblyVersion = "4.0.0";
-        internal const System.String AssemblyFileVersion = "4.0.0";
-        internal const System.String AssemblyInformationalVersion = "4.0.0 f5962d";
+        internal const System.String AssemblyVersion = "4.0.1";
+        internal const System.String AssemblyFileVersion = "4.0.1";
+        internal const System.String AssemblyInformationalVersion = "4.0.1 c26ad0";
     }
 }
