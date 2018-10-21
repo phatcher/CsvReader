@@ -5,13 +5,13 @@ using System.Reflection;
 [assembly: AssemblyCopyrightAttribute("Copyright © 2005 Sébastien Lorion, 2014 Paul Hatcher")]
 [assembly: AssemblyVersionAttribute("4.0.0")]
 [assembly: AssemblyFileVersionAttribute("4.0.0")]
-[assembly: AssemblyInformationalVersionAttribute("4.0.0 68c015")]
+[assembly: AssemblyInformationalVersionAttribute("4.0.0 f5962d")]
 namespace System {
     internal static class AssemblyVersionInformation {
         internal const System.String AssemblyProduct = "LumenWorks.Framework.IO";
         internal const System.String AssemblyCopyright = "Copyright © 2005 Sébastien Lorion, 2014 Paul Hatcher";
         internal const System.String AssemblyVersion = "4.0.0";
         internal const System.String AssemblyFileVersion = "4.0.0";
-        internal const System.String AssemblyInformationalVersion = "4.0.0 68c015";
+        internal const System.String AssemblyInformationalVersion = "4.0.0 f5962d";
     }
 }

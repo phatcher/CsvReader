@@ -165,7 +165,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                     csv.ReadNextRecord();
                     reader.Close();
 
-                    var result = reader.GetSchemaTable();
+                    reader.GetSchemaTable();
                 }
             });
         }
@@ -194,7 +194,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                     csv.ReadNextRecord();
                     reader.Close();
 
-                    var result = reader.NextResult();
+                    reader.NextResult();
                 }
             });
         }
@@ -226,7 +226,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                     csv.ReadNextRecord();
                     reader.Close();
 
-                    var result = reader.Read();
+                    reader.Read();
                 }
             });
         }
@@ -255,7 +255,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                     csv.ReadNextRecord();
                     reader.Close();
 
-                    var result = reader.Depth;
+                    var x = reader.Depth;
                 }
             });
         }
@@ -333,7 +333,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 var value = new byte[temp.Length];
 
                 for (var i = 0; i < temp.Length; i++)
+                {
                     value[i] = Convert.ToByte(temp[i]);
+                }
 
                 while (reader.Read())
                 {
@@ -345,7 +347,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                     Assert.AreEqual(value.Length, csvValue.Length);
 
                     for (var i = 0; i < value.Length; i++)
+                    {
                         Assert.AreEqual(value[i], csvValue[i]);
+                    }
                 }
             }
         }
@@ -383,7 +387,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                     Assert.AreEqual(value.Length, csvValue.Length);
 
                     for (var i = 0; i < value.Length; i++)
+                    {
                         Assert.AreEqual(value[i], csvValue[i]);
+                    }
                 }
             }
         }
@@ -400,7 +406,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                     Assert.AreSame(csv, reader.GetData(0));
 
                     for (var i = 1; i < reader.FieldCount; i++)
+                    {
                         Assert.IsNull(reader.GetData(i));
+                    }
                 }
             }
         }
@@ -415,7 +423,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 while (reader.Read())
                 {
                     for (var i = 0; i < reader.FieldCount; i++)
+                    {
                         Assert.AreEqual(typeof(string).FullName, reader.GetDataTypeName(i));
+                    }
                 }
             }
         }
@@ -475,7 +485,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 while (reader.Read())
                 {
                     for (var i = 0; i < reader.FieldCount; i++)
+                    {
                         Assert.AreEqual(typeof(string), reader.GetFieldType(i));
+                    }
                 }
             }
         }
@@ -624,7 +636,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                         var value = reader.GetValue(i);
 
                         if (string.IsNullOrEmpty(csv[i]))
+                        {
                             Assert.AreEqual(DBNull.Value, value);
+                        }
 
                         values[i] = value.ToString();
                     }
@@ -740,7 +754,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 while (reader.Read())
                 {
                     for (var i = 0; i < reader.FieldCount; i++)
+                    {
                         values[i] = (string) reader[i];
+                    }
 
                     CsvReaderSampleData.CheckSampleData1(csv.HasHeaders, csv.CurrentRecordIndex, values);
                 }

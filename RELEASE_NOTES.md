@@ -1,3 +1,6 @@
+#### 4.0.1 (2018-10-21)
+* Introduce SourceLink support
+
 #### 4.0.0 (2018-03-24)
 * Support .NET Framework 2.0+ and .NET Standard 1.3+
 * Use DateTime.TryParseExact if needed (@milcondoin)

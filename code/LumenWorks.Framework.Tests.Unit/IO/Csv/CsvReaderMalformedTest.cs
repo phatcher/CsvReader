@@ -36,10 +36,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             {
                 int realFieldCount;
 
-                if (i == badRecordIndex)
-                    realFieldCount = badFieldIndex;
-                else
-                    realFieldCount = fieldCount;
+                realFieldCount = i == badRecordIndex ? badFieldIndex : fieldCount;
 
                 for (var j = 0; j < realFieldCount; j++)
                 {
@@ -57,7 +54,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
                     // when eof is true, buffer is cleared and position is reset to 0, so exception will have CurrentPosition = 0
                     if (i == recordCount - 1)
+                    {
                         expectedErrorPosition = 0;
+                    }
                 }
             }
 
@@ -74,10 +73,14 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
                     // if not sequential, directly test the missing field
                     if (!sequentialAccess)
+                    {
                         CheckMissingFieldValueUnquoted(csv, badFieldIndex, badRecordIndex, badFieldIndex, expectedErrorPosition, sequentialAccess, action);
+                    }
 
                     for (var i = 0; i < csv.FieldCount; i++)
+                    {
                         CheckMissingFieldValueUnquoted(csv, i, badRecordIndex, badFieldIndex, expectedErrorPosition, sequentialAccess, action);
+                    }
                 }
             }
         }
@@ -193,7 +196,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
             // NOTE: Buffer size affects reported error position - surely should be based on source doc position?
             var ep = ParseException<MissingFieldCsvException>(data, 11);
             if (!(ep.CurrentRecordIndex == 2 && ep.CurrentFieldIndex == 2 && ep.CurrentPosition == 1))
+            {
                 throw ep;
+            }
         }
 
         [Test]
@@ -203,7 +208,9 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
 
             var ep = ParseException<MissingFieldCsvException>(data);
             if (!(ep.CurrentRecordIndex == 2 && ep.CurrentFieldIndex == 2 && ep.CurrentPosition == 22))
+            {
                 throw ep;
+            }
         }
 
         [Test]

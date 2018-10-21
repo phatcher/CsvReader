@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net20;net35;net45;net461;netstandard2.0</TargetFrameworks>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3;netstandard2.0;net20;net35;net45;net461;net472</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>LumenWorks.Framework.IO</RootNamespace>
     <Description>An extended version of LumenWorks.Frameworks.IO</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>    
     <PackageId>LumenWorksCsvReader</PackageId>
     <Title>LumenWorks CSV Reader</Title>
     <Copyright>Copyright © 2005 Sébastien Lorion, 2014 Paul Hatcher</Copyright>
@@ -14,18 +15,18 @@
     <PackageProjectUrl>https://github.com/phatcher/CsvReader</PackageProjectUrl>
     <PackageRequireLicenceAcceptance>False</PackageRequireLicenceAcceptance>
     <PackageTags>CSV</PackageTags>
-    <RepositoryUrl>https://github.com/phatcher/CsvReader</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
     <Authors>Sébastien Lorion, Paul Hatcher</Authors>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>LumenWorks.Framework.snk</AssemblyOriginatorKeyFile>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <OutputPath>$(SolutionDir)\build\$(Configuration)\$(AssemblyName)\$(TargetFramework)\</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>LumenWorks.Framework.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>$(SolutionDir)\build\$(Configuration)\$(TargetFramework)\LumenWorks.Framework.IO.xml</DocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All"/>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
   </ItemGroup>
