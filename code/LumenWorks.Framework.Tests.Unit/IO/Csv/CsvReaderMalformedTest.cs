@@ -458,21 +458,5 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 }
             }
         }
-
-        [Test]
-        public void ApplicationThrowsExceptionWhenRowGotLessFields()
-        {
-            const string data = "\"VOTER_ID\",\r\n\"5TH_SPECIAL_VOTING_METHOD\"";
-             using (var csv = new CsvReader(new System.IO.StringReader(data), false, ','))
-            {
-                while (csv.ReadNextRecord())
-                {
-                    for (var i = 0; i < csv.FieldCount; i++)
-                    {
-                        var s = csv[i];
-                    }
-                }
-            }
-        }
     }
 }

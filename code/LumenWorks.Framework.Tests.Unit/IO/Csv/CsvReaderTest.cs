@@ -609,6 +609,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\r\r\n1\r";
 
+            // NB Need all values as NET 2 doesn't support optional args
             using (var csv = new CsvReader(new System.IO.StringReader(data), false, '\r', '\"', '\"', '#', ValueTrimmingOptions.None))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
@@ -631,6 +632,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         {
             const string data = "\"double\"\"\"\"double quotes\"";
 
+            // NB Need all values as NET 2 doesn't support optional args
             using (var csv = new CsvReader(new System.IO.StringReader(data), false, ',', '\"', '\"', '#', ValueTrimmingOptions.None))
             {
                 Assert.IsTrue(csv.ReadNextRecord());
@@ -955,26 +957,53 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                 Assert.IsTrue(csv.ReadNextRecord());
                 Assert.AreEqual(1, csv.FieldCount);
                 Assert.AreEqual(string.Empty, csv[0]);
+
                 Assert.IsFalse(csv.ReadNextRecord());
             }
         }
 
         [Test]
-        public void ParsingTest43()
+        public void MissingFieldNull()
         {
-            using (var csv = new CsvReader(new StringReader("a,b\n   "), false))
+            using (var csv = new CsvReader(new StringReader("a,b,\nc,d"), false))
             {
                 csv.SkipEmptyLines = true;
                 csv.MissingFieldAction = MissingFieldAction.ReplaceByNull;
 
-                Assert.IsTrue(csv.ReadNextRecord());
-                Assert.AreEqual(2, csv.FieldCount);
-                Assert.AreEqual("a", csv[0]);
-                Assert.AreEqual("b", csv[1]);
+                RowCheck(csv, "a", "b", string.Empty);
+                RowCheck(csv, "c", "d", null);
 
-                csv.ReadNextRecord();
-                Assert.AreEqual(string.Empty, csv[0]);
-                Assert.AreEqual(null, csv[1]);
+                Assert.That(csv.ReadNextRecord, Is.False);
+            }
+        }
+
+        [Test]
+        public void MissingFieldEmpty()
+        {
+            using (var csv = new CsvReader(new StringReader("a,b,\nc,d"), false))
+            {
+                csv.SkipEmptyLines = true;
+                csv.MissingFieldAction = MissingFieldAction.ReplaceByEmpty;
+
+                RowCheck(csv, "a", "b", string.Empty);
+                RowCheck(csv, "c", "d", string.Empty);
+
+                Assert.That(csv.ReadNextRecord, Is.False);
+            }
+        }
+
+        [Test]
+        public void MissingFieldException()
+        {
+            using (var csv = new CsvReader(new StringReader("a,b,\nc,d"), false))
+            {
+                csv.SkipEmptyLines = true;
+                csv.MissingFieldAction = MissingFieldAction.ParseError;
+
+                RowCheck(csv, "a", "b", string.Empty);
+                RowCheck(csv, "c", "d");
+
+                Assert.Throws<MissingFieldCsvException>(() => { var x = csv[2]; });
             }
         }
 
@@ -1164,7 +1193,7 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
         [Test]
         public void OverrideColumnValueTest()
         {
-            using (CsvReader csv = new CsvReader(new StringReader("Column1,Column2,Column3\nabc,def,ghi\n"), true))
+            using (var csv = new CsvReader(new StringReader("Column1,Column2,Column3\nabc,def,ghi\n"), true))
             {
                 csv.Columns[csv.GetFieldIndex("Column2")].OverrideValue = "xyz";
 
@@ -1475,6 +1504,26 @@ namespace LumenWorks.Framework.Tests.Unit.IO.Csv
                     csv.CopyCurrentRecordTo(actual);
 
                     CollectionAssert.AreEqual(expected, actual);
+                }
+            }
+        }
+
+        private void RowCheck(CsvReader csv, params object[] values)
+        {            
+            Assert.That(csv.ReadNextRecord(), Is.True);
+            for (var i = 0; i < values.Length; i++)
+            {
+                Assert.That(csv[i], Is.EqualTo(values[i]), $"Field {i} differs");
+            }
+        }
+
+        private void ProcessData(CsvReader csv)
+        {
+            while (csv.ReadNextRecord())
+            {
+                for (var i = 0; i < csv.FieldCount; i++)
+                {
+                    var s = csv[i];
                 }
             }
         }
