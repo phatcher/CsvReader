@@ -1418,9 +1418,12 @@ namespace LumenWorks.Framework.IO.Csv
         /// Indicates if the reader will skip directly to the next line without parsing the current one. 
         /// To be used when an error occurs.
         /// </param>
+        /// <param name="caseSensitiveHeaders">
+        /// Indicates if the reader should be case-sensitive when parsing headers.
+        /// </param>
         /// <returns><see langword="true"/> if a record has been successfully reads; otherwise, <see langword="false"/>.</returns>
         /// <exception cref="T:System.ComponentModel.ObjectDisposedException">The instance has been disposed of.</exception>
-        protected virtual bool ReadNextRecord(bool onlyReadHeaders, bool skipToNextLine)
+        protected virtual bool ReadNextRecord(bool onlyReadHeaders, bool skipToNextLine, bool caseSensitiveHeaders = false)
         {
             if (_eof)
             {
@@ -1488,7 +1491,8 @@ namespace LumenWorks.Framework.IO.Csv
                     Array.Resize(ref _fields, _fieldCount);
                 }
 
-                _fieldHeaderIndexes = new Dictionary<string, int>(_fieldCount, StringComparer.CurrentCultureIgnoreCase);
+                var headerComparer = caseSensitiveHeaders ? StringComparer.CurrentCulture : StringComparer.CurrentCultureIgnoreCase;
+                _fieldHeaderIndexes = new Dictionary<string, int>(_fieldCount, headerComparer);
 
                 _initialized = true;
 
